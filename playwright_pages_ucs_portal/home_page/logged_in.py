@@ -1,8 +1,8 @@
 import re
 
 from playwright_pages_base.base import expect
-from playwright_pages_base.portal.home_page.base import HomePage
-from playwright_pages_base.portal.login_page import LoginPage
+from base import HomePage
+from ..login_page import LoginPage
 
 
 class HomePageLoggedIn(HomePage):

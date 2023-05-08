@@ -1,4 +1,4 @@
-from playwright_pages_base.portal.common.portal_page import PortalPage
+from ..common.portal_page import PortalPage
 
 
 class HomePage(PortalPage):

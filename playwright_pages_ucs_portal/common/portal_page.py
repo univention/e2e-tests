@@ -1,9 +1,9 @@
 from playwright_pages_base.base import BasePage, expect
-from playwright_pages_base.portal.common.cookie_dialog import CookieDialog
-from playwright_pages_base.portal.common.header import Header
-from playwright_pages_base.portal.common.notifications import NotificationDrawer, PopupNotificationContainer
-from playwright_pages_base.portal.common.right_side_menu import RightSideMenu
-from playwright_pages_base.portal.exceptions import PortalError
+from cookie_dialog import CookieDialog
+from header import Header
+from notifications import NotificationDrawer, PopupNotificationContainer
+from right_side_menu import RightSideMenu
+from ..exceptions import PortalError
 
 
 class PortalPage(BasePage):

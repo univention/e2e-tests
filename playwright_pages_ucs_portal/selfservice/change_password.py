@@ -2,7 +2,7 @@ import re
 import string
 
 from playwright_pages_base.base import BasePage
-from playwright_pages_base.portal.home_page.logged_in import HomePageLoggedIn
+from ..home_page.logged_in import HomePageLoggedIn
 
 
 class ChangePasswordDialogPage(BasePage):
