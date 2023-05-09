@@ -1,5 +1,5 @@
 from playwright_pages_base.base import expect
-from base import HomePage
+from .base import HomePage
 
 
 class HomePageLoggedOut(HomePage):

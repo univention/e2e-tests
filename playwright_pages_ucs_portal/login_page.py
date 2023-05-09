@@ -1,8 +1,8 @@
 import re
 
 from playwright_pages_base.base import expect
-from common.portal_page import PortalPage
-from home_page.logged_out import HomePageLoggedOut
+from .common.portal_page import PortalPage
+from .home_page.logged_out import HomePageLoggedOut
 
 
 class LoginPage(PortalPage):
