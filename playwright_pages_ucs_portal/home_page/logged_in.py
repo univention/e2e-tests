@@ -1,7 +1,7 @@
 import re
 
 from playwright_pages_base.base import expect
-from base import HomePage
+from .base import HomePage
 from ..login_page import LoginPage
 
 

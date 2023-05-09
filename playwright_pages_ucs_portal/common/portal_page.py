@@ -1,8 +1,8 @@
 from playwright_pages_base.base import BasePage, expect
-from cookie_dialog import CookieDialog
-from header import Header
-from notifications import NotificationDrawer, PopupNotificationContainer
-from right_side_menu import RightSideMenu
+from .cookie_dialog import CookieDialog
+from .header import Header
+from .notifications import NotificationDrawer, PopupNotificationContainer
+from .right_side_menu import RightSideMenu
 from ..exceptions import PortalError
 
 
