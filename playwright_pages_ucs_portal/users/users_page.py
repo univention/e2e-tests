@@ -1,6 +1,6 @@
 import string
 
-from playwright_pages_base.base import  BasePage, BasePagePart, expect
+from playwright_pages_base.base import BasePage, BasePagePart, expect
 
 
 # TODO: The two classes in here should be handled in a better way,
