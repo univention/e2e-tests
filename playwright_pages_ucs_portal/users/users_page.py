@@ -55,13 +55,13 @@ class UCSUsersPage(BasePage):
 class AddUserDialog(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.container_indicator = self.get_by_label("User template")
-        self.last_name = self.get_by_role("textbox", name="Last name *")
-        self.username = self.get_by_role("textbox", name="User name *")
-        self.next_button = self.get_by_role("button", name="Next")
-        self.password_box = self.get_by_role("textbox", name="Password *")
-        self.retype_box = self.get_by_role("textbox", name="Password (retype) *")
-        self.submit_password_button = self.get_by_role("button", name="Create user")
+        self.container_indicator = self.page_part_locator.get_by_label("User template")
+        self.last_name = self.page_part_locator.get_by_role("textbox", name="Last name *")
+        self.username = self.page_part_locator.get_by_role("textbox", name="User name *")
+        self.next_button = self.page_part_locator.get_by_role("button", name="Next")
+        self.password_box = self.page_part_locator.get_by_role("textbox", name="Password *")
+        self.retype_box = self.page_part_locator.get_by_role("textbox", name="Password (retype) *")
+        self.submit_password_button = self.page_part_locator.get_by_role("button", name="Create user")
 
     def add_user(self, username: string, password: string):
         # expect(self.container_indicator).to_be_visible()
@@ -72,5 +72,5 @@ class AddUserDialog(BasePagePart):
         self.password_box.fill(password)
         self.retype_box.fill(password)
         self.submit_password_button.click()
-        expect(self.get_by_text(f"The user \"{username}\" has been created.")).to_be_visible()
+        expect(self.page_part_locator.get_by_text(f"The user \"{username}\" has been created.")).to_be_visible()
         self.page_part_locator.press("Escape")

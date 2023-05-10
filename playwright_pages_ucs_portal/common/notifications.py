@@ -35,7 +35,7 @@ class NotificationElement(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.close_button = self.page_part_locator.locator("//*[contains(@data-test, 'closeNotification')]")
-        self.link = self.get_by_role("link")
+        self.link = self.page_part_locator.get_by_role("link")
         self.title = self.page_part_locator.locator("//div[@class='notification__title']")
         self.details = self.page_part_locator.locator("//div[@class='notification__description']")
 
