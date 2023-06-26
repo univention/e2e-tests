@@ -48,6 +48,12 @@ class BasePage:
         """
         raise NotImplementedError
 
+    def get_new_tab(self, clickable):
+        with self.page.expect_popup() as new_page_info:
+            clickable.click()
+        new_page = new_page_info.value
+        return new_page
+
 
 class BasePagePart:
     """
