@@ -19,7 +19,7 @@ class LoginPage(PortalPage):
         home_page = HomePageLoggedOut(self.page)
         home_page.navigate()
         home_page.is_displayed()
-        self.reveal_right_side_menu()
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()
         expect(self.right_side_menu.logout_button).to_be_hidden()
         self.right_side_menu.click_login_button()

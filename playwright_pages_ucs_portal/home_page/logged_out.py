@@ -23,10 +23,10 @@ class HomePageLoggedOut(HomePage):
         self.logout()
         # Normally, we don't use assertions inside the navigate() methods
         # Navigation roots are the exception, since they have to assure login state
-        self.reveal_right_side_menu()
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()
         expect(self.right_side_menu.logout_button).to_be_hidden()
-        self.hide_right_side_menu()
+        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
 
     def is_displayed(self):
         expect(self.login_widget).to_be_visible()
