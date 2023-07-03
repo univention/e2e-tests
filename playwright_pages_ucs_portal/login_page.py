@@ -6,8 +6,8 @@ from .home_page.logged_out import HomePageLoggedOut
 
 
 class LoginPage(PortalPage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         # TODO: Using regular expr to target different langs in SouvAP env. Needs better solution.
         # In headed mode, default language is English. In headless mode, it is Deutsch.
         self.username_input = self.page.get_by_label(re.compile("^(Username|Benutzername)"))

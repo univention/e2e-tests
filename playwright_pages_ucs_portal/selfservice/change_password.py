@@ -6,8 +6,8 @@ from ..home_page.logged_in import HomePageLoggedIn
 
 
 class ChangePasswordDialogPage(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         self.old_password_box = self.page.get_by_test_id('password-box')
         self.new_password_box = self.page.get_by_test_id('new-password-box')
         self.retype_password_box = self.page.get_by_test_id('retype-password-box')

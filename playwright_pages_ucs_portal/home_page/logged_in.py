@@ -8,8 +8,8 @@ from ..login_page import LoginPage
 class HomePageLoggedIn(HomePage):
     """This represents the logged in state of the portal's home page."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         self.umc_heading = self.page.get_by_text("Univention Management Console", exact=True)
         self.users_tile = self.page.get_by_role("link", name=re.compile("User New Tab|Users iFrame"))
         self.files_tile = self.page.get_by_role("link", name="Files New Tab")

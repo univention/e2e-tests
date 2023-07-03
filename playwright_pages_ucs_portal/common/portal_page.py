@@ -25,8 +25,8 @@ class PortalPage(BasePage):
     ```
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         self.header = Header(self.page.locator("#portal-header"))
         self.notification_drawer = NotificationDrawer(self.page.locator("#notifications-all"))
         self.popup_notification_container = PopupNotificationContainer(

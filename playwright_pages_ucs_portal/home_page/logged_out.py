@@ -8,8 +8,8 @@ class HomePageLoggedOut(HomePage):
     who has not yet logged in.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         self.login_widget = self.page.get_by_role("link", name="Login Same tab")
 
     def navigate(self):

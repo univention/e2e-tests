@@ -9,8 +9,8 @@ from playwright_pages_base.base import BasePage, BasePagePart, expect
 
 
 class UsersPage(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         # TODO: These should be separated into a user list page part once the page part
         # gets an appropriate `data-testid` attribute or identifier.
         # Currently, it is something generic like `id="umc_widgets_ContainerWidget_10"`
@@ -22,8 +22,8 @@ class UsersPage(BasePage):
 
 
 class UCSUsersPage(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         # TODO: using an iFrame here might be different in the SouvAP env
         # and will likely break test_users_page.
         self.iframe = self.page.frame_locator("iframe[title=\"Users\"]")
