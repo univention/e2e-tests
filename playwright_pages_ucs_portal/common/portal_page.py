@@ -55,13 +55,22 @@ class PortalPage(BasePage):
         self.hide_area(self.notification_drawer, self.header.bell_icon)
 
     def logout(self):
+        """Optimized for the case when we are already logged out"""
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-        logout_button_visible = self.right_side_menu.logout_button.is_visible()
-        login_button_visible = self.right_side_menu.login_button.is_visible()
-        if login_button_visible and logout_button_visible:
-            raise PortalError("Both login and logout buttons are visible in the side navigation drawer")
-        elif logout_button_visible:
+        try:
+            expect(self.right_side_menu.login_button).to_be_visible()
+        except AssertionError:
+            try:
+                expect(self.right_side_menu.logout_button).to_be_visible()
+            except AssertionError:
+                raise PortalError("Both login and logout buttons are hidden in the side navigation drawer")
             self.right_side_menu.click_logout_button()
+        else:
+            try:
+                expect(self.right_side_menu.logout_button).to_be_hidden()
+            except AssertionError:
+                raise PortalError("Both login and logout buttons are visible in the side navigation drawer")
+            self.hide_area(self.right_side_menu, self.header.hamburger_icon)
 
     def accept_cookies(self):
         expect(self.cookie_dialog).to_be_visible()
