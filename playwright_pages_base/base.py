@@ -32,14 +32,22 @@ class BasePage:
     """
 
     def __init__(self, page: Page):
+        self.set_content(page)
+
+    def set_content(self, page):
+        """This method should be used to define page elements and page parts.
+        It allows to change the tab and redefine the elements/page parts based
+        on the new tab.
+        """
         self.page = page
 
     def navigate(self, *args, **kwargs):
-        """Should navigate to this page"""
-        raise NotImplementedError
-
-    def navigate_to(self, target, *args, **kwargs):
-        """Should navigate to target, given we are on this page"""
+        """Should navigate to this page from a well-defined root page using a
+        canonical path. Note that this may open new tabs, since the root page
+        and this page may be displayed in different tabs. In this case, you
+        should call set_content() to ensure that this page object is based on the
+        correct tab.
+        """
         raise NotImplementedError
 
     def is_displayed(self):
@@ -47,6 +55,67 @@ class BasePage:
         in the Playwright Page (browser tab).
         """
         raise NotImplementedError
+
+    def get_new_tab(self, clickable):
+        """Clicking on some clickable elements opens a new tab/window.
+        This method is used to click on such an element and retrieve the new tab/window.
+        """
+        with self.page.expect_popup() as new_page_info:
+            clickable.click()
+        new_page = new_page_info.value
+        return new_page
+
+    @staticmethod
+    def reveal_area(area, clickable):
+        """Method that ensures that a collapsible area (could be a dropdown or sliding menu)
+        is in the revealed state.
+
+        Parameters
+        ----------
+        area : BasePagePart or Locator
+        clickable: Locator
+                   Clickable element that is responsible for opening and closing area
+        """
+        try:
+            expect(area).to_be_hidden()
+        except AssertionError:
+            pass
+        else:
+            clickable.click()
+            expect(area).to_be_visible()
+
+    @staticmethod
+    def hide_area(area, clickable):
+        """Method that ensures that a collapsible area (could be a dropdown or sliding menu)
+        is in the collapsed state.
+
+        Parameters
+        ----------
+        area : BasePagePart or Locator
+        clickable: Locator
+                   Clickable element that is responsible for opening and closing area
+        """
+        try:
+            expect(area).to_be_visible()
+        except AssertionError:
+            pass
+        else:
+            clickable.click()
+            expect(area).to_be_hidden()
+
+    def upload_files(self, files, clickable):
+        """Method to upload a file
+
+        Parameters
+        ----------
+        files : str or pathlib.Path (or list thereof)
+        clickable: Locator
+                   Clickable element that is responsible for opening the file picker
+        """
+        with self.page.expect_file_chooser() as file_chooser_info:
+            clickable.click()
+        file_chooser = file_chooser_info.value
+        file_chooser.set_files(files)
 
 
 class BasePagePart:
