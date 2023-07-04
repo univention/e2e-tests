@@ -24,6 +24,13 @@ class LoginPage(PortalPage):
         expect(self.right_side_menu.logout_button).to_be_hidden()
         self.right_side_menu.click_login_button()
 
+    def navigate_saml(self):
+        """Login via saml specifically"""
+        home_page = HomePageLoggedOut(self.page)
+        home_page.navigate()
+        home_page.is_displayed()
+        home_page.saml_login_tile.click()
+
     def is_displayed(self):
         expect(self.username_input).to_be_visible()
 
