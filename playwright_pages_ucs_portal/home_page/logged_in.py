@@ -24,12 +24,12 @@ class HomePageLoggedIn(HomePage):
             self.accept_cookies()
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         try:
-            # Checking login state only since is_displayed() is currently empty
-            expect(self.right_side_menu.logout_button).to_be_visible()
-            expect(self.right_side_menu.login_button).to_be_hidden()
+            expect(self.right_side_menu.login_button).to_be_visible()
         except AssertionError:
+            expect(self.right_side_menu.logout_button).to_be_visible()
+        else:
             login_page = LoginPage(self.page)
-            login_page.navigate()
+            login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
             login_page.login(username, password)
             self.reveal_area(self.right_side_menu, self.header.hamburger_icon)

@@ -15,9 +15,9 @@ class LoginPage(PortalPage):
         # TODO: Using regular expression to target both UCS and SouvAP envs. Needs a better solution.
         self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In|Anmelden)"))
 
-    def navigate(self):
+    def navigate(self, cookies_accepted=False):
         home_page = HomePageLoggedOut(self.page)
-        home_page.navigate()
+        home_page.navigate(cookies_accepted=cookies_accepted)
         home_page.is_displayed()
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()

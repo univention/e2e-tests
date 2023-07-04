@@ -12,14 +12,15 @@ class HomePageLoggedOut(HomePage):
         super().set_content(*args, **kwargs)
         self.login_widget = self.page.get_by_role("link", name="Login Same tab")
 
-    def navigate(self):
+    def navigate(self, cookies_accepted=False):
         self.page.goto("/")
-        try:
-            expect(self.cookie_dialog).to_be_visible()
-        except AssertionError:
-            pass
-        else:
-            self.accept_cookies()
+        if not cookies_accepted:
+            try:
+                expect(self.cookie_dialog).to_be_visible()
+            except AssertionError:
+                pass
+            else:
+                self.accept_cookies()
         self.logout()
         # Normally, we don't use assertions inside the navigate() methods
         # Navigation roots are the exception, since they have to assure login state
