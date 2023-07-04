@@ -25,8 +25,8 @@ class PortalPage(BasePage):
     ```
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
         self.header = Header(self.page.locator("#portal-header"))
         self.notification_drawer = NotificationDrawer(self.page.locator("#notifications-all"))
         self.popup_notification_container = PopupNotificationContainer(
@@ -35,63 +35,27 @@ class PortalPage(BasePage):
         self.right_side_menu = RightSideMenu(self.page.locator("#portal-sidenavigation"))
         self.cookie_dialog = CookieDialog(self.page.get_by_role("dialog", name="Cookie Consent"))
 
-    def reveal_notification_drawer(self):
-        try:
-            expect(self.notification_drawer).to_be_hidden()
-        except AssertionError:
-            pass
-        else:
-            self.header.click_bell_icon()
-            expect(self.notification_drawer).to_be_visible()
-
-    def hide_notification_drawer(self):
-        try:
-            expect(self.notification_drawer).to_be_visible()
-        except AssertionError:
-            pass
-        else:
-            self.header.click_bell_icon()
-            expect(self.notification_drawer).to_be_hidden()
-
     def remove_all_notifications(self):
-        self.reveal_notification_drawer()
+        self.reveal_area(self.notification_drawer, self.header.bell_icon)
         count = self.notification_drawer.notifications.count()
         if self.notification_drawer.no_notifications_heading.is_visible():
             if count > 0:
                 raise PortalError("'No notifications' visible even when non-zero notifications present")
             else:
-                self.hide_notification_drawer()
+                self.hide_area(self.notification_drawer, self.header.bell_icon)
         elif count == 1:
             self.notification_drawer.notification(0).click_close_button()
             expect(self.notification_drawer).to_be_hidden()
         else:
             self.notification_drawer.click_remove_all_button()
             expect(self.notification_drawer).to_be_hidden()
-        self.reveal_notification_drawer()
+        self.reveal_area(self.notification_drawer, self.header.bell_icon)
         expect(self.notification_drawer.no_notifications_heading).to_be_visible()
         expect(self.notification_drawer.notifications).to_have_count(0)
-        self.hide_notification_drawer()
-
-    def reveal_right_side_menu(self):
-        try:
-            expect(self.right_side_menu).to_be_hidden()
-        except AssertionError:
-            pass
-        else:
-            self.header.click_hamburger_icon()
-            expect(self.right_side_menu).to_be_visible()
-
-    def hide_right_side_menu(self):
-        try:
-            expect(self.right_side_menu).to_be_visible()
-        except AssertionError:
-            pass
-        else:
-            self.header.click_hamburger_icon()
-            expect(self.right_side_menu).to_be_hidden()
+        self.hide_area(self.notification_drawer, self.header.bell_icon)
 
     def logout(self):
-        self.reveal_right_side_menu()
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         logout_button_visible = self.right_side_menu.logout_button.is_visible()
         login_button_visible = self.right_side_menu.login_button.is_visible()
         if login_button_visible and logout_button_visible:
@@ -118,7 +82,7 @@ class PortalPage(BasePage):
         current_language = self.get_language() or "en"
         change_language_name = menu_entry_names[current_language]
 
-        self.reveal_right_side_menu()
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         self.right_side_menu.click_entry(change_language_name)
         self.right_side_menu.click_entry(name)
-        self.hide_right_side_menu()
+        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
