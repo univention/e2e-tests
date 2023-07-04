@@ -95,3 +95,16 @@ class PortalPage(BasePage):
         self.right_side_menu.click_entry(change_language_name)
         self.right_side_menu.click_entry(name)
         self.hide_area(self.right_side_menu, self.header.hamburger_icon)
+
+    def assert_logged_in(self):
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
+        # Checking login state only since is_displayed() is currently empty
+        expect(self.right_side_menu.logout_button).to_be_visible()
+        expect(self.right_side_menu.login_button).to_be_hidden()
+        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
+
+    def assert_logged_out(self):
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
+        expect(self.right_side_menu.login_button).to_be_visible()
+        expect(self.right_side_menu.logout_button).to_be_hidden()
+        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
