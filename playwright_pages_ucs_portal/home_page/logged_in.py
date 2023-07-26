@@ -13,6 +13,13 @@ class HomePageLoggedIn(HomePage):
         self.umc_heading = self.page.get_by_text("Univention Management Console", exact=True)
         self.users_tile = self.page.get_by_role("link", name=re.compile("User New Tab|Users iFrame"))
         self.files_tile = self.page.get_by_role("link", name="Files New Tab")
+        self.mail_tile = self.page.get_by_role("link", name="E-Mail New Tab")
+        self.calendar_tile = self.page.get_by_role("link", name="Calendar New Tab")
+        self.contacts_tile = self.page.get_by_role("link", name="Contacts New Tab")
+        self.tasks_tile = self.page.get_by_role("link", name="Tasks New Tab")
+        self.video_conference_tile = self.page.get_by_role("link", name="Ad hoc videoconference New Tab")
+        self.projects_tile = self.page.get_by_role("link", name="Projects New Tab")
+        self.activity_tile = self.page.get_by_role("link", name="Activiy New Tab")
 
     def navigate(self, username, password):
         self.page.goto("/")
