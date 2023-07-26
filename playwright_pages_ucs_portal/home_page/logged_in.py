@@ -19,7 +19,7 @@ class HomePageLoggedIn(HomePage):
         self.tasks_tile = self.page.get_by_role("link", name="Tasks New Tab")
         self.video_conference_tile = self.page.get_by_role("link", name="Ad hoc videoconference New Tab")
         self.projects_tile = self.page.get_by_role("link", name="Projects New Tab")
-        self.activity_tile = self.page.get_by_role("link", name="Activiy New Tab")
+        self.activity_tile = self.page.get_by_role("link", name="Activity New Tab")
 
     def navigate(self, username, password):
         self.page.goto("/")
