@@ -18,12 +18,12 @@
 
 # Keycloak login brute force protection tests
 
-| Test                                                                                                                    | Source                                |
-|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
-| Many failed login with browser A; browser blocked                                                                       | `tests/test_block::test_device_block` |
-| Browser A block is released after a minute                                                                              | `tests/test_block::test_device_block` |
-| Browser A blocked, but browser B can login                                                                              | `tests/test_block::test_device_block` |
-| Many failed logins with browser A and IP X; browser A blocked. more failed logins with browser B and IP X; IP X blocked | `tests/test_block::test_ip_block`     |
-| IP X block is released after a minute                                                                                   | `tests/test_block::test_ip_block`     |
-| IP X blocked, but IP Y can login                                                                                        | `tests/test_block::test_ip_block`     |
-| OIDC API block for IP address                                                                                           | `tests/test_block::test_api_ip_block` |
+| Test                                                                                                                    | Source                                      |
+|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| Many failed login with browser A; browser blocked                                                                       | `tests/bfp/test_block::test_device_block`   |
+| Browser A block is released after a minute                                                                              | `tests/bfp/test_block::test_device_block`   |
+| Browser A blocked, but browser B can login                                                                              | `tests/bfp/test_block::test_device_block`   |
+| Many failed logins with browser A and IP X; browser A blocked. more failed logins with browser B and IP X; IP X blocked | `tests/bfp/test_block::test_ip_block`       |
+| IP X block is released after a minute                                                                                   | `tests/bfp/test_block::test_ip_block`       |
+| IP X blocked, but IP Y can login                                                                                        | `tests/bfp/test_block::test_ip_block`       |
+| OIDC API block for IP address                                                                                           | `tests/bfp/test_block::test_api_ip_block`   |
