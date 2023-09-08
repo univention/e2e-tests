@@ -40,7 +40,7 @@ e2e-tests:
       - "${CI_PROJECT_DIR}/test-results/"
     when: "always"
     reports:
-      junit: "test_result.xml"
+      junit: "test_results.xml"
     expire_in: "14 days"
   before_script:
     - "pip install -r requirements.txt"
