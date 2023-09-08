@@ -71,9 +71,10 @@ def get_page(browser_name, ip):
         headed_option = pytestconfig.getoption("--headed")
         if headed_option:
             launch_options["headless"] = False
-        slowmo_option = pytestconfig.getoption("--slowmo")
-        if slowmo_option:
-            launch_options["slow_mo"] = slowmo_option
+        # The handler needs some time to block devices/IP.  So we set slow motion so that the tests run at a human-like
+        # pace (500 ms between actions). Otherwise, the tests won't succeed.
+        # TODO: What is the smallest value for this?
+        launch_options["slow_mo"] = 500
         browser = browser_type.launch(**launch_options)
         browser_context_args = {}
         if keycloak_base_url:
