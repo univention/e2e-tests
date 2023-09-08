@@ -15,13 +15,23 @@ def password(pytestconfig):
 
 
 @pytest.fixture()
-def notifications_api_base_url(pytestconfig):
-    return pytestconfig.getoption("--notifications-api-base-url")
+def admin_username(pytestconfig):
+    return pytestconfig.option.admin_username
 
 
 @pytest.fixture()
-def browser_context_args(browser_context_args, pytestconfig):
-    browser_context_args["base_url"] = pytestconfig.getoption("--portal-base-url")
+def admin_password(pytestconfig):
+    return pytestconfig.option.admin_password
+
+
+@pytest.fixture()
+def portal_base_url(pytestconfig):
+    return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture()
+def browser_context_args(browser_context_args, portal_base_url):
+    browser_context_args["base_url"] = portal_base_url
     return browser_context_args
 
 
@@ -50,4 +60,11 @@ def navigate_to_saml_login_page(page):
 def navigate_to_home_page_logged_in(page, username, password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
+    return page
+
+
+@pytest.fixture()
+def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_password):
+    home_page_logged_in = HomePageLoggedIn(page)
+    home_page_logged_in.navigate(admin_username, admin_password)
     return page
