@@ -1,19 +1,12 @@
 def pytest_addoption(parser):
     # Portal tests options
-    parser.addoption("--username", default="Administrator",
-                     help="Portal login username",
-                     )
-    parser.addoption("--password", default="univention",
-                     help="Portal login password",
-                     )
-    parser.addoption("--notifications-api-base-url",
-                     default="http://localhost:8000/univention/portal/notifications-api/",
-                     help="Base URL of the notification API",
-                     )
-    parser.addoption("--portal-base-url", default="http://localhost:8000",
-                     help="Base URL of the univention portal",
-                     )
+    parser.addoption("--portal-base-url", help="Base URL of the univention portal")
+    parser.addoption("--username", help="Portal login username")
+    parser.addoption("--password", help="Portal login password")
+    parser.addoption("--admin-username", help="Portal admin login username")
+    parser.addoption("--admin-password", help="Portal admin login password")
     # BFP tests options
+    parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin",
                      help="Keycloak admin login username"
                      )

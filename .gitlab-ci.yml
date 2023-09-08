@@ -1,0 +1,72 @@
+---
+
+variables:
+  portal_base_url:
+    description: "Base url of the portal e.g. https://portal.nightly.dev.souvap.cloud"
+  username:
+    description: "Username for logging into the portal"
+  password:
+    description: "Password for logging into the portal"
+  admin_username:
+    description: "Username of admin user of the portal"
+  admin_password:
+    description: "Password of the admin user of the portal"
+  keycloak_base_url:
+    description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud"
+  kc_admin_username:
+    description: "Admin user for logging into Keycloak admin console"
+  kc_admin_password:
+    description: "Password of Keycloak admin user"
+  num_device_block:
+    description: "Number of failed logins for device block"
+  num_ip_block:
+    description: "Number of failed logins for IP block"
+  release_duration:
+    description: "Blocks are released after this many seconds"
+  realm:
+    description: "Realm to attempt logins at"
+
+
+stages:
+  - "test"
+
+e2e-tests:
+  stage: "test"
+  image: "registry.souvap-univention.de/souvap/tooling/images/playwright-pytest:latest"
+  artifacts:
+    expose_as: "report"
+    paths:
+      - "${CI_PROJECT_DIR}/report.html"
+      - "${CI_PROJECT_DIR}/test-results/"
+    when: "always"
+    reports:
+      junit: "test_result.xml"
+    expire_in: "14 days"
+  before_script:
+    - "pip install -r requirements.txt"
+  script:
+    - |
+      pytest --portal-base-url ${portal_base_url} \
+      --username ${username} \
+      --password ${password} \
+      --admin-username ${admin_username} \
+      --admin-password ${admin_password} \
+      --keycloak-base-url ${keycloak_base_url} \
+      --kc-admin-username ${kc_admin_username} \
+      --kc-admin-password ${kc_admin_password} \
+      --num-device-block ${num_device_block} \
+      --num-ip-block ${num_ip_block} \
+      --release-duration ${release_duration} \
+      --realm ${realm} \
+      --junitxml test_results.xml \
+      --html report.html \
+      --self-contained-html \
+      --video retain-on-failure \
+      --tracing retain-on-failure \
+      --screenshot on \
+      --slowmo 100
+  tags:
+    - "docker"
+  only:
+    - "triggers"
+    - "web"

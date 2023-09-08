@@ -13,6 +13,11 @@ from url_normalize import url_normalize
 
 
 @pytest.fixture()
+def notifications_api_base_url(portal_base_url):
+    return urljoin(portal_base_url, "/univention/portal/notifications-api/")
+
+
+@pytest.fixture()
 def login_and_clear_old_notifications(navigate_to_home_page_logged_in, username, password):
     page = navigate_to_home_page_logged_in
     home_page_logged_in = HomePageLoggedIn(page)

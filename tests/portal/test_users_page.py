@@ -3,9 +3,9 @@ from pages.portal.home_page.logged_in import HomePageLoggedIn
 from pages.portal.users.users_page import UsersPage
 
 
-def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in):
+def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin):
     """This test should be run using an admin user. Otherwise, it will fail."""
-    page = navigate_to_home_page_logged_in
+    page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     # TODO: We don't yet have a concept for popups in our POM.
     with page.expect_popup() as tab_admin:

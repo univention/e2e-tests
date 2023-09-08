@@ -28,8 +28,8 @@ def realm(pytestconfig):
 
 
 @pytest.fixture(scope="session")
-def base_url(pytestconfig):
-    return pytestconfig.getoption("--base-url")
+def keycloak_base_url(pytestconfig):
+    return pytestconfig.getoption("--keycloak-base-url")
 
 
 @pytest.fixture
@@ -65,20 +65,20 @@ def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
 
 def get_page(browser_name, ip):
     @pytest.fixture
-    def get_page_for_browser_and_ip(playwright, pytestconfig, request):
+    def get_page_for_browser_and_ip(playwright, pytestconfig, request, keycloak_base_url):
         browser_type = getattr(playwright, browser_name)
         launch_options = {}
         headed_option = pytestconfig.getoption("--headed")
         if headed_option:
             launch_options["headless"] = False
-        slowmo_option = pytestconfig.getoption("--slowmo")
-        if slowmo_option:
-            launch_options["slow_mo"] = slowmo_option
+        # The handler needs some time to block devices/IP.  So we set slow motion so that the tests run at a human-like
+        # pace (500 ms between actions). Otherwise, the tests won't succeed.
+        # TODO: What is the smallest value for this?
+        launch_options["slow_mo"] = 500
         browser = browser_type.launch(**launch_options)
         browser_context_args = {}
-        base_url = pytestconfig.getoption("--base-url")
-        if base_url:
-            browser_context_args["base_url"] = base_url
+        if keycloak_base_url:
+            browser_context_args["base_url"] = keycloak_base_url
         video_option = pytestconfig.getoption("--video")
         capture_video = video_option in ["on", "retain-on-failure"]
         if capture_video:
