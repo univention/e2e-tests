@@ -51,7 +51,7 @@ e2e-tests:
     expire_in: "14 days"
   before_script:
     - "pip install --no-cache-dir -r requirements.txt"
-    - "playwright install --with-deps chromium firefox"
+    - "playwright install --with-deps"
   script:
     - |
       pytest --portal-base-url ${portal_base_url} \
