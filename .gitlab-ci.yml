@@ -38,7 +38,6 @@ stages:
   - "test"
 
 e2e-tests:
-  stage: "test"
   image: "mcr.microsoft.com/playwright/python:v1.37.0-jammy"
   artifacts:
     expose_as: "report"
@@ -78,3 +77,4 @@ e2e-tests:
   only:
     - "triggers"
     - "web"
+    - "api"
