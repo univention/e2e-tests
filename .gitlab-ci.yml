@@ -13,18 +13,25 @@ variables:
     description: "Password of the admin user of the portal"
   keycloak_base_url:
     description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud"
+  # TODO: Remove default values below once BFP is deployed in sovereign-workplace pipeline
   kc_admin_username:
     description: "Admin user for logging into Keycloak admin console"
+    value: "admin"
   kc_admin_password:
     description: "Password of Keycloak admin user"
+    value: "univention"
   num_device_block:
     description: "Number of failed logins for device block"
+    value: "5"
   num_ip_block:
     description: "Number of failed logins for IP block"
+    value: "7"
   release_duration:
     description: "Blocks are released after this many seconds"
+    value: "60"
   realm:
     description: "Realm to attempt logins at"
+    value: "master"
 
 
 stages:
