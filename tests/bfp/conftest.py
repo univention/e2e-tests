@@ -112,7 +112,7 @@ def get_page(browser_name, ip):
 
 
 chromium_ip_1_page = get_page("chromium", "127.0.0.12")
-firefox_ip_1_page = get_page("firefox", "127.0.0.12")
+webkit_ip_1_page = get_page("webkit", "127.0.0.12")
 chromium_ip_2_page = get_page("chromium", "127.0.0.13")
 
 
@@ -131,10 +131,10 @@ def navigate_to_login_page_chromium_ip_2(chromium_ip_2_page):
 
 
 @pytest.fixture
-def navigate_to_login_page_firefox_ip_1(firefox_ip_1_page):
-    admin_login_page = AdminLoginPage(firefox_ip_1_page)
+def navigate_to_login_page_webkit_ip_1(webkit_ip_1_page):
+    admin_login_page = AdminLoginPage(webkit_ip_1_page)
     admin_login_page.navigate()
-    return firefox_ip_1_page
+    return webkit_ip_1_page
 
 
 @pytest.fixture
@@ -162,7 +162,7 @@ def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
 
 @pytest.fixture
 def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
-                     navigate_to_login_page_firefox_ip_1,
+                     navigate_to_login_page_webkit_ip_1,
                      username,
                      password,
                      wrong_password,
@@ -176,14 +176,14 @@ def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
         login_page.login(username, wrong_password)
         expect(login_page.invalid_login_message).to_be_visible()
 
-    firefox_ip_1_page = navigate_to_login_page_firefox_ip_1
-    login_page = AdminLoginPage(firefox_ip_1_page)
+    webkit_ip_1_page = navigate_to_login_page_webkit_ip_1
+    login_page = AdminLoginPage(webkit_ip_1_page)
     for _ in range(num_ip_block - num_device_block):
         login_page.login(username, wrong_password)
         expect(login_page.invalid_login_message).to_be_visible()
     login_page.login(username, wrong_password)
     block_initiated_at = datetime.datetime.now()
-    yield chromium_ip_1_page, firefox_ip_1_page
+    yield chromium_ip_1_page, webkit_ip_1_page
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)

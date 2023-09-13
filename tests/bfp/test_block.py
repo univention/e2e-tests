@@ -10,24 +10,24 @@ from api.keycloak_api import KeycloakAPI
 
 
 def test_device_block(trigger_device_block_chromium_ip_1,
-                      navigate_to_login_page_firefox_ip_1,
+                      navigate_to_login_page_webkit_ip_1,
                       username,
                       password,
                       release_duration
                       ):
     # TODO: parametrize realm
     chromium_ip_1_page = trigger_device_block_chromium_ip_1
-    firefox_ip_1_page = navigate_to_login_page_firefox_ip_1
+    webkit_ip_1_page = navigate_to_login_page_webkit_ip_1
 
     admin_login_page = AdminLoginPage(chromium_ip_1_page)
     expect(admin_login_page.invalid_login_message).to_be_hidden()
     on_device_block_page = OnDeviceBlockPage(chromium_ip_1_page)
     expect(on_device_block_page.device_blocked_message).to_be_visible()
 
-    admin_login_page = AdminLoginPage(firefox_ip_1_page)
+    admin_login_page = AdminLoginPage(webkit_ip_1_page)
     admin_login_page.is_displayed()
     admin_login_page.login(username, password)
-    admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
+    admin_console_home_page = AdminConsoleHomePage(webkit_ip_1_page)
     admin_console_home_page.is_displayed()
 
     chromium_ip_1_page.wait_for_timeout(
@@ -44,12 +44,12 @@ def test_ip_block(trigger_ip_block,
                   release_duration
                   ):
     # TODO: parametrize realm
-    chromium_ip_1_page, firefox_ip_1_page = trigger_ip_block
+    chromium_ip_1_page, webkit_ip_1_page = trigger_ip_block
     chromium_ip_2_page = navigate_to_login_page_chromium_ip_2
 
-    admin_login_page = AdminLoginPage(firefox_ip_1_page)
+    admin_login_page = AdminLoginPage(webkit_ip_1_page)
     expect(admin_login_page.invalid_login_message).to_be_hidden()
-    on_ip_block_page = OnIPBlockPage(firefox_ip_1_page)
+    on_ip_block_page = OnIPBlockPage(webkit_ip_1_page)
     on_ip_block_page.is_displayed()
 
     admin_login_page = AdminLoginPage(chromium_ip_2_page)
@@ -58,9 +58,9 @@ def test_ip_block(trigger_ip_block,
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_2_page)
     admin_console_home_page.is_displayed()
 
-    firefox_ip_1_page.wait_for_timeout(
+    webkit_ip_1_page.wait_for_timeout(
         round(release_duration * 1000) + 1)  # + 1 for safety
-    admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
+    admin_console_home_page = AdminConsoleHomePage(webkit_ip_1_page)
     admin_console_home_page.navigate(username, password)
     admin_console_home_page.is_displayed()
 

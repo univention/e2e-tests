@@ -39,7 +39,7 @@ stages:
 
 e2e-tests:
   stage: "test"
-  image: "registry.souvap-univention.de/souvap/tooling/images/playwright-pytest:latest"
+  image: "mcr.microsoft.com/playwright/python:v1.37.0-jammy"
   artifacts:
     expose_as: "report"
     paths:
@@ -50,8 +50,8 @@ e2e-tests:
       junit: "test_results.xml"
     expire_in: "14 days"
   before_script:
-    - "pip install -r requirements.txt"
-    - "playwright install chromium firefox"
+    - "pip install --no-cache-dir -r requirements.txt"
+    - "playwright install --with-deps"
   script:
     - |
       pytest --portal-base-url ${portal_base_url} \
