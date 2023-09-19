@@ -15,8 +15,8 @@ You can find the documentation for `playwright` and `pytest` in the links below:
 ## Page Object Model
 
 We use the Page Object Model (POM) for representing webpages.
-You can usually find the Page Objects (POs) under `tests/e2e/src/pages` in our
-repositories.
+You can find the Page Objects (POs) under `src/pages` in this
+repository.
 
 Here are some useful links for reading about POM basic concepts.
 
@@ -36,7 +36,7 @@ The basic implementations outlined above are inadequate for our use case for two
    because these implementations were designed with Selenium in mind.
    Playwright is fundamentally different from Selenium in many ways. Therefore,
    I believe it is better to build a POM from scratch so that it integrates well
-   with the Playwright way of doing things by design.
+   with the Playwright way of doing things.
 
 With that in mind, we have developed our own custom POM jumping off from the
 basic POM implementation in the Playwright docs.
@@ -146,9 +146,9 @@ You should define your own concrete Page Objects as follows.
 from playwright.sync_api import Page
 
 class HomePage(BasePage):
-    def __init__(self, page: Page):
+    def set_content(self, page: Page):
         # The super call makes the self.page instance attribute available
-        super().__init__(page)
+        super().set_content(page)
         # self.page can be used to locate elements on the page
         self.example_element = self.page.locator(...)
 
@@ -188,8 +188,8 @@ Page Objects have a reference to the Page Parts that belong to them.
 
 ```
 class HomePage(BasePage):
-    def __init__(self, page):
-        super().__init__(page)
+    def set_content(self, page):
+        super().set_content(page)
         self.header = Header(self.page.locator(...))
 ```
 
@@ -330,12 +330,11 @@ tests.
 ### Writing custom error messages
 
 Since we are on the topic of assertions using `expect()`, it is to be noted
-that at the time of writing this document, the Python version of Playwright
-did not support custom error messages in the `expect()` function. This
-feature is [currently being worked on](https://github.com/microsoft/playwright-python/issues/1310)
-and should be available in the next release.
+that at the time our test suite was first created, the Python version of Playwright
+did not support custom error messages in the `expect()` function. However, this 
+feature is now [available](https://playwright.dev/python/docs/test-assertions#custom-expect-message).
 
-Once the feature is available, we recommend that you always include a custom
+For new page objects and tests, we recommend to include a custom
 error message with your `expect()` calls as follows.
 
 ```
@@ -349,7 +348,7 @@ message can immediately get an idea of the following:
    "*Notifications sidebar* is not visible after clicking bell icon on *home page (logged in)*"
 2. Which expected condition was not fulfilled e.g.
    "Notifications sidebar *is not visible* after clicking bell icon on home page (logged in)"
-3. Preceeding actions, if relevant e.g.
+3. Preceding actions, if relevant e.g.
    "Notifications sidebar is not visible *after clicking bell icon* on home page (logged in)"
 
 ## Inheritance patterns
@@ -463,8 +462,8 @@ navbar.
 
 ```
 class PortalPage(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, *kwargs)
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, *kwargs)
         self.navbar = Navbar(self.page.locator(...))
 
 class HomePage(PortalPage):
@@ -577,6 +576,38 @@ Consider the `navigate()` method of the `UserSettingsPageLoggedIn` again. By
 defining its navigation with respect to `HomePageLoggedIn` it ensures that
 the `navigate()` method will lead to the logged-in state of the page (as expected).
 
+### Navigating to pages that open in a new tab
+
+Navigating to certain pages from the root may be associated with opening new 
+tabs. In this case, we can make the page object aware of the new tab by calling
+`set_content(new_tab)` inside the `navigate()` method. This will make `self.page`
+point to the new tab and the page elements being defined with respect to the 
+new tab.
+
+When the `navigate()` method opens new tabs, these tabs should be returned as 
+a tuple by the method.
+
+Here's an example.
+
+```
+   class NextcloudAllFilesPage(NextcloudHomePage):
+      def set_content(self, page: Page):
+         super().set_content(page)
+         self.new_file_folder = self.page.locator(...)
+         ...
+
+      def navigate(self, username: str, password: str):
+         portal_home_page_logged_in = HomePageLoggedIn(self.page)    # Starts from previous page in navigation path
+         portal_home_page_logged_in.navigate(username, password)
+         portal_home_page_logged_in.is_displayed()
+         nextcloud_tab = portal_home_page_logged_in.get_new_tab(
+            portal_home_page_logged_in.files_tile
+         )    # A new tab is opened during navigation
+         nextcloud_tab.wait_for_url(re.compile("dir="))
+         self.set_content(nextcloud_tab)    # The page object redefined self.page and elements wrt the new tab
+         return nextcloud_tab    # Returns the new tab
+```
+
 ## Assertions in POs
 
 There are two camps when in comes to whether assertions should be put in POs.
@@ -599,6 +630,9 @@ limitations. Here are the guidelines regarding that.
    explicitly stated, then you shouldn't perform assertions to check the
    result of that action.
 
+   In general, try to avoid writing such one-liner methods anyway, since these
+   one-liners are better written directly in the tests.
+
     ```
     def click_login_button():
         self.login_button.click()
@@ -614,8 +648,7 @@ limitations. Here are the guidelines regarding that.
             self.header.click_hamburger_icon()
         expect(self.side_nav_drawer).to_be_visible()  # Checks performed at end
     ```
-
-
+   
 3. If you are implementing a more complex method, composed of multiple steps
    to achieve a goal, e.g. `remove_all_notifications()`, then you should
    perform assertions to check that the intermediate results are correct.
