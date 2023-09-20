@@ -46,7 +46,7 @@ docker run -it --network="host" e2e:latest pytest
 
 ## For test engineers
 
-We use the page object model in our tests. The page objects are in `src/pages`.
+We use the page object model in our tests. The page objects are in `src/umspages`.
 
 You can pip install the page objects as a package using
 

@@ -15,7 +15,7 @@ You can find the documentation for `playwright` and `pytest` in the links below:
 ## Page Object Model
 
 We use the Page Object Model (POM) for representing webpages.
-You can find the Page Objects (POs) under `src/pages` in this
+You can find the Page Objects (POs) under `src/umspages` in this
 repository.
 
 Here are some useful links for reading about POM basic concepts.
@@ -310,7 +310,7 @@ works just like Playwright's `expect()`, but it also accepts Page Objects and
 Page Parts as an argument.
 
 ```
-from pages.base import expect
+from umspages.base import expect
 
 def test_url(page):
     hp = HomePage(page)

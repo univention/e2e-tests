@@ -28,22 +28,34 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from umspages.common.base import expect
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
-from umspages.portal.users.users_page import UsersPage
+import re
+
+from ..common.base import BasePage, expect
 
 
-def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin):
-    """This test should be run using an admin user. Otherwise, it will fail."""
-    page = navigate_to_home_page_logged_in_as_admin
-    home_page_logged_in = HomePageLoggedIn(page)
-    # TODO: We don't yet have a concept for popups in our POM.
-    with page.expect_popup() as tab_admin:
-        home_page_logged_in.click_users_tile()
-    users_page = UsersPage(tab_admin.value)
-    # TODO: The user list takes unnaturally long to appear. We are using a locator timeout
-    # to handle that. Replace this with an increased global timeout as soon as we figure out how.
-    expect(users_page.add_user_button).to_be_visible(timeout=10000)
-    expect(users_page.column_header_name).to_be_visible()
-    expect(users_page.column_header_type).to_be_visible()
-    expect(users_page.column_header_path).to_be_visible()
+class OnDeviceBlockPage(BasePage):
+    # navigate() not defined because logic is dependent on number of previous logins.
+    # Only tests can have that info and should handle that.
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
+        blocked_msg = re.compile("Too many failed login.*device",
+                                 re.IGNORECASE
+                                 )
+        self.device_blocked_message = self.page.get_by_text(blocked_msg)
+
+    def is_displayed(self):
+        expect(self.device_blocked_message).to_be_visible()
+
+
+class OnIPBlockPage(BasePage):
+    # navigate() not defined because logic is dependent on number of previous logins.
+    # Only tests can have that info and should handle that.
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
+        blocked_msg = re.compile("Too many failed login.*IP",
+                                 re.IGNORECASE
+                                 )
+        self.ip_blocked_message = self.page.get_by_text(blocked_msg)
+
+    def is_displayed(self):
+        expect(self.ip_blocked_message).to_be_visible()

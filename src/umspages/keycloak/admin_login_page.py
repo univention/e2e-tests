@@ -28,22 +28,37 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from umspages.common.base import expect
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
-from umspages.portal.users.users_page import UsersPage
+from ..common.base import BasePage, expect
+from .welcome_page import WelcomePage
 
 
-def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin):
-    """This test should be run using an admin user. Otherwise, it will fail."""
-    page = navigate_to_home_page_logged_in_as_admin
-    home_page_logged_in = HomePageLoggedIn(page)
-    # TODO: We don't yet have a concept for popups in our POM.
-    with page.expect_popup() as tab_admin:
-        home_page_logged_in.click_users_tile()
-    users_page = UsersPage(tab_admin.value)
-    # TODO: The user list takes unnaturally long to appear. We are using a locator timeout
-    # to handle that. Replace this with an increased global timeout as soon as we figure out how.
-    expect(users_page.add_user_button).to_be_visible(timeout=10000)
-    expect(users_page.column_header_name).to_be_visible()
-    expect(users_page.column_header_type).to_be_visible()
-    expect(users_page.column_header_path).to_be_visible()
+class AdminLoginPage(BasePage):
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
+        self.username_input = self.page.get_by_label("Username or email")
+        self.password_input = self.page.get_by_label("Password")
+        self.submit_button = self.page.get_by_role("button", name="Sign In")
+        self.invalid_login_message = self.page.get_by_text(
+            "Invalid username or password.")
+
+    def is_displayed(self):
+        expect(self.username_input).to_be_visible()
+
+    def navigate(self):
+        welcome_page = WelcomePage(self.page)
+        welcome_page.navigate()
+        welcome_page.click_administrator_console_link()
+
+    def fill_username(self, username):
+        self.username_input.fill(username)
+
+    def fill_password(self, password):
+        self.password_input.fill(password)
+
+    def click_submit_button(self):
+        self.submit_button.click()
+
+    def login(self, username, password):
+        self.fill_username(username)
+        self.fill_password(password)
+        self.click_submit_button()
