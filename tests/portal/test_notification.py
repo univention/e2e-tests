@@ -6,9 +6,9 @@ from urllib.parse import urljoin
 
 import pytest
 import requests
-from pages.common.base import expect
-from pages.portal.home_page.logged_in import HomePageLoggedIn
-from pages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.common.base import expect
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from url_normalize import url_normalize
 
 

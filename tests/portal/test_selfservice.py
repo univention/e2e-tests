@@ -2,11 +2,11 @@ import random
 
 import pytest
 from playwright.sync_api import Page
-from pages.common.base import expect
-from pages.portal.home_page.logged_in import HomePageLoggedIn
-from pages.portal.home_page.logged_out import HomePageLoggedOut
-from pages.portal.selfservice.change_password import ChangePasswordDialogPage
-from pages.portal.users.users_page import UCSUsersPage
+from umspages.common.base import expect
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.selfservice.change_password import ChangePasswordDialogPage
+from umspages.portal.users.users_page import UCSUsersPage
 
 
 DUMMY_USER_NAME = f"dummy_{random.randint(1000,9999)}"  # noqa: S311

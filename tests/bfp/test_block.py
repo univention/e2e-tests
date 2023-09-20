@@ -2,9 +2,9 @@ import requests
 from time import sleep
 from playwright.sync_api import expect
 
-from pages.keycloak.admin_console.admin_console_home_page import AdminConsoleHomePage
-from pages.keycloak.admin_login_page import AdminLoginPage
-from pages.keycloak.on_block_page import OnDeviceBlockPage, OnIPBlockPage
+from umspages.keycloak.admin_console.admin_console_home_page import AdminConsoleHomePage
+from umspages.keycloak.admin_login_page import AdminLoginPage
+from umspages.keycloak.on_block_page import OnDeviceBlockPage, OnIPBlockPage
 
 from api.keycloak_api import KeycloakAPI
 

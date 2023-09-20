@@ -1,7 +1,7 @@
 import pytest
-from pages.portal.home_page.logged_in import HomePageLoggedIn
-from pages.portal.home_page.logged_out import HomePageLoggedOut
-from pages.portal.login_page import LoginPage
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.login_page import LoginPage
 
 
 @pytest.fixture()

@@ -1,5 +1,5 @@
-from pages.common.base import expect
-from pages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.common.base import expect
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
 
 
 def test_user_can_switch_language_to_german(navigate_to_home_page_logged_out):

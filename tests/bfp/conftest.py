@@ -6,7 +6,7 @@ from playwright.sync_api import expect, Error
 import pytest
 from slugify import slugify
 
-from pages.keycloak.admin_login_page import AdminLoginPage
+from umspages.keycloak.admin_login_page import AdminLoginPage
 
 
 artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
