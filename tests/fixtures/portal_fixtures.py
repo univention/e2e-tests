@@ -29,34 +29,10 @@
 # <https://www.gnu.org/licenses/>.
 
 import pytest
+
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
-
-
-@pytest.fixture()
-def username(pytestconfig):
-    return pytestconfig.option.username
-
-
-@pytest.fixture()
-def password(pytestconfig):
-    return pytestconfig.option.password
-
-
-@pytest.fixture()
-def admin_username(pytestconfig):
-    return pytestconfig.option.admin_username
-
-
-@pytest.fixture()
-def admin_password(pytestconfig):
-    return pytestconfig.option.admin_password
-
-
-@pytest.fixture()
-def portal_base_url(pytestconfig):
-    return pytestconfig.getoption("--portal-base-url")
 
 
 @pytest.fixture()
@@ -94,7 +70,11 @@ def navigate_to_home_page_logged_in(page, username, password):
 
 
 @pytest.fixture()
-def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_password):
+def navigate_to_home_page_logged_in_as_admin(
+        page,
+        admin_username,
+        admin_password
+):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(admin_username, admin_password)
     return page

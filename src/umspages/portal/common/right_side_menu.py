@@ -28,14 +28,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import BasePagePart
+from ...common.base import BasePagePart  # type: ignore
 
 
 class RightSideMenu(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.logout_button = self.page_part_locator.get_by_role("button", name="Logout")
-        self.login_button = self.page_part_locator.get_by_role("button", name="Login")
+        self.logout_button = self.page_part_locator.get_by_role(
+            "button",
+            name="Logout"
+        )
+        self.login_button = self.page_part_locator.get_by_role(
+            "button",
+            name="Login"
+        )
 
     def click_logout_button(self):
         self.logout_button.click()

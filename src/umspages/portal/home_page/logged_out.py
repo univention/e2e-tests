@@ -28,7 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import expect
+from ...common.base import expect  # type: ignore
 from .base import HomePage
 
 
@@ -40,13 +40,17 @@ class HomePageLoggedOut(HomePage):
 
     def set_content(self, *args, **kwargs):
         """
-        The saml login tile is often renamed from "Login (Single sign-on)" to "Login"
-        This means that login_widget can be plain ucs login or saml login
-        while saml_login_tile is always the saml tile, no matter the name.
+        The saml login tile is often renamed from
+        "Login (Single sign-on)" to "Login"
+        This means that login_widget can be plain
+        ucs login or saml login while saml_login_tile
+        is always the saml tile, no matter the name.
         """
         super().set_content(*args, **kwargs)
-        self.login_widget = self.page.get_by_role("link", name="Login Same tab")
-        self.saml_login_tile = self.page.locator('xpath=//a[contains(@href, "univention/saml")]')
+        self.login_widget = self.page.get_by_text("LoginLog in to the portal")
+        self.saml_login_tile = self.page.locator(
+            'xpath=//a[contains(@href, "univention/saml")]'
+        )
 
     def navigate(self, cookies_accepted=False):
         self.page.goto("/")
@@ -58,8 +62,9 @@ class HomePageLoggedOut(HomePage):
             else:
                 self.accept_cookies()
         self.logout()
-        # Normally, we don't use assertions inside the navigate() methods
-        # Navigation roots are the exception, since they have to assure login state
+        # Normally, we don't use assertions inside the navigate()
+        # methods. Navigation roots are the exception, since they
+        # have to assure login state
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()
         expect(self.right_side_menu.logout_button).to_be_hidden()

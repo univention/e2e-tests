@@ -28,7 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ....common.base import BasePage
+from ....common.base import BasePage  # type: ignore
 from .header import Header
 
 

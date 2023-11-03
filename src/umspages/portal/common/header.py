@@ -30,7 +30,7 @@
 
 import re
 
-from ...common.base import BasePagePart
+from ...common.base import BasePagePart  # type: ignore
 
 
 class Header(BasePagePart):
@@ -39,10 +39,11 @@ class Header(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bell_icon = self.page_part_locator.get_by_role(
-            "button",
-            name=re.compile("^Notifications")
+            "button", name=re.compile("^Notifications")
         )
-        self.hamburger_icon = self.page_part_locator.locator("#header-button-menu")
+        self.hamburger_icon = self.page_part_locator.locator(
+            "#header-button-menu"
+        )
 
     def click_bell_icon(self):
         self.bell_icon.click()

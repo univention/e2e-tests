@@ -28,9 +28,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import expect
-from .common.admin_console_page import AdminConsolePage
+from ...common.base import expect  # type: ignore
 from ..admin_login_page import AdminLoginPage
+from .common.admin_console_page import AdminConsolePage
 
 
 class AdminConsoleHomePage(AdminConsolePage):
@@ -39,7 +39,8 @@ class AdminConsoleHomePage(AdminConsolePage):
         self.realm_selector = self.page.get_by_test_id("realmSelectorToggle")
 
     def navigate(self, username, password):
-        # this page is the canonical navigation root for logged in pages, so using URL to navigate
+        # this page is the canonical navigation root
+        # for logged in pages, so using URL to navigate
         self.page.goto("/admin/master/console/")
         try:
             # Check if logged in

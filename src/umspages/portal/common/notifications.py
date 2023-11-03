@@ -28,28 +28,35 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import BasePagePart
+from ...common.base import BasePagePart  # type: ignore
 
 
 class NotificationsContainer(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.notifications = self.page_part_locator.locator("//*[starts-with(@data-test, 'notification')]")
+        self.notifications = self.page_part_locator.locator(
+            "//*[starts-with(@data-test, 'notification')]"
+        )
 
     def notification(self, n):
         count = self.notifications.count()
         if n >= count:
-            raise IndexError(f"You are trying to access the {n}th popup notification, "
-                             f"but here are only {count} popup notifications",
-                             )
+            raise IndexError(
+                f"You are trying to access the {n}th popup notification, "
+                f"but here are only {count} popup notifications",
+            )
         return NotificationElement(self.notifications.nth(n))
 
 
 class NotificationDrawer(NotificationsContainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.remove_all_button = self.page_part_locator.get_by_role("button", name="Remove all")
-        self.no_notifications_heading = self.page_part_locator.get_by_text("No notifications")
+        self.remove_all_button = self.page_part_locator.get_by_role(
+            "button", name="Remove all"
+        )
+        self.no_notifications_heading = self.page_part_locator.get_by_text(
+            "No notifications"
+        )
 
     def click_remove_all_button(self):
         self.remove_all_button.click()
@@ -64,10 +71,16 @@ class NotificationElement(BasePagePart):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.close_button = self.page_part_locator.locator("//*[contains(@data-test, 'closeNotification')]")
+        self.close_button = self.page_part_locator.locator(
+            "//*[contains(@data-test, 'closeNotification')]"
+        )
         self.link = self.page_part_locator.get_by_role("link")
-        self.title = self.page_part_locator.locator("//div[@class='notification__title']")
-        self.details = self.page_part_locator.locator("//div[@class='notification__description']")
+        self.title = self.page_part_locator.locator(
+            "//div[@class='notification__title']"
+        )
+        self.details = self.page_part_locator.locator(
+            "//div[@class='notification__description']"
+        )
 
     def click_close_button(self):
         self.close_button.click()

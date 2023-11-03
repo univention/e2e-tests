@@ -30,17 +30,20 @@
 
 import re
 
-from ..common.base import BasePage, expect
+from ..common.base import BasePage  # type: ignore
+from ..common.base import expect  # type: ignore
 
 
 class OnDeviceBlockPage(BasePage):
-    # navigate() not defined because logic is dependent on number of previous logins.
-    # Only tests can have that info and should handle that.
+    # navigate() not defined because logic is dependent
+    # on number of previous logins. Only tests can have
+    # that info and should handle that.
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        blocked_msg = re.compile("Too many failed login.*device",
-                                 re.IGNORECASE
-                                 )
+        blocked_msg = re.compile(
+            "Too many failed login.*device",
+            re.IGNORECASE
+        )
         self.device_blocked_message = self.page.get_by_text(blocked_msg)
 
     def is_displayed(self):
@@ -48,13 +51,12 @@ class OnDeviceBlockPage(BasePage):
 
 
 class OnIPBlockPage(BasePage):
-    # navigate() not defined because logic is dependent on number of previous logins.
-    # Only tests can have that info and should handle that.
+    # navigate() not defined because logic is dependent on
+    # number of previous logins. Only tests can have that
+    # info and should handle that.
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        blocked_msg = re.compile("Too many failed login.*IP",
-                                 re.IGNORECASE
-                                 )
+        blocked_msg = re.compile("Too many failed login.*IP", re.IGNORECASE)
         self.ip_blocked_message = self.page.get_by_text(blocked_msg)
 
     def is_displayed(self):

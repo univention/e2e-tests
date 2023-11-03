@@ -28,12 +28,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import BasePage, expect
+from ...common.base import (BasePage,  # type: ignore
+                            expect)  # type: ignore
+from ..exceptions import PortalError
 from .cookie_dialog import CookieDialog
 from .header import Header
 from .notifications import NotificationDrawer, PopupNotificationContainer
 from .right_side_menu import RightSideMenu
-from ..exceptions import PortalError
 
 
 class PortalPage(BasePage):
@@ -58,19 +59,28 @@ class PortalPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.header = Header(self.page.locator("#portal-header"))
-        self.notification_drawer = NotificationDrawer(self.page.locator("#notifications-all"))
+        self.notification_drawer = NotificationDrawer(
+            self.page.locator("#notifications-all")
+        )
         self.popup_notification_container = PopupNotificationContainer(
             self.page.locator("#notifications-visible"),
         )
-        self.right_side_menu = RightSideMenu(self.page.locator("#portal-sidenavigation"))
-        self.cookie_dialog = CookieDialog(self.page.get_by_role("dialog", name="Cookie Consent"))
+        self.right_side_menu = RightSideMenu(
+            self.page.locator("#portal-sidenavigation")
+        )
+        self.cookie_dialog = CookieDialog(
+            self.page.get_by_role("dialog", name="Cookie Consent")
+        )
 
     def remove_all_notifications(self):
         self.reveal_area(self.notification_drawer, self.header.bell_icon)
         count = self.notification_drawer.notifications.count()
         if self.notification_drawer.no_notifications_heading.is_visible():
             if count > 0:
-                raise PortalError("'No notifications' visible even when non-zero notifications present")
+                raise PortalError(
+                    "'No notifications' visible even when non-zero"
+                    " notifications present"
+                )
             else:
                 self.hide_area(self.notification_drawer, self.header.bell_icon)
         elif count == 1:
@@ -80,7 +90,9 @@ class PortalPage(BasePage):
             self.notification_drawer.click_remove_all_button()
             expect(self.notification_drawer).to_be_hidden()
         self.reveal_area(self.notification_drawer, self.header.bell_icon)
-        expect(self.notification_drawer.no_notifications_heading).to_be_visible()
+        expect(
+            self.notification_drawer.no_notifications_heading
+        ).to_be_visible()
         expect(self.notification_drawer.notifications).to_have_count(0)
         self.hide_area(self.notification_drawer, self.header.bell_icon)
 
@@ -93,13 +105,19 @@ class PortalPage(BasePage):
             try:
                 expect(self.right_side_menu.logout_button).to_be_visible()
             except AssertionError:
-                raise PortalError("Both login and logout buttons are hidden in the side navigation drawer")
+                raise PortalError(
+                    "Both login and logout buttons are "
+                    "hidden in the side navigation drawer"
+                )
             self.right_side_menu.click_logout_button()
         else:
             try:
                 expect(self.right_side_menu.logout_button).to_be_hidden()
             except AssertionError:
-                raise PortalError("Both login and logout buttons are visible in the side navigation drawer")
+                raise PortalError(
+                    "Both login and logout buttons are visible "
+                    "in the side navigation drawer"
+                )
             self.hide_area(self.right_side_menu, self.header.hamburger_icon)
 
     def accept_cookies(self):

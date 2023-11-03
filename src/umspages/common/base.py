@@ -28,11 +28,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from playwright.sync_api import Locator, Page, expect as playwright_expect
+from playwright.sync_api import Locator, Page
+from playwright.sync_api import expect as playwright_expect
 
 
 def expect(actual, *args, **kwargs):
-    """This method is just like Playwright's expect(), but can also handle page objects and parts"""
+    """This method is just like Playwright's expect(),
+    but can also handle page objects and parts"""
     if isinstance(actual, BasePage):
         return playwright_expect(actual.page, *args, **kwargs)
     elif isinstance(actual, BasePagePart):
@@ -42,11 +44,13 @@ def expect(actual, *args, **kwargs):
 
 class BasePage:
     """
-    All full pages (i.e. which are not page parts) should be derived from this class.
-    Methods that are common to full pages (as apposed to page parts) should go here.
+    All full pages (i.e. which are not page parts) should be
+    derived from this class. Methods that are common to full
+    pages (as apposed to page parts) should go here.
 
-    You can do page assertions directly by using expect() from playwright_pages_base
-    instead of the vanilla expect() supplied by Playwright
+    You can do page assertions directly by using expect() from
+    playwright_pages_base instead of the vanilla expect() supplied
+    by Playwright
 
     ```
     from playwright_pages_base import expect, BasePage
@@ -75,8 +79,8 @@ class BasePage:
         """Should navigate to this page from a well-defined root page using a
         canonical path. Note that this may open new tabs, since the root page
         and this page may be displayed in different tabs. In this case, you
-        should call set_content() to ensure that this page object is based on the
-        correct tab.
+        should call set_content() to ensure that this page object is based
+        on the correct tab.
         """
         raise NotImplementedError
 
@@ -88,7 +92,8 @@ class BasePage:
 
     def get_new_tab(self, clickable):
         """Clicking on some clickable elements opens a new tab/window.
-        This method is used to click on such an element and retrieve the new tab/window.
+        This method is used to click on such an element and retrieve
+         the new tab/window.
         """
         with self.page.expect_popup() as new_page_info:
             clickable.click()
@@ -97,14 +102,16 @@ class BasePage:
 
     @staticmethod
     def reveal_area(area, clickable):
-        """Method that ensures that a collapsible area (could be a dropdown or sliding menu)
+        """Method that ensures that a collapsible
+        area (could be a dropdown or sliding menu)
         is in the revealed state.
 
         Parameters
         ----------
         area : BasePagePart or Locator
         clickable: Locator
-                   Clickable element that is responsible for opening and closing area
+                   Clickable element that is responsible
+                   for opening and closing area
         """
         try:
             expect(area).to_be_hidden()
@@ -116,14 +123,16 @@ class BasePage:
 
     @staticmethod
     def hide_area(area, clickable):
-        """Method that ensures that a collapsible area (could be a dropdown or sliding menu)
+        """Method that ensures that a collapsible
+        area (could be a dropdown or sliding menu)
         is in the collapsed state.
 
         Parameters
         ----------
         area : BasePagePart or Locator
         clickable: Locator
-                   Clickable element that is responsible for opening and closing area
+                   Clickable element that is responsible
+                   for opening and closing area
         """
         try:
             expect(area).to_be_visible()
@@ -140,7 +149,8 @@ class BasePage:
         ----------
         files : str or pathlib.Path (or list thereof)
         clickable: Locator
-                   Clickable element that is responsible for opening the file picker
+                   Clickable element that is responsible
+                    for opening the file picker
         """
         with self.page.expect_file_chooser() as file_chooser_info:
             clickable.click()
@@ -150,9 +160,11 @@ class BasePage:
 
 class BasePagePart:
     """
-    All classes representing page parts should be derived from this class
+    All classes representing page parts should be derived
+    from this class
 
-    The page containing the page part should store a reference to the part page as follows
+    The page containing the page part should store a reference
+    to the part page as follows
 
     ```
     class Header(BasePagePart):
@@ -177,5 +189,8 @@ class BasePagePart:
 
     def __init__(self, page_part_locator):
         if not isinstance(page_part_locator, Locator):
-            raise ValueError(f"Locators must be of type Locator, got  {type(page_part_locator)}")
+            raise ValueError(
+                f"Locators must be of type Locator, "
+                f"got  {type(page_part_locator)}"
+            )
         self.page_part_locator = page_part_locator

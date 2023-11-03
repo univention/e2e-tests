@@ -1,5 +1,12 @@
+black
+flake8
+isort
+mypy
 playwright==1.37.0
 pytest-html==4.0.0
 pytest-playwright==0.4.2
 requests==2.31.0
+ruff
+types-python-slugify
+types-requests
 url-normalize==1.4.3

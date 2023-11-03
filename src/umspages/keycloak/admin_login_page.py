@@ -28,7 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ..common.base import BasePage, expect
+from ..common.base import (BasePage,  # type: ignore
+                           expect)  # type: ignore
 from .welcome_page import WelcomePage
 
 
@@ -39,7 +40,8 @@ class AdminLoginPage(BasePage):
         self.password_input = self.page.get_by_label("Password")
         self.submit_button = self.page.get_by_role("button", name="Sign In")
         self.invalid_login_message = self.page.get_by_text(
-            "Invalid username or password.")
+            "Invalid username or password."
+        )
 
     def is_displayed(self):
         expect(self.username_input).to_be_visible()

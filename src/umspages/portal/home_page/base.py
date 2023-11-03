@@ -36,4 +36,5 @@ class HomePage(PortalPage):
     Common home page stuff applicable for both logged in and logged out state
     should be put here
     """
+
     pass

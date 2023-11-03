@@ -32,44 +32,13 @@ import datetime
 import os
 import tempfile
 
-from playwright.sync_api import expect, Error
 import pytest
+from playwright.sync_api import Error, expect
 from slugify import slugify
 
 from umspages.keycloak.admin_login_page import AdminLoginPage
 
-
 artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
-
-
-@pytest.fixture
-def username(pytestconfig):
-    return pytestconfig.option.kc_admin_username
-
-
-@pytest.fixture
-def password(pytestconfig):
-    return pytestconfig.option.kc_admin_password
-
-
-@pytest.fixture
-def realm(pytestconfig):
-    return pytestconfig.option.realm
-
-
-@pytest.fixture(scope="session")
-def keycloak_base_url(pytestconfig):
-    return pytestconfig.getoption("--keycloak-base-url")
-
-
-@pytest.fixture
-def num_device_block(pytestconfig):
-    return pytestconfig.getoption("--num-device-block")
-
-
-@pytest.fixture
-def num_ip_block(pytestconfig):
-    return pytestconfig.getoption("--num-ip-block")
 
 
 @pytest.fixture
@@ -90,19 +59,26 @@ def playwright(playwright):
 
 def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
     output_dir = pytestconfig.getoption("--output")
-    return os.path.join(output_dir, slugify(request.node.nodeid), folder_or_file_name)
+    return os.path.join(
+        output_dir, slugify(request.node.nodeid),
+        folder_or_file_name
+    )
 
 
 def get_page(browser_name, ip):
     @pytest.fixture
-    def get_page_for_browser_and_ip(playwright, pytestconfig, request, keycloak_base_url):
+    def get_page_for_browser_and_ip(
+        playwright, pytestconfig, request, keycloak_base_url
+    ):
         browser_type = getattr(playwright, browser_name)
         launch_options = {}
         headed_option = pytestconfig.getoption("--headed")
         if headed_option:
             launch_options["headless"] = False
-        # The handler needs some time to block devices/IP.  So we set slow motion so that the tests run at a human-like
-        # pace (500 ms between actions). Otherwise, the tests won't succeed.
+        # The handler needs some time to block devices/IP.
+        # So we set slow motion so that the tests run at a
+        # human-like pace (500 ms between actions). Otherwise,
+        # the tests won't succeed.
         # TODO: What is the smallest value for this?
         launch_options["slow_mo"] = 500
         browser = browser_type.launch(**launch_options)
@@ -119,8 +95,9 @@ def get_page(browser_name, ip):
         yield page
         browser_context.close()
         video_option = pytestconfig.getoption("--video")
-        failed = request.node.rep_call.failed if hasattr(
-            request.node, "rep_call") else True
+        failed = (
+            request.node.rep_call.failed if hasattr(request.node, "rep_call") else True
+        )
         preserve_video = video_option == "on" or (
             failed and video_option == "retain-on-failure"
         )
@@ -132,12 +109,14 @@ def get_page(browser_name, ip):
                     file_name = os.path.basename(video_path)
                     video.save_as(
                         path=build_artifact_test_folder(
-                            pytestconfig, request, file_name)
+                            pytestconfig, request, file_name
+                        )
                     )
                 except Error:
                     # Silent catch empty videos.
                     pass
         browser.close()
+
     return get_page_for_browser_and_ip
 
 
@@ -168,12 +147,13 @@ def navigate_to_login_page_webkit_ip_1(webkit_ip_1_page):
 
 
 @pytest.fixture
-def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
-                                       username,
-                                       wrong_password,
-                                       num_device_block,
-                                       release_duration
-                                       ):
+def trigger_device_block_chromium_ip_1(
+    navigate_to_login_page_chromium_ip_1,
+    username,
+    wrong_password,
+    num_device_block,
+    release_duration,
+):
     page = navigate_to_login_page_chromium_ip_1
     login_page = AdminLoginPage(page)
     for _ in range(num_device_block):
@@ -191,15 +171,16 @@ def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
 
 
 @pytest.fixture
-def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
-                     navigate_to_login_page_webkit_ip_1,
-                     username,
-                     password,
-                     wrong_password,
-                     num_device_block,
-                     num_ip_block,
-                     release_duration
-                     ):
+def trigger_ip_block(
+    navigate_to_login_page_chromium_ip_1,
+    navigate_to_login_page_webkit_ip_1,
+    username,
+    password,
+    wrong_password,
+    num_device_block,
+    num_ip_block,
+    release_duration,
+):
     chromium_ip_1_page = navigate_to_login_page_chromium_ip_1
     login_page = AdminLoginPage(chromium_ip_1_page)
     for _ in range(num_device_block):
@@ -218,4 +199,5 @@ def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)
     chromium_ip_1_page.wait_for_timeout(
-        round(remaining * 1000) + 1)  # + 1 for safety
+        round(remaining * 1000) + 1
+    )  # + 1 for safety

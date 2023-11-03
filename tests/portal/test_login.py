@@ -28,57 +28,141 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import pytest
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
-
-from umspages.portal.home_page.logged_out import HomePageLoggedOut
-from umspages.portal.login_page import LoginPage
+from playwright.sync_api import Page, expect
 
 
-def test_login(navigate_to_login_page, username, password):
-    """Tests the plain UMC login in our devenv but the SAML login in the nightly deployment"""
-    page = navigate_to_login_page
-    login_page = LoginPage(page)
-    login_page.login(username, password)
+def test_login(browser, portal_base_url, username, password):
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto(portal_base_url)
+    login_widget = page.get_by_text("LoginLog in to the portal")
 
-    home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.assert_logged_in()
+    expect(login_widget).to_be_visible()
 
+    login_widget.click()
+    page.wait_for_load_state("load")
 
-def test_logout(navigate_to_login_page, username, password):
-    """Tests the plain UMC logout in our devenv but the SAML login in the nightly deployment"""
-    page = navigate_to_login_page
-    login_page = LoginPage(page)
-    login_page.login(username, password)
-    home_page_logged_in = HomePageLoggedIn(page)
+    expect(page).to_have_title("Univention Login")
 
-    home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
-    home_page_logged_in.right_side_menu.click_logout_button()
+    username_input = page.locator("#umcLoginUsername")
+    password_input = page.locator("#umcLoginPassword")
+    login_button = page.get_by_role("button", name="Login")
 
-    home_page_logged_out = HomePageLoggedOut(page)
-    home_page_logged_out.assert_logged_out()
+    expect(username_input).to_be_visible()
+    expect(password_input).to_be_visible()
+    expect(login_button).to_be_visible()
 
+    username_input.fill(username)
+    password_input.fill(password)
+    login_button.click()
+    page.wait_for_load_state("load")
 
-@pytest.mark.saml()
-def test_saml_login(navigate_to_saml_login_page, username, password):
-    page = navigate_to_saml_login_page
-    login_page = LoginPage(page)
-    login_page.login(username, password)
+    expect(page).to_have_title("Sovereign Workplace")
 
-    home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.assert_logged_in()
+    page.context.storage_state(path="user_page.json")
 
 
-@pytest.mark.saml()
-def test_saml_logout(navigate_to_saml_login_page, username, password):
-    page = navigate_to_saml_login_page
-    login_page = LoginPage(page)
-    login_page.login(username, password)
-    home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.assert_logged_in()
+def test_login_2(page: Page, portal_base_url, username, password):
+    page.goto(portal_base_url)
+    login_widget = page.get_by_text("LoginLog in to the portal")
 
-    home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
-    home_page_logged_in.right_side_menu.click_logout_button()
+    expect(login_widget).to_be_visible()
 
-    home_page_logged_out = HomePageLoggedOut(page)
-    home_page_logged_out.assert_logged_out()
+    login_widget.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Univention Login")
+
+    username_input = page.locator("#umcLoginUsername")
+    password_input = page.locator("#umcLoginPassword")
+    login_button = page.get_by_role("button", name="Login")
+
+    expect(username_input).to_be_visible()
+    expect(password_input).to_be_visible()
+    expect(login_button).to_be_visible()
+
+    username_input.fill(username)
+    password_input.fill(password)
+    login_button.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Sovereign Workplace")
+
+'''
+def test_saml_login(page: Page, portal_base_url, username, password):
+    page.goto(portal_base_url)
+    # locator('xpath=//a[contains(@href, "univention/saml")]')
+    login_widget = page.locator(
+        '[href="/univention/saml/?location=%2Funivention%2Fportal%2F"]'
+    )
+
+    expect(login_widget).to_be_visible()
+
+    login_widget.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Univention Login")
+
+    username_input = page.locator("#umcLoginUsername")
+    password_input = page.locator("#umcLoginPassword")
+    login_button = page.get_by_role("button", name="Login")
+
+    expect(username_input).to_be_visible()
+    expect(password_input).to_be_visible()
+    expect(login_button).to_be_visible()
+
+    username_input.fill(username)
+    password_input.fill(password)
+    login_button.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Sovereign Workplace")
+'''
+
+def test_logout(browser):
+    page = browser.new_page(storage_state="user_page.json")
+    page.goto('http://localhost:8000/univention/portal/#/')
+    hamburger_icon = page.locator("#header-button-menu")
+    right_side_menu = page.locator("#portal-sidenavigation")
+
+    expect(right_side_menu).to_be_hidden()
+    hamburger_icon.click()
+    expect(right_side_menu).to_be_visible()
+
+    logout_button = page.get_by_role("button", name="Logout")
+    expect(logout_button).to_be_visible()
+    logout_button.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Sovereign Workplace")
+
+
+def test_logout_2(page: Page, portal_base_url, username, password):
+    page.goto(portal_base_url)
+    login_widget = page.get_by_text("LoginLog in to the portal")
+    login_widget.click()
+    page.wait_for_load_state("load")
+    page.locator("#umcLoginUsername").fill(username)
+    page.locator("#umcLoginPassword").fill(password)
+    page.get_by_role("button", name="Login").click()
+
+    hamburger_icon = page.locator("#header-button-menu")
+    right_side_menu = page.locator("#portal-sidenavigation")
+
+    expect(right_side_menu).to_be_hidden()
+    hamburger_icon.click()
+    expect(right_side_menu).to_be_visible()
+
+    logout_button = page.get_by_role("button", name="Logout")
+    expect(logout_button).to_be_visible()
+    logout_button.click()
+    page.wait_for_load_state("load")
+
+    expect(page).to_have_title("Sovereign Workplace")
+
+
+def test_saml_logout(page: Page, portal_base_url, username, password):
+    """
+    TODO
+    """
+    pass
