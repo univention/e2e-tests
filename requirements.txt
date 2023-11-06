@@ -1,5 +1,7 @@
+black
 playwright==1.37.0
 pytest-html==4.0.0
 pytest-playwright==0.4.2
 requests==2.31.0
+ruff
 url-normalize==1.4.3

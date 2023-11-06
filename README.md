@@ -23,8 +23,8 @@ Then just run the following command.
 pytest
 ```
 
-This will use the default settings for environment URL, login, etc. You can change 
-these settings by passing command line options. The available command line options 
+This will use the default settings for environment URL, login, etc. You can change
+these settings by passing command line options. The available command line options
 can be seen [here](tests/conftest.py).
 
 So you can do the following to run the portal tests, for example:
@@ -76,3 +76,10 @@ The brief description of every test in this repo can be found [here](tests.md).
 ## Processes
 
 Our test management process is documented [here](https://univention.gitpages.knut.univention.de/customers/dataport/team-souvap/testing/test-management.html).
+
+## Pre-commit
+
+Run the pre-commit checks before committing:
+```sh
+docker compose run --rm pre-commit
+```
