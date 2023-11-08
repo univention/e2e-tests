@@ -30,6 +30,8 @@
 
 import pytest
 
+from playwright.sync_api import Browser, Page
+
 
 @pytest.fixture()
 def username(pytestconfig):
@@ -87,7 +89,7 @@ def num_ip_block(pytestconfig):
 
 
 @pytest.fixture
-def browser(playwright):
+def browser(playwright) -> Browser:
     browser = playwright.chromium.launch(headless=False)
     browser._close = browser.close
 
@@ -96,4 +98,14 @@ def browser(playwright):
 
     browser.close = _handle_close
 
+
     return browser
+
+
+@pytest.fixture
+def main_page(browser, portal_base_url) -> Page:
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto(portal_base_url)
+    page.wait_for_load_state("load")
+    return page

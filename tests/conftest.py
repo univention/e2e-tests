@@ -90,7 +90,7 @@ def pytest_addoption(parser):
 
 
 pytest_plugins = [
-    "fixtures.base_fixtures",
-    "fixtures.bfp_fixtures",
-    "fixtures.portal_fixtures",
+    "fixtures.base",
+    "fixtures.bfp",
+    "fixtures.portal",
   ]
