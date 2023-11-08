@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "https://git.knut.univention.de/api/v4/projects/3/packages/pypi/simple"
+verify_ssl = true
+name = "gitknutunivention"
+
+[packages]
+playwright = "==1.37.0"
+pytest-html = "==4.0.0"
+pytest-playwright = "==0.4.2"
+requests = "==2.31.0"
+url-normalize = "==1.4.3"
+pdbpp = "*"
+univention-admin-rest-client = {version = "*", index = "gitknutunivention"}
+ucs-test-utils = {version = "*", index = "gitknutunivention"}
+
+[dev-packages]
