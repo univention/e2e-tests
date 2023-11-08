@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+playwright = "==1.37.0"
+pytest-html = "==4.0.0"
+pytest-playwright = "==0.4.2"
+requests = "==2.31.0"
+url-normalize = "==1.4.3"
+pdbpp = "*"
+
+[dev-packages]
