@@ -27,3 +27,28 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
+
+from playwright.sync_api import expect
+
+
+def test_portal_management_console_page_design(
+        admin_page
+):
+    page = admin_page
+    expect(page).to_have_title('Sovereign Workplace')
+
+
+def test_portal_management_console_page_lang_en(
+        admin_page
+):
+    page = admin_page
+    assert 'en' == page.locator("html").get_attribute("lang")
+
+
+def test_portal_management_console_page_lang_de(
+        admin_page
+):
+    """
+    TODO
+    """
+    pass

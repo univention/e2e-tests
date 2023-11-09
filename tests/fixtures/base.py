@@ -91,7 +91,8 @@ def num_ip_block(pytestconfig):
 @pytest.fixture(scope="module")
 def browser(playwright) -> Browser:
     browser = playwright.chromium.launch(
-        headless=True,
+        headless=False,
+        # slow_mo=3000,
     )
     yield browser
     browser.close()
@@ -121,7 +122,37 @@ def login_page(browser, portal_base_url) -> Page:
         timezone_id='Europe/Berlin',
     )
     page = context.new_page()
-    page.goto(portal_base_url + '/univention/login')
+    # page.goto(portal_base_url + '/univention/login')
+    page.goto(portal_base_url + '/univention/login?location=/univention/portal')
     page.wait_for_load_state("load")
+    yield page
+    page.close()
+
+
+@pytest.fixture()
+def admin_page(
+        login_page,
+        admin_username,
+        admin_password
+) -> Page:
+    page = login_page
+    page.locator('#umcLoginUsername').fill(admin_username)
+    page.locator('#umcLoginPassword').fill(admin_password)
+    page.locator('#umcLoginForm').locator('.umcLoginFormButton').click()
+    page.wait_for_url("**/univention/portal/#/")
+    yield page
+    page.close()
+
+@pytest.fixture()
+def user_page(
+        login_page,
+        username,
+        password
+) -> Page:
+    page = login_page
+    page.locator('#umcLoginUsername').fill(username)
+    page.locator('#umcLoginPassword').fill(password)
+    page.locator('#umcLoginForm').locator('.umcLoginFormButton').click()
+    page.wait_for_url("**/univention/portal/#/")
     yield page
     page.close()

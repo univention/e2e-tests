@@ -28,7 +28,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import pytest
 from playwright.sync_api import expect
 
 
@@ -65,7 +64,9 @@ def test_portal_login_page_lang_de(login_page):
 
 
 def test_portal_login_page_login_button(login_page, username, password):
-    login_page.locator('#umcLoginUsername').fill(username)
-    login_page.locator('#umcLoginPassword').fill(password)
-    login_page.locator('#umcLoginForm').locator('.umcLoginFormButton').click()
-    expect(login_page).to_have_title('Univention Management Console')
+    page = login_page
+    page.locator('#umcLoginUsername').fill(username)
+    page.locator('#umcLoginPassword').fill(password)
+    page.locator('#umcLoginForm').locator('.umcLoginFormButton').click()
+    # expect(page).to_have_title('Univention Management Console')
+    expect(page).to_have_title('Sovereign Workplace')
