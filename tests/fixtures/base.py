@@ -88,24 +88,40 @@ def num_ip_block(pytestconfig):
     return pytestconfig.option.num_ip_block
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def browser(playwright) -> Browser:
-    browser = playwright.chromium.launch(headless=False)
-    browser._close = browser.close
-
-    def _handle_close() -> None:
-        browser._close()
-
-    browser.close = _handle_close
+    browser = playwright.chromium.launch(
+        headless=True,
+    )
+    yield browser
+    browser.close()
 
 
-    return browser
-
-
-@pytest.fixture
+@pytest.fixture()
 def main_page(browser, portal_base_url) -> Page:
-    context = browser.new_context()
+    context = browser.new_context(
+        is_mobile=False,
+        # locale='de-DE',
+        locale='en-EN',
+        timezone_id='Europe/Berlin',
+    )
     page = context.new_page()
     page.goto(portal_base_url)
     page.wait_for_load_state("load")
-    return page
+    yield page
+    page.close()
+
+
+@pytest.fixture(scope="function")
+def login_page(browser, portal_base_url) -> Page:
+    context = browser.new_context(
+        is_mobile=False,
+        locale='en-EN',
+        # locale='de-DE',
+        timezone_id='Europe/Berlin',
+    )
+    page = context.new_page()
+    page.goto(portal_base_url + '/univention/login')
+    page.wait_for_load_state("load")
+    yield page
+    page.close()

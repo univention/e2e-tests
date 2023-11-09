@@ -31,10 +31,6 @@
 from playwright.sync_api import expect
 
 
-def teardown(main_page):
-    main_page.close()
-
-
 def test_portal_main_page_design(main_page):
     expect(main_page).to_have_title("Sovereign Workplace")
 
@@ -80,8 +76,7 @@ def test_portal_main_page_design(main_page):
 
 
 def test_portal_main_page_lang_en(main_page):
-    lang = main_page.locator("html").get_attribute("lang")
-    assert lang == 'en'
+    assert 'en' == main_page.locator("html").get_attribute("lang")
 
     # Check the page title
     assert main_page.locator('#portal-header').locator('h1', has_text='Sovereign Workplace')
@@ -109,6 +104,7 @@ def test_portal_main_page_lang_de():
     """
     TODO
     """
+    # assert 'de' == main_page.locator("html").get_attribute("lang")
     pass
 
 
