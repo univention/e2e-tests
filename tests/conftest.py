@@ -29,55 +29,12 @@
 # <https://www.gnu.org/licenses/>.
 
 def pytest_addoption(parser):
-
-    # Testing options
-    parser.addoption("--browser_name",
-                     type=str,
-                     default='chromium',
-                     help="Web browser name: "
-                          "chromium, firefox, webkit",
-                     )
-    parser.addoption("--heaqdless",
-                     action="store",
-                     default=True,
-                     help="true or false"
-                          "Run tests in headed mode. See more:"
-                          "https://playwright.dev/python/docs/chrome-extensions#headless-mode",
-                     )
-    parser.addoption("--slow-mo",
-                     action="store",
-                     type=int,
-                     default=0,
-                     help="Integer value."
-                          "Slows down Playwright operations by the specified "
-                          "amount of milliseconds. Useful so that you can see "
-                          "what is going on (default: 0).  See more: "
-                          "https://playwright.dev/python/docs/test-runners#configure-slow-mo",
-                     )
-    parser.addoption("--is-mobile",
-                     action="store",
-                     default=False,
-                     help="False (default) or True."
-                          "Select desktop or mobile version of the site.",
-                     )
-    parser.addoption("--time-zone",
-                     action="store",
-                     default='Europe/Berlin',
-                     help="",
-                     )
-    parser.addoption("--locale",
-                     action="store",
-                     default='en-EN',
-                     help="String: 'en-EN' or 'de-DE'",
-                     )
-
     # Portal tests options
     parser.addoption("--portal-base-url", help="Base URL of the univention portal")
     parser.addoption("--username", help="Portal login username")
     parser.addoption("--password", help="Portal login password")
     parser.addoption("--admin-username", help="Portal admin login username")
     parser.addoption("--admin-password", help="Portal admin login password")
-
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin",
@@ -98,10 +55,3 @@ def pytest_addoption(parser):
     parser.addoption("--realm", default="master",
                      help="Realm to attempt logins at"
                      )
-
-
-# It should be in the end of the file
-pytest_plugins = [
-    "fixtures.bfp",
-    "fixtures.portal",
-  ]
