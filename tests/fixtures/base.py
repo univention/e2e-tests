@@ -32,6 +32,8 @@ import pytest
 
 from playwright.sync_api import Browser, Page
 
+from umspages.portal.admin_page import AdminPage
+
 
 @pytest.fixture()
 def username(pytestconfig):
@@ -125,7 +127,7 @@ def login_page(browser, portal_base_url) -> Page:
     # page.goto(portal_base_url + '/univention/login')
     page.goto(portal_base_url + '/univention/login?location=/univention/portal')
     page.wait_for_load_state("load")
-    yield page
+    yield LoginPage(page)
     page.close()
 
 
@@ -134,18 +136,19 @@ def admin_page(
         login_page,
         admin_username,
         admin_password
-) -> Page:
+) -> AdminPage:
     page = login_page
     page.locator('#umcLoginUsername').fill(admin_username)
     page.locator('#umcLoginPassword').fill(admin_password)
     page.locator('#umcLoginForm').locator('.umcLoginFormButton').click()
     page.wait_for_url("**/univention/portal/#/")
-    yield page
+    yield AdminPage(page)
     page.close()
+
 
 @pytest.fixture()
 def user_page(
-        login_page,
+        login_page : LoginPage,
         username,
         password
 ) -> Page:

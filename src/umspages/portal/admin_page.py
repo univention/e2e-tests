@@ -28,32 +28,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from playwright.sync_api import expect
-from umspages.portal.admin_page import AdminPage
+from playwright.sync_api import Page
 
 
-def test_portal_management_console_page_design(
-        admin_page: AdminPage
-):
-    assert admin_page.title == 'Sovereign Workplace'
+class PortalPage:
 
-    # Check categories
-    categories = admin_page.page.locator('div[class="portal-category"]')
-    assert categories.count() == 3
+    def __init__(self, page: Page):
+        self.page = page
 
 
 
-def test_portal_management_console_page_lang_en(
-        admin_page: AdminPage
-):
-    page = admin_page
-    assert 'en' == page.lang
+class AdminPage(PortalPage):
 
+    def __init__(self, page: Page):
+        PortalPage.__init__(self, page)
 
-def test_portal_management_console_page_lang_de(
-        admin_page
-):
-    """
-    TODO
-    """
-    pass
+        self.lang = self.page.locator("html").get_attribute("lang")
+        self.title = self.page.locator("head").locator("title").inner_text()
