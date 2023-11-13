@@ -28,6 +28,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import pytest
+
+from lang import de, en
+
 def pytest_addoption(parser):
 
     # Testing options
@@ -37,13 +41,11 @@ def pytest_addoption(parser):
                      help="Web browser name: "
                           "chromium, firefox, webkit",
                      )
-    parser.addoption("--heaqdless",
-                     action="store",
-                     default=True,
-                     help="true or false"
-                          "Run tests in headed mode. See more:"
-                          "https://playwright.dev/python/docs/chrome-extensions#headless-mode",
-                     )
+    '''parser.addoption("--headed",
+                     action="store_false",
+                     help="Run tests in headed mode. See more:"
+                          "https://playwright.dev/python/docs/ci#running-headed",
+                     )'''
     parser.addoption("--slow-mo",
                      action="store",
                      type=int,
@@ -98,6 +100,13 @@ def pytest_addoption(parser):
     parser.addoption("--realm", default="master",
                      help="Realm to attempt logins at"
                      )
+
+
+@pytest.fixture(scope="module")
+def localization(pytestconfig) -> dict:
+    if 'de-DE' == pytestconfig.getoption("--locale"):
+        return de.handbook
+    return en.handbook
 
 
 # It should be in the end of the file

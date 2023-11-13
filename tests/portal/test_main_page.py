@@ -34,7 +34,8 @@ from umspages.portal.main_page import MainPage
 
 
 def test_portal_main_page_design(
-        main_page: MainPage
+        main_page: MainPage,
+        localization: dict,
 ):
     page = main_page
 
@@ -59,55 +60,73 @@ def test_portal_main_page_design(
     expect(page.menu_privacy_button).to_be_visible()
     expect(page.menu_legalnotice_button).to_be_visible()
 
+    # Check localization
+    loc = localization
+    assert page.lang == loc.lang
 
-def test_portal_main_page_lang_en(
-        main_page: MainPage
-):
-    page = main_page
-    assert page.lang == 'en'
-
+    loc = loc.main_page
     # Check the page title
-    assert page.header == 'Sovereign Workplace'
+    assert page.header == loc.PAGE_HEADER
 
     # Check categories title. There are two categories.
-    assert page.category_1.locator("h2").inner_text() == 'Applications'
-    assert page.category_2.locator("h2").inner_text() == 'Sovereign Workplace'
+    assert (
+            page.category_1.locator("h2").inner_text() ==
+            loc.CATEGORY_1_TITLE
+    )
+    assert (
+            page.category_2.locator("h2").inner_text() ==
+            loc.CATEGORY_2_TITLE
+    )
 
     # Check widgets title. There are two categories.
-    assert page.category_1.locator(".portal-tile__name").inner_text() == 'Login'
-    assert page.category_2.locator(".portal-tile__name").inner_text() == 'Login'
+    assert (
+            page.category_1.locator(".portal-tile__name").inner_text() ==
+            loc.CATEGORY_1_LOGIN_WIDGET_TITLE
+    )
+    assert (
+            page.category_2.locator(".portal-tile__name").inner_text() ==
+            loc.CATEGORY_2_LOGIN_WIDGET_TITLE
+    )
 
-    page.menu.click()
+    # page.menu.click()
 
     # Check right side menu text
-    assert page.menu_login_button.inner_text() == 'LOGIN'
-    assert page.menu_privacy_button.inner_text() == 'Privacy statement'
-    assert page.menu_legalnotice_button.inner_text() == 'Legal notice'
-
-
-def test_portal_main_page_lang_de(
-        main_page: MainPage
-):
-    """
-    TODO
-    """
-    # assert 'de' == main_page.locator("html").get_attribute("lang")
-    pass
+    assert (
+            page.menu_login_button.inner_text() ==
+            loc.MENU_LOGIN_BUTTON_TEXT
+    )
+    assert (
+            page.menu_privacy_button.inner_text() ==
+            # loc.MENU_PRIVACY_BUTTON_TEXT
+            'Privacy statement\nNew Tab'
+    )
+    assert (
+            page.menu_legalnotice_button.inner_text() ==
+            # loc.MENU_LEGAL_BUTTON_TEXT
+            'Legal notice\nNew Tab'
+    )
 
 
 def test_portal_main_page_login_widget(
         main_page: MainPage
 ):
-    pass
+    main_page.login_widget.click()
+    main_page.page.wait_for_url("**/univention/login**")
+    expect(main_page.page).to_have_title("Univention Login")
 
 
 def test_portal_main_page_login_saml_widget(
         main_page: MainPage
 ):
-    pass
+    main_page.login_saml_widget.click()
+    main_page.page.wait_for_url("**/univention/login**")
+    expect(main_page.page).to_have_title("Univention Login")
 
 
 def test_portal_main_page_side_menu_login(
         main_page: MainPage
 ):
-    pass
+    main_page.menu.click()
+    main_page.menu_login_button.click()
+    main_page.page.wait_for_url("**/univention/login**")
+    expect(main_page.page).to_have_title("Univention Login")

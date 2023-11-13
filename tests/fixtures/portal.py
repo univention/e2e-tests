@@ -109,7 +109,7 @@ def browser(pytestconfig, playwright) -> Browser:
     browser = playwright[
         pytestconfig.getoption("--browser_name")
     ].launch(
-        headless=pytestconfig.getoption("--heaqdless"),
+        headless=(not pytestconfig.getoption("--headed")),
         slow_mo=pytestconfig.getoption("--slow-mo"),
     )
     yield browser
@@ -128,3 +128,22 @@ def main_page(pytestconfig, browser, portal_base_url) -> MainPage:
     page.wait_for_load_state("load")
     yield MainPage(page)
     page.close()
+
+
+@pytest.fixture()
+def login_page(pytestconfig, main_page) -> LoginPage:
+    main_page.login_widget.click()
+    main_page.page.wait_for_url("**/univention/login**")
+    yield LoginPage(main_page.page)
+    '''
+    context = browser.new_context(
+        is_mobile=pytestconfig.getoption("--is-mobile"),
+        locale=pytestconfig.getoption("--locale"),
+        timezone_id=pytestconfig.getoption("--time-zone"),
+    )
+    page = context.new_page()
+    page.goto(portal_base_url)
+    page.wait_for_load_state("load")
+    yield MainPage(page)
+    page.close()
+    '''
