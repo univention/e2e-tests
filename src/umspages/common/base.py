@@ -62,7 +62,6 @@ class BasePage:
     """
 
     def __init__(self, page: Page):
-        self.page = page
         self.set_content(page)
 
     def set_content(self, page):
@@ -70,7 +69,7 @@ class BasePage:
         It allows to change the tab and redefine the elements/page parts based
         on the new tab.
         """
-        pass
+        self.page = page
 
     def navigate(self, *args, **kwargs):
         """Should navigate to this page from a well-defined root page using a
