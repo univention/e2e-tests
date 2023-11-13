@@ -27,42 +27,27 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
+import pdb
 
 import pytest
 
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
-from umspages.portal.login_page import LoginPage
 
-
-@pytest.fixture(scope="module")
-def logged_in_cookies(browser, browser_context_args, username, password):
-    context = browser.new_context(**browser_context_args)
-    page = context.new_page()
-
-    login_page = LoginPage(page)
-    login_page.navigate()
-    login_page.login(username, password)
-
-    home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.assert_logged_in()
-
-    cookies = page.context.cookies()
-    return cookies
-
-
-def test_cookie_hardening_sets_samesite(logged_in_cookies):
-    umc_session_cookie = _get_cookie(logged_in_cookies, "UMCSessionId")
+def test_cookie_hardening_sets_samesite(home_page):
+    cookies = home_page.page.context.cookies()
+    umc_session_cookie = _get_cookie(cookies, "UMCSessionId")
     assert umc_session_cookie["sameSite"] == "Strict"
 
 
 @pytest.mark.xfail(reason="Pending fix in the deployment setup")
-def test_cookie_hardening_sets_secure(logged_in_cookies):
-    umc_session_cookie = _get_cookie(logged_in_cookies, "UMCSessionId")
+def test_cookie_hardening_sets_secure(home_page):
+    cookies = home_page.page.context.cookies()
+    umc_session_cookie = _get_cookie(cookies, "UMCSessionId")
     assert umc_session_cookie["secure"] == True
 
 
-def test_cookie_hardening_does_not_set_expires(logged_in_cookies):
-    umc_session_cookie = _get_cookie(logged_in_cookies, "UMCSessionId")
+def test_cookie_hardening_does_not_set_expires(home_page):
+    cookies = home_page.page.context.cookies()
+    umc_session_cookie = _get_cookie(cookies, "UMCSessionId")
     assert umc_session_cookie["expires"] == -1
 
 

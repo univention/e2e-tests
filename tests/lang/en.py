@@ -43,4 +43,13 @@ handbook = AttrDict(
         MENU_PRIVACY_BUTTON_TEXT='Privacy statement',
         MENU_LEGAL_BUTTON_TEXT='Legal notice',
     ),
+    login_page=AttrDict(
+        PAGE_HEADER='UCS',
+        LOGIN_FORM_TITLE='Login at null',
+        USERNAME_INPUT_LABEL='Username',
+        PASSWORD_INPUT_LABEL='Password',
+        LOGIN_BUTTON_LABEL='Login',
+        MENU_HELP_LABEL='Help',
+        MENU_BACK_BUTTON='Back to start site',
+    ),
 )

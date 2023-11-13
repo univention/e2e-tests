@@ -32,10 +32,10 @@ import pytest
 
 from playwright.sync_api import Browser, Page
 
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
-from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
 from umspages.portal.main_page import MainPage
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
 
 
 @pytest.fixture(scope="session")
@@ -134,16 +134,17 @@ def main_page(pytestconfig, browser, portal_base_url) -> MainPage:
 def login_page(pytestconfig, main_page) -> LoginPage:
     main_page.login_widget.click()
     main_page.page.wait_for_url("**/univention/login**")
-    yield LoginPage(main_page.page)
-    '''
-    context = browser.new_context(
-        is_mobile=pytestconfig.getoption("--is-mobile"),
-        locale=pytestconfig.getoption("--locale"),
-        timezone_id=pytestconfig.getoption("--time-zone"),
-    )
-    page = context.new_page()
-    page.goto(portal_base_url)
-    page.wait_for_load_state("load")
-    yield MainPage(page)
+    page  = main_page.page
+    yield LoginPage(page)
     page.close()
-    '''
+
+
+@pytest.fixture()
+def home_page(login_page, username, password) -> HomePageLoggedIn:
+    login_page.username_input.fill(username)
+    login_page.password_input.fill(password)
+    login_page.login_button.click()
+    login_page.page.wait_for_url("**/univention/portal/#/")
+    page  = login_page.page
+    yield HomePageLoggedIn(page)
+    page.close()
