@@ -28,7 +28,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+from urllib.parse import urljoin
+
+import requests
 import pytest
+
+from api.udm_api import UDMFixtures
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
@@ -55,8 +60,24 @@ def admin_password(pytestconfig):
 
 
 @pytest.fixture(scope="session")
+def udm_admin_username(pytestconfig):
+    return pytestconfig.option.udm_admin_username
+
+
+@pytest.fixture(scope="session")
+def udm_admin_password(pytestconfig):
+    return pytestconfig.option.udm_admin_password
+
+
+@pytest.fixture(scope="session")
 def portal_base_url(pytestconfig):
     return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture()
+def udm_rest_api_base_url(portal_base_url):
+    """Base URL to reach the UDM Rest API."""
+    return urljoin(portal_base_url, "/univention/udm/")
 
 
 @pytest.fixture(scope="session")
@@ -98,3 +119,23 @@ def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_passwor
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(admin_username, admin_password)
     return page
+
+
+@pytest.fixture(scope="session")
+def udm_session(udm_admin_username, udm_admin_password):
+    """
+    Prepares an instance of `requests.Session` to call the UDM Rest API.
+
+    The instance has headers and authentication information prepared so that
+    requests will run with full permissions in the UDM Rest API.
+    """
+    udm_session = requests.Session()
+    udm_session.auth = (udm_admin_username, udm_admin_password)
+    udm_session.headers.update({"accept": "application/json"})
+    return udm_session
+
+
+@pytest.fixture()
+def udm_fixtures(udm_rest_api_base_url, udm_session):
+    """An instance of `UDMFixtures` to set up test data through the UDM Rest API."""
+    return UDMFixtures(base_url=udm_rest_api_base_url, session=udm_session)

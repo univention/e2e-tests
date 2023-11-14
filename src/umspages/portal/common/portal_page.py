@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from ...common.base import BasePage, expect
+from .announcements import AnnouncementContainer
 from .cookie_dialog import CookieDialog
 from .header import Header
 from .notifications import NotificationDrawer, PopupNotificationContainer
@@ -58,6 +59,7 @@ class PortalPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.header = Header(self.page.locator("#portal-header"))
+        self.announcement_container = AnnouncementContainer(self.page.locator("#announcement-container"))
         self.notification_drawer = NotificationDrawer(self.page.locator("#notifications-all"))
         self.popup_notification_container = PopupNotificationContainer(
             self.page.locator("#notifications-visible"),
