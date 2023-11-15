@@ -79,7 +79,6 @@ def pytest_addoption(parser):
     parser.addoption("--password", help="Portal login password")
     parser.addoption("--admin-username", help="Portal admin login username")
     parser.addoption("--admin-password", help="Portal admin login password")
-
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin",
