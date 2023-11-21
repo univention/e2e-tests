@@ -54,9 +54,9 @@ class HomePageLoggedIn(HomePage):
         self.new_files_folder_tile = self.page.get_by_role("button", name="Create new files Folder", exact=False)
 
         self.projects_tile = self.page.get_by_role("link", name="Projects New Tab")
-        self.knowledge_tile = self.page.get_by_role("link",name="Knowledge New Tab")
+        self.knowledge_tile = self.page.get_by_role("link", name="Knowledge New Tab")
 
-        self.collaboration_tile = self.page.get_by_role("link",name="Collaboration New Tab")
+        self.collaboration_tile = self.page.get_by_role("link", name="Collaboration New Tab")
         self.video_conference_tile = self.page.get_by_role("link", name="Ad hoc videoconference New Tab")
 
     def navigate(self, username, password):

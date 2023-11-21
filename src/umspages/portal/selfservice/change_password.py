@@ -48,8 +48,7 @@ class ChangePasswordDialogPage(BasePage):
         home_page_logged_in.navigate(username, password)
         home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
         home_page_logged_in.right_side_menu.click_entry("User settings")
-        # TODO: Using regular expression to target both UCS and SouvAP envs. Needs a better solution.
-        home_page_logged_in.right_side_menu.click_sub_entry(re.compile("Change your password|Update my password"))
+        home_page_logged_in.right_side_menu.click_sub_entry(re.compile("Update my password"))
 
     def change_password(self, old_password: string, new_password: string):
         self.old_password_box.fill(old_password)
