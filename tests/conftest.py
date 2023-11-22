@@ -66,11 +66,6 @@ def pytest_addoption(parser):
                      )
 
 
-@pytest.fixture
-def udm_uri(udm_rest_api_base_url):
-    return udm_rest_api_base_url
-
-
 @pytest.fixture(scope="session")
 def udm_admin_username(pytestconfig):
     return pytestconfig.option.udm_admin_username
@@ -93,8 +88,8 @@ def udm_rest_api_base_url(portal_base_url):
 
 
 @pytest.fixture
-def udm(udm_uri, udm_admin_username, udm_admin_password):
-    udm = UDM(udm_uri, udm_admin_username, udm_admin_password)
+def udm(udm_rest_api_base_url, udm_admin_username, udm_admin_password):
+    udm = UDM(udm_rest_api_base_url, udm_admin_username, udm_admin_password)
     # test the connection
     udm.get_ldap_base()
     return udm
