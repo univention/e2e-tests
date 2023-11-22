@@ -28,6 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+from urllib.parse import urljoin
+
 import requests
 import pytest
 
@@ -116,3 +118,17 @@ def udm_session(udm_admin_username, udm_admin_password):
 def udm_fixtures(udm_rest_api_base_url, udm_session):
     """An instance of `UDMFixtures` to set up test data through the UDM Rest API."""
     return UDMFixtures(base_url=udm_rest_api_base_url, session=udm_session)
+
+
+@pytest.fixture()
+def udm_ldap_base(udm_rest_api_base_url, udm_session):
+    """
+    The base DN used by the LDAP directory behind the UDM Rest API.
+
+    This value is dynamically discovered and will only be available if the UDM
+    Rest API is up and running.
+    """
+    ldap_base_url = urljoin(udm_rest_api_base_url, "ldap/base/")
+    result = udm_session.get(ldap_base_url)
+    data = result.json()
+    return data["dn"]

@@ -36,24 +36,28 @@ from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 
 
-stub_announcement = {
-    "properties": {
-        "allowedGroups": [],
-        "isSticky": False,
-        "message": {"en_US": "Message content of E2E Test Announcement e2e-test-001."},
-        "name": "e2e-test-001",
-        "needsConfirmation": False,
-        "objectFlag": [],
-        "severity": "warn",
-        "title": {"en_US": "E2E Test Announcement Title"},
-        "visibleFrom": None,
-        "visibleUntil": None,
-    },
-    "position": "cn=announcement,cn=portals,cn=univention,dc=univention-organization,dc=intranet",
-}
+@pytest.fixture
+def stub_announcement(udm_ldap_base):
+    data = {
+        "properties": {
+            "allowedGroups": [],
+            "isSticky": False,
+            "message": {"en_US": "Message content of E2E Test Announcement e2e-test-001."},
+            "name": "e2e-test-001",
+            "needsConfirmation": False,
+            "objectFlag": [],
+            "severity": "warn",
+            "title": {"en_US": "E2E Test Announcement Title"},
+            "visibleFrom": None,
+            "visibleUntil": None,
+        },
+        "position": f"cn=announcement,cn=portals,cn=univention,{udm_ldap_base}",
+    }
+    return data
 
 
-def test_anonymous_user_sees_announcement(udm_fixtures, navigate_to_home_page_logged_out):
+def test_anonymous_user_sees_announcement(
+        udm_fixtures, navigate_to_home_page_logged_out, stub_announcement):
     announcement_data = udm_fixtures.ensure_announcement(stub_announcement)
     page = navigate_to_home_page_logged_out
     home_page = HomePageLoggedOut(page)
