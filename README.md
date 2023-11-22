@@ -8,10 +8,18 @@ The repository's content provides you with first insights into the containerized
 
 # End-to-end tests used by the SouvAP Dev team
 
+## Requirements
+
+Make sure to have `pipenv` available, see <https://pipenv.pypa.io/en/latest/>.
+
 ## Installation
 
+The installation is only needed once.
+
 ```
-pip install -r requirements.txt
+pipenv sync
+pipenv shell
+
 playwright install  # installs required browsers
 ```
 
@@ -20,11 +28,13 @@ playwright install  # installs required browsers
 Then just run the following command.
 
 ```
+pipenv shell
+
 pytest
 ```
 
-This will use the default settings for environment URL, login, etc. You can change 
-these settings by passing command line options. The available command line options 
+This will use the default settings for environment URL, login, etc. You can change
+these settings by passing command line options. The available command line options
 can be seen [here](tests/conftest.py).
 
 So you can do the following to run the portal tests, for example:
