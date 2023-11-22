@@ -42,6 +42,7 @@ class HomePageLoggedIn(HomePage):
         super().set_content(*args, **kwargs)
         self.umc_heading = self.page.get_by_text("Univention Management Console", exact=True)
         self.users_tile = self.page.get_by_role("link", name=re.compile("User New Tab|Users iFrame"))
+        self.announcements_tile = self.page.get_by_role("link", name=re.compile("Announcements New Tab"))
 
         self.mail_tile = self.page.get_by_role("link", name="E-Mail New Tab")
         self.calendar_tile = self.page.get_by_role("link", name="Calendar New Tab")
