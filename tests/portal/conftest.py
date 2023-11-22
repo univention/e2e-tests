@@ -28,8 +28,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from urllib.parse import urljoin
-
 import requests
 import pytest
 
@@ -57,27 +55,6 @@ def admin_username(pytestconfig):
 @pytest.fixture(scope="session")
 def admin_password(pytestconfig):
     return pytestconfig.option.admin_password
-
-
-@pytest.fixture(scope="session")
-def udm_admin_username(pytestconfig):
-    return pytestconfig.option.udm_admin_username
-
-
-@pytest.fixture(scope="session")
-def udm_admin_password(pytestconfig):
-    return pytestconfig.option.udm_admin_password
-
-
-@pytest.fixture(scope="session")
-def portal_base_url(pytestconfig):
-    return pytestconfig.getoption("--portal-base-url")
-
-
-@pytest.fixture()
-def udm_rest_api_base_url(portal_base_url):
-    """Base URL to reach the UDM Rest API."""
-    return urljoin(portal_base_url, "/univention/udm/")
 
 
 @pytest.fixture(scope="session")

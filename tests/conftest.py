@@ -28,6 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 import os
 import pytest
+from urllib.parse import urljoin
 
 from univention.admin.rest.client import UDM
 
@@ -66,21 +67,29 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture
-def udm_uri():
-    # cannot verify https in the container at the moment
-    return os.environ.get(
-        "TESTS_UDM_ADMIN_URL", "http://localhost:8000/univention/udm/"
-    )
+def udm_uri(udm_rest_api_base_url):
+    return udm_rest_api_base_url
 
 
-@pytest.fixture
-def udm_admin_username():
-    return os.environ.get("TESTS_UDM_ADMIN_USERNAME", "Administrator")
+@pytest.fixture(scope="session")
+def udm_admin_username(pytestconfig):
+    return pytestconfig.option.udm_admin_username
 
 
-@pytest.fixture
-def udm_admin_password():
-    return os.environ.get("TESTS_UDM_ADMIN_PASSWORD", "univention")
+@pytest.fixture(scope="session")
+def udm_admin_password(pytestconfig):
+    return pytestconfig.option.udm_admin_password
+
+
+@pytest.fixture(scope="session")
+def portal_base_url(pytestconfig):
+    return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture()
+def udm_rest_api_base_url(portal_base_url):
+    """Base URL to reach the UDM Rest API."""
+    return urljoin(portal_base_url, "/univention/udm/")
 
 
 @pytest.fixture
