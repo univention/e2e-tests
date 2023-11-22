@@ -81,7 +81,7 @@ def portal_base_url(pytestconfig):
     return pytestconfig.getoption("--portal-base-url")
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def udm_rest_api_base_url(portal_base_url):
     """Base URL to reach the UDM Rest API."""
     return urljoin(portal_base_url, "/univention/udm/")
