@@ -3,3 +3,8 @@ pytest-html==4.0.0
 pytest-playwright==0.4.2
 requests==2.31.0
 url-normalize==1.4.3
+
+# Packages which are not available on a public package index
+--extra-index-url https://git.knut.univention.de/api/v4/projects/3/packages/pypi/simple
+univention-admin-rest-client>=0.1.0
+ucs-test-utils
