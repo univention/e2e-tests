@@ -26,14 +26,14 @@
 # You should have received a copy of the GNU Affero General Public
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
-import os
+# <https://www.gnu.org/licenses/>.
+
 import pytest
 from urllib.parse import urljoin
 
 from univention.admin.rest.client import UDM
 
 
-# <https://www.gnu.org/licenses/>.
 
 def pytest_addoption(parser):
     # Portal tests options
