@@ -30,7 +30,10 @@
 
 import pytest
 
+from umspages.common.base import expect
+from umspages.portal.announcements.announcements_page import AnnouncementsPage
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
 
 
 stub_announcement = {
@@ -56,3 +59,12 @@ def test_anonymous_user_sees_announcement(udm_fixtures, navigate_to_home_page_lo
     home_page = HomePageLoggedOut(page)
     expected_title = announcement_data["properties"]["title"]["en_US"]
     home_page.announcement_container.assert_announcement(title=expected_title)
+
+
+def test_admin_user_can_view_announcements_page(navigate_to_home_page_logged_in_as_admin):
+    page = navigate_to_home_page_logged_in_as_admin
+    home_page_logged_in = HomePageLoggedIn(page)
+    with page.expect_popup() as tab_admin:
+        home_page_logged_in.announcements_tile.click()
+    announcements_page = AnnouncementsPage(tab_admin.value)
+    expect(announcements_page.add_button).to_be_visible()
