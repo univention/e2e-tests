@@ -32,8 +32,8 @@ import pytest
 
 from umspages.common.base import expect
 from umspages.portal.announcements.announcements_page import AnnouncementsPage
-from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
+from umspages.portal.home_page.logged_out import HomePageLoggedOut
 
 
 @pytest.fixture
@@ -42,7 +42,9 @@ def stub_announcement(udm_ldap_base):
         "properties": {
             "allowedGroups": [],
             "isSticky": False,
-            "message": {"en_US": "Message content of E2E Test Announcement e2e-test-001."},
+            "message": {
+                "en_US": "Message content of E2E Test Announcement e2e-test-001."
+            },
             "name": "e2e-test-001",
             "needsConfirmation": False,
             "objectFlag": [],
@@ -57,7 +59,8 @@ def stub_announcement(udm_ldap_base):
 
 
 def test_anonymous_user_sees_announcement(
-        udm_fixtures, navigate_to_home_page_logged_out, stub_announcement):
+    udm_fixtures, navigate_to_home_page_logged_out, stub_announcement
+):
     announcement_data = udm_fixtures.ensure_announcement(stub_announcement)
     page = navigate_to_home_page_logged_out
     home_page = HomePageLoggedOut(page)
@@ -65,10 +68,12 @@ def test_anonymous_user_sees_announcement(
     home_page.announcement_container.assert_announcement(title=expected_title)
 
 
-def test_admin_user_can_view_announcements_page(navigate_to_home_page_logged_in_as_admin):
+def test_admin_user_can_view_announcements_page(
+    navigate_to_home_page_logged_in_as_admin,
+):
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
-    with page.expect_popup() as tab_admin:
-        home_page_logged_in.announcements_tile.click()
-    announcements_page = AnnouncementsPage(tab_admin.value)
+    announcements_page = AnnouncementsPage(
+        home_page_logged_in.click_announcements_tile()
+    )
     expect(announcements_page.add_button).to_be_visible()

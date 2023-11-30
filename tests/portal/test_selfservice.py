@@ -32,14 +32,15 @@ import random
 
 import pytest
 from playwright.sync_api import Page
+
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
-from umspages.portal.selfservice.change_password import ChangePasswordDialogPage
+from umspages.portal.selfservice.change_password import \
+    ChangePasswordDialogPage
 from umspages.portal.users.users_page import UsersPage
 
-
-DUMMY_USER_NAME = f"dummy_{random.randint(1000,9999)}"  # noqa: S311
+DUMMY_USER_NAME = f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 DUMMY_USER_PASSWORD_1 = "firstpass"
 DUMMY_USER_PASSWORD_2 = "secondpass"
 
@@ -50,14 +51,9 @@ def dummy_user_home(navigate_to_home_page_logged_in: Page, username, password) -
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
-    with page.expect_popup() as popup_info:
-        home_page_logged_in.click_users_tile()
-        popup = popup_info.value
-
-    popup.wait_for_load_state()
-    users_page = UsersPage(popup)
+    users_page = UsersPage(home_page_logged_in.click_users_tile())
     users_page.add_user(DUMMY_USER_NAME, DUMMY_USER_PASSWORD_1)
-    popup.close()
+    users_page.close()
 
     home_page_logged_out.navigate()
 
@@ -68,14 +64,9 @@ def dummy_user_home(navigate_to_home_page_logged_in: Page, username, password) -
 
     home_page_logged_in.navigate(username, password)
 
-    with page.expect_popup() as popup_info:
-        home_page_logged_in.click_users_tile()
-        popup = popup_info.value
-
-    popup.wait_for_load_state()
-    users_page = UsersPage(popup)
+    users_page = UsersPage(home_page_logged_in.click_users_tile())
     users_page.remove_user(DUMMY_USER_NAME)
-    popup.close()
+    users_page.close()
 
     home_page_logged_out.navigate()
 
