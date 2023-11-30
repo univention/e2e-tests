@@ -40,47 +40,6 @@ from umspages.portal.login_page import LoginPage
 
 
 @pytest.fixture(scope="session")
-def username(pytestconfig):
-    return pytestconfig.option.username
-
-
-@pytest.fixture(scope="session")
-def password(pytestconfig):
-    return pytestconfig.option.password
-
-
-@pytest.fixture(scope="session")
-def admin_username(pytestconfig):
-    return pytestconfig.option.admin_username
-
-
-@pytest.fixture(scope="session")
-def admin_password(pytestconfig):
-    return pytestconfig.option.admin_password
-
-
-@pytest.fixture(scope="session")
-def udm_admin_username(pytestconfig):
-    return pytestconfig.option.udm_admin_username
-
-
-@pytest.fixture(scope="session")
-def udm_admin_password(pytestconfig):
-    return pytestconfig.option.udm_admin_password
-
-
-@pytest.fixture(scope="session")
-def portal_base_url(pytestconfig):
-    return pytestconfig.getoption("--portal-base-url")
-
-
-@pytest.fixture()
-def udm_rest_api_base_url(portal_base_url):
-    """Base URL to reach the UDM Rest API."""
-    return urljoin(portal_base_url, "/univention/udm/")
-
-
-@pytest.fixture(scope="session")
 def browser_context_args(browser_context_args, portal_base_url):
     browser_context_args["base_url"] = portal_base_url
     return browser_context_args

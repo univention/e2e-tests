@@ -28,13 +28,34 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 import os
 import pytest
+from lang import de, en
 
-from univention.admin.rest.client import UDM
+from urllib.parse import urljoin
+
+# from univention.admin.rest.client import UDM
 
 
 # <https://www.gnu.org/licenses/>.
 
 def pytest_addoption(parser):
+    # Testing options
+    parser.addoption("--is-mobile",
+                     action="store",
+                     default=False,
+                     help="False (default) or True."
+                          "Select desktop or mobile version of the site.",
+                     )
+    parser.addoption("--time-zone",
+                     action="store",
+                     default='Europe/Berlin',
+                     help="",
+                     )
+    parser.addoption("--locale",
+                     action="store",
+                     default='en-EN',
+                     help="String: 'en-EN' or 'de-DE'",
+                     )
+
     # Portal tests options
     parser.addoption("--portal-base-url", help="Base URL of the univention portal")
     parser.addoption("--username", help="Portal login username")
@@ -65,6 +86,37 @@ def pytest_addoption(parser):
                      )
 
 
+
+@pytest.fixture(scope="session")
+def username(pytestconfig):
+    return pytestconfig.option.username
+
+
+@pytest.fixture(scope="session")
+def password(pytestconfig):
+    return pytestconfig.option.password
+
+
+@pytest.fixture(scope="session")
+def admin_username(pytestconfig):
+    return pytestconfig.option.admin_username
+
+
+@pytest.fixture(scope="session")
+def admin_password(pytestconfig):
+    return pytestconfig.option.admin_password
+
+
+@pytest.fixture(scope="session")
+def udm_admin_username(pytestconfig):
+    return pytestconfig.option.udm_admin_username
+
+
+@pytest.fixture(scope="session")
+def udm_admin_password(pytestconfig):
+    return pytestconfig.option.udm_admin_password
+
+
 @pytest.fixture
 def udm_uri():
     # cannot verify https in the container at the moment
@@ -82,10 +134,42 @@ def udm_admin_username():
 def udm_admin_password():
     return os.environ.get("TESTS_UDM_ADMIN_PASSWORD", "univention")
 
-
+'''
 @pytest.fixture
 def udm(udm_uri, udm_admin_username, udm_admin_password):
     udm = UDM(udm_uri, udm_admin_username, udm_admin_password)
     # test the connection
     udm.get_ldap_base()
     return udm
+'''
+
+
+@pytest.fixture(scope="session")
+def portal_base_url(pytestconfig):
+    return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture()
+def udm_rest_api_base_url(portal_base_url):
+    """Base URL to reach the UDM Rest API."""
+    return urljoin(portal_base_url, "/univention/udm/")
+
+@pytest.fixture(scope="module")
+def localization(pytestconfig) -> dict:
+    if 'de-DE' == pytestconfig.getoption("--locale"):
+        return de.handbook
+    return en.handbook
+
+
+@pytest.fixture(scope="module")
+def cluster(pytestconfig) -> str:
+    if pytestconfig.getoption("-m") == "gaia":
+        return 'gaia'
+    else:
+        return 'devenv'
+
+
+# It should be in the end of the file
+pytest_plugins = [
+    "fixtures.portal",
+  ]

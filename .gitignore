@@ -123,6 +123,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.idea/
 env/
 venv/
 ENV/
@@ -160,5 +161,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+/package.json
+/package-lock.json
+/node_modules/
 
 test-results/
