@@ -28,19 +28,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import string
-
-from ...common.base import BasePage
+from ...common.base import BasePage, expect
 from ..home_page.logged_in import HomePageLoggedIn
 
 
-class ChangePasswordDialogPage(BasePage):
+class ManageProfileDialogPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.old_password_box = self.page.get_by_test_id("password-box")
-        self.new_password_box = self.page.get_by_test_id("new-password-box")
-        self.retype_password_box = self.page.get_by_test_id("retype-password-box")
-        self.submit_button = self.page.get_by_role("button", name="Change password")
+        self.description_box = self.page.get_by_role("textbox", name="Description")
+        self.title_box = self.page.get_by_role("textbox", name="Title")
+        self.first_name_box = self.page.get_by_role("textbox", name="First name *")
+        self.last_name_box = self.page.get_by_role("textbox", name="Last name *")
+        self.display_name_box = self.page.get_by_role("textbox", name="Display name")
+        self.initials_box = self.page.get_by_role("textbox", name="Initials")
+        self.organisation_box = self.page.get_by_role("textbox", name="Organisation")
+        self.street_box = self.page.get_by_role("textbox", name="Street")
+        self.postal_code_box = self.page.get_by_role("textbox", name="Postal code")
+        self.city_box = self.page.get_by_role("textbox", name="City")
+        self.save_button = self.page.get_by_role("button", name="Save")
+        self.close_button = self.page.get_by_role("button", name="Close")
 
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
@@ -50,10 +56,9 @@ class ChangePasswordDialogPage(BasePage):
             home_page_logged_in.header.hamburger_icon,
         )
         home_page_logged_in.right_side_menu.click_entry("User settings")
-        home_page_logged_in.right_side_menu.click_sub_entry("Update my password")
+        home_page_logged_in.right_side_menu.click_sub_entry("Manage my profile")
 
-    def change_password(self, old_password: string, new_password: string):
-        self.old_password_box.fill(old_password)
-        self.new_password_box.fill(new_password)
-        self.retype_password_box.fill(new_password)
-        self.submit_button.click()
+    def change_description(self, description):
+        self.description_box.fill(description)
+        self.save_button.click()
+        expect(self.description_box).to_be_hidden(timeout=10000)

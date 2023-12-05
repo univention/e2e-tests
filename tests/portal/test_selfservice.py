@@ -40,28 +40,49 @@ from umspages.portal.selfservice.change_password import \
     ChangePasswordDialogPage
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
+from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
+from umspages.portal.selfservice.set_recovery_email import \
+    SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UsersPage
 
-DUMMY_USER_NAME = f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 DUMMY_USER_PASSWORD_1 = "firstpass"
 DUMMY_USER_PASSWORD_2 = "secondpass"
+DUMMY_EMAIL = "mail@example.org"
+DUMMY_DESCRIPTION = "some description"
+
+
+@pytest.fixture()
+def dummy_username(scope="function"):
+    yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 
 
 @pytest.fixture()
 def dummy_user_home(
-    navigate_to_home_page_logged_in_as_admin: Page, admin_username, admin_password
+    navigate_to_home_page_logged_in_as_admin: Page,
+    admin_username,
+    admin_password,
+    dummy_username,
 ) -> Page:
+    """
+    Creates a dummy user from the UI.
+    1. Logs in as an admin user.
+    2. Creates a dummy user from the `Users` tile.
+    3. Logs out from admin.
+    4. Yields the page and the created username.
+    5. Logs in as an admin user.
+    6. Deletes the dummy user from step 2.
+    """
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
     users_page = UsersPage(home_page_logged_in.click_users_tile())
-    users_page.add_user(DUMMY_USER_NAME, DUMMY_USER_PASSWORD_1)
+    users_page.add_user(dummy_username, DUMMY_USER_PASSWORD_1)
     users_page.close()
 
     home_page_logged_out.navigate()
 
-    yield page
+    yield page, dummy_username
 
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
@@ -69,22 +90,30 @@ def dummy_user_home(
     home_page_logged_in.navigate(admin_username, admin_password)
 
     users_page = UsersPage(home_page_logged_in.click_users_tile())
-    users_page.remove_user(DUMMY_USER_NAME)
+    users_page.remove_user(dummy_username)
     users_page.close()
 
     home_page_logged_out.navigate()
 
 
-def test_non_admin_can_change_password(dummy_user_home: Page):
-    change_password_page = ChangePasswordDialogPage(dummy_user_home)
-    change_password_page.navigate(DUMMY_USER_NAME, DUMMY_USER_PASSWORD_1)
+def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
+    """
+    Tests a user can update its password, doing so from the side-menu.
+    1. Logs in as the dummy user with its original password.
+    2. Changes the password from the side-menu to a new password.
+    3. Logs out from the dummy user.
+    4. Logs in with the new password.
+    """
+    page, dummy_username = dummy_user_home
+    change_password_page = ChangePasswordDialogPage(page)
+    change_password_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
     change_password_page.change_password(DUMMY_USER_PASSWORD_1, DUMMY_USER_PASSWORD_2)
 
-    dummy_user_home_logged_out = HomePageLoggedOut(dummy_user_home)
+    dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
 
-    dummy_user_home_logged_in = HomePageLoggedIn(dummy_user_home)
-    dummy_user_home_logged_in.navigate(DUMMY_USER_NAME, DUMMY_USER_PASSWORD_2)
+    dummy_user_home_logged_in = HomePageLoggedIn(page)
+    dummy_user_home_logged_in.navigate(dummy_username, DUMMY_USER_PASSWORD_2)
     dummy_user_home_logged_in.reveal_area(
         dummy_user_home_logged_in.right_side_menu,
         dummy_user_home_logged_in.header.hamburger_icon,
@@ -92,7 +121,66 @@ def test_non_admin_can_change_password(dummy_user_home: Page):
     expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
 
 
+def test_set_recovery_email(dummy_user_home: (Page, str)):
+    """
+    Tests a user can set up a recovery email.
+    1. Logs in as the dummy user.
+    2. Sets a dummy recovery email from the side-menu.
+    3. Logs out from the dummy user.
+    4. Logs in again to the dummy user.
+    5. Triggers the recovery email window and checks the recovery email is the
+    same.
+    """
+    page, dummy_username = dummy_user_home
+    set_recovery_email_page = SetRecoveryEmailDialogPage(page)
+    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
+    set_recovery_email_page.set_recovery_email(DUMMY_EMAIL)
+
+    dummy_user_home_logged_out = HomePageLoggedOut(page)
+    dummy_user_home_logged_out.navigate()
+
+    set_recovery_email_page = SetRecoveryEmailDialogPage(page)
+    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
+    expect(set_recovery_email_page.email_box).to_have_value(DUMMY_EMAIL)
+    expect(set_recovery_email_page.retype_email_box).to_have_value(DUMMY_EMAIL)
+
+
+def test_manage_profile(dummy_user_home: (Page, str)):
+    """
+    Tests a user can manage their profile.
+    1. Logs in as the dummy user.
+    2. Sets a description on his profile.
+    3. Logs out from the dummy user.
+    4. Logs in again to the dummy user.
+    5. Checks the description remains the same.
+    """
+    page, dummy_username = dummy_user_home
+    manage_profile_page = ManageProfileDialogPage(page)
+    manage_profile_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    expect(manage_profile_page.save_button).to_be_visible()
+    manage_profile_page.change_description(DUMMY_DESCRIPTION)
+
+    dummy_user_home_logged_out = HomePageLoggedOut(page)
+    dummy_user_home_logged_out.navigate()
+
+    set_recovery_email_page = ManageProfileDialogPage(page)
+    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    expect(set_recovery_email_page.save_button).to_be_visible(timeout=10000)
+    expect(set_recovery_email_page.description_box).to_have_value(DUMMY_DESCRIPTION)
+
+
 def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
+    """
+    Tests the selfservice portal is served and with the correct tiles.
+    1. Logs into the portal as a normal user.
+    2. Navigates into `/univention/selfservice`.
+    3. Checks for the `My profile` and `Protect account` tiles.
+    4. Logs out.
+    5. Check for `My profile`, `Protect account` and `Password forgotten`
+    tiles.
+    """
     page = navigate_to_selfservice_portal_logged_in
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
     selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)

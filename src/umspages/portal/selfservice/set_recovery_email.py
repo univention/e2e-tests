@@ -28,19 +28,22 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import re
 import string
 
 from ...common.base import BasePage
 from ..home_page.logged_in import HomePageLoggedIn
 
 
-class ChangePasswordDialogPage(BasePage):
+class SetRecoveryEmailDialogPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.old_password_box = self.page.get_by_test_id("password-box")
-        self.new_password_box = self.page.get_by_test_id("new-password-box")
-        self.retype_password_box = self.page.get_by_test_id("retype-password-box")
-        self.submit_button = self.page.get_by_role("button", name="Change password")
+        self.username_box = self.page.get_by_label("username *")
+        self.password_box = self.page.get_by_test_id("password-box")
+        self.next_button = self.page.get_by_role("button", name="Next")
+        self.email_box = self.page.get_by_role("textbox", name="Email", exact=True)
+        self.retype_email_box = self.page.get_by_role("textbox", name="Email (retype)")
+        self.submit_button = self.page.get_by_role("button", name="Submit")
 
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
@@ -50,10 +53,14 @@ class ChangePasswordDialogPage(BasePage):
             home_page_logged_in.header.hamburger_icon,
         )
         home_page_logged_in.right_side_menu.click_entry("User settings")
-        home_page_logged_in.right_side_menu.click_sub_entry("Update my password")
+        home_page_logged_in.right_side_menu.click_sub_entry(
+            re.compile("My password recovery options")
+        )
+        self.username_box.fill(username)
+        self.password_box.fill(password)
+        self.next_button.click()
 
-    def change_password(self, old_password: string, new_password: string):
-        self.old_password_box.fill(old_password)
-        self.new_password_box.fill(new_password)
-        self.retype_password_box.fill(new_password)
+    def set_recovery_email(self, email: string):
+        self.email_box.fill(email)
+        self.retype_email_box.fill(email)
         self.submit_button.click()
