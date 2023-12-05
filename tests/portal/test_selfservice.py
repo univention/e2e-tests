@@ -46,8 +46,10 @@ DUMMY_USER_PASSWORD_2 = "secondpass"
 
 
 @pytest.fixture()
-def dummy_user_home(navigate_to_home_page_logged_in: Page, username, password) -> Page:
-    page = navigate_to_home_page_logged_in
+def dummy_user_home(
+    navigate_to_home_page_logged_in_as_admin: Page, admin_username, admin_password
+) -> Page:
+    page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
@@ -62,7 +64,7 @@ def dummy_user_home(navigate_to_home_page_logged_in: Page, username, password) -
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
 
-    home_page_logged_in.navigate(username, password)
+    home_page_logged_in.navigate(admin_username, admin_password)
 
     users_page = UsersPage(home_page_logged_in.click_users_tile())
     users_page.remove_user(DUMMY_USER_NAME)
