@@ -38,6 +38,8 @@ from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.selfservice.change_password import \
     ChangePasswordDialogPage
+from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
+from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 from umspages.portal.users.users_page import UsersPage
 
 DUMMY_USER_NAME = f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
@@ -88,3 +90,17 @@ def test_non_admin_can_change_password(dummy_user_home: Page):
         dummy_user_home_logged_in.header.hamburger_icon,
     )
     expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
+
+
+def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
+    page = navigate_to_selfservice_portal_logged_in
+    selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
+    selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
+
+    expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
+    expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()
+
+    selfservice_portal_logged_out.navigate()
+    expect(selfservice_portal_logged_out.my_profile_tile).to_be_visible()
+    expect(selfservice_portal_logged_out.protect_account_tile).to_be_visible()
+    expect(selfservice_portal_logged_out.password_forgotten_tile).to_be_visible()

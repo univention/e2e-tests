@@ -30,13 +30,15 @@
 
 from urllib.parse import urljoin
 
-import requests
 import pytest
+import requests
 
 from api.udm_api import UDMFixtures
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
+from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
+from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 
 
 @pytest.fixture(scope="session")
@@ -73,6 +75,13 @@ def navigate_to_home_page_logged_out(page):
 
 
 @pytest.fixture()
+def navigate_to_selfservice_portal_logged_out(page):
+    selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
+    selfservice_portal_logged_out.navigate()
+    return page
+
+
+@pytest.fixture()
 def navigate_to_login_page(page):
     login_page = LoginPage(page)
     login_page.navigate()
@@ -90,6 +99,13 @@ def navigate_to_saml_login_page(page):
 def navigate_to_home_page_logged_in(page, username, password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
+    return page
+
+
+@pytest.fixture()
+def navigate_to_selfservice_portal_logged_in(page, username, password):
+    selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
+    selfservice_portal_logged_in.navigate(username, password)
     return page
 
 
