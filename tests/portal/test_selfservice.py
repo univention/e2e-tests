@@ -65,6 +65,7 @@ def dummy_user_home(
 ) -> Page:
     """
     Creates a dummy user from the UI.
+
     1. Logs in as an admin user.
     2. Creates a dummy user from the `Users` tile.
     3. Logs out from admin.
@@ -99,6 +100,7 @@ def dummy_user_home(
 def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
     """
     Tests a user can update its password, doing so from the side-menu.
+
     1. Logs in as the dummy user with its original password.
     2. Changes the password from the side-menu to a new password.
     3. Logs out from the dummy user.
@@ -124,6 +126,7 @@ def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
 def test_set_recovery_email(dummy_user_home: (Page, str)):
     """
     Tests a user can set up a recovery email.
+
     1. Logs in as the dummy user.
     2. Sets a dummy recovery email from the side-menu.
     3. Logs out from the dummy user.
@@ -174,6 +177,7 @@ def test_manage_profile(dummy_user_home: (Page, str)):
 def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
     """
     Tests the selfservice portal is served and with the correct tiles.
+
     1. Logs into the portal as a normal user.
     2. Navigates into `/univention/selfservice`.
     3. Checks for the `My profile` and `Protect account` tiles.
