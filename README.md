@@ -41,8 +41,10 @@ So you can do the following to run the portal tests, for example:
 
 ```
 pytest --username <my_user> --password <my_password> \
+       --admin-username <admin_user> --admin-password <admin_password>
        --notifications-api-base-url <custom_notifications_api_base_url> \
        --portal-base-url <custom_portal_base_url> tests/portal
+       --udm-admin-username <udm_admin> --udm-admin-password <udm_admin_pass>
 ```
 
 We use the `pytest-playwright` plugin, and it exposes useful command

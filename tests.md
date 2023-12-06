@@ -12,8 +12,13 @@
 |               | Two notifications are displayed in the correct order            | `tests/portal/test_two_notifications.py`          |
 |               | Notification expiry time is respected                           | `tests/portal/test_notification_expiry_time.py`   |
 | Translation   | Logged out user is able to change language                      | `tests/portal/test_i18n.py`                       |
-| UMC Tile      | Admin user is able to use the Users tile                        | `tests/portal/test_users_page.py`                 |
-| Self-service  | Non-admin user can change password                              | `tests/portal/test_non_admin_can_change_password` |
+| UMC User Tile | Admin user is able to use the Users tile                        | `tests/portal/test_users_page.py`                 |
+| Self-service  | Non-admin user can change password                              | `tests/portal/test_selfservice`                   |
+| Self-service  | Non-admin user can set a recovery email                         | `tests/portal/test_selfservice`                   |
+| Self-service  | `/univention/portal` selfservice tiles logged in and out        | `tests/portal/test_selfservice`                   |
+| Self-service  | Non-admin user can manage its profile                           | `tests/portal/test_selfservice`                   |
+| Announcements | Anonymous user sees announcements                               | `tests/portal/test_announcements`                 |
+| Announcements | Admin user can access announcements page (and tile)             | `tests/portal/test_announcements`                 |
 
 
 # Keycloak login brute force protection tests
