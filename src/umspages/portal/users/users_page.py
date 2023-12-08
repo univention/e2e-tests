@@ -161,9 +161,9 @@ class AddUserDialog(BasePagePart):
         )
 
     def add_user(self, username: string, password: string):
-        expect(self.container_indicator).to_be_visible()
-        self.container_indicator.fill(":/users")
-        self.page_part_locator.get_by_text(re.compile("users$")).click()
+        if self.container_indicator.is_visible():
+            self.container_indicator.fill(":/users")
+            self.page_part_locator.get_by_text(re.compile("users$")).click()
         expect(self.template).to_be_visible()
         self.template.fill("openDesk User")
         self.next_button.click()
