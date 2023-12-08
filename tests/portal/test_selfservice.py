@@ -52,7 +52,7 @@ DUMMY_DESCRIPTION = "some description"
 
 
 @pytest.fixture()
-def dummy_username(scope="function"):
+def dummy_username():
     yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 
 
