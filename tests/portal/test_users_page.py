@@ -28,11 +28,17 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import pytest
+
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.users.users_page import UsersPage
 
 
+@pytest.mark.users
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin):
     """This test should be run using an admin user. Otherwise, it will fail."""
     page = navigate_to_home_page_logged_in_as_admin

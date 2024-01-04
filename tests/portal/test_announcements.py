@@ -58,6 +58,10 @@ def stub_announcement(udm_ldap_base):
     return data
 
 
+@pytest.mark.announcements
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_anonymous_user_sees_announcement(
     udm_fixtures, navigate_to_home_page_logged_out, stub_announcement
 ):
@@ -68,6 +72,10 @@ def test_anonymous_user_sees_announcement(
     home_page.announcement_container.assert_announcement(title=expected_title)
 
 
+@pytest.mark.announcements
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_admin_user_can_view_announcements_page(
     navigate_to_home_page_logged_in_as_admin,
 ):

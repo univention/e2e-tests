@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 
-import requests
 import pytest
+import requests
 
 
 @pytest.fixture
@@ -10,6 +10,10 @@ def navigation_api_url(portal_base_url):
     return urljoin(portal_base_url, "/univention/portal/navigation.json")
 
 
+@pytest.mark.central_navigation
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_navigation_api_returns_data_for_anonymous_user(navigation_api_url):
     response = requests.get(navigation_api_url)
     data = response.json()
@@ -19,6 +23,10 @@ def test_navigation_api_returns_data_for_anonymous_user(navigation_api_url):
     assert display_name == "Login"
 
 
+@pytest.mark.central_navigation
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_navigation_api_returns_valid_icon_urls(navigation_api_url):
     response = requests.get(navigation_api_url)
     data = response.json()

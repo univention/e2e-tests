@@ -17,5 +17,6 @@ url-normalize = "==1.4.3"
 pdbpp = "*"
 univention-admin-rest-client = {version = "*", index = "gitknutunivention"}
 ucs-test-utils = {version = "*", index = "gitknutunivention"}
+pytest = "*"
 
 [dev-packages]

@@ -36,10 +36,11 @@ from urllib.parse import urljoin
 
 import pytest
 import requests
+from url_normalize import url_normalize
+
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
-from url_normalize import url_normalize
 
 
 @pytest.fixture()
@@ -48,7 +49,9 @@ def notifications_api_base_url(portal_base_url):
 
 
 @pytest.fixture()
-def login_and_clear_old_notifications(navigate_to_home_page_logged_in, username, password):
+def login_and_clear_old_notifications(
+    navigate_to_home_page_logged_in, username, password
+):
     page = navigate_to_home_page_logged_in
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
@@ -96,19 +99,25 @@ def send_notification_endpoint(notifications_api_base_url):
 
 # https://git.knut.univention.de/univention/components/univention-portal/-/issues/712
 @pytest.mark.xfail()
-def test_two_notifications(login_and_clear_old_notifications,
-                           send_notification_endpoint,
-                           notification_json_data,
-                           notification_json_data_different_details,
-                           ):
+@pytest.mark.notifications
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_two_notifications(
+    login_and_clear_old_notifications,
+    send_notification_endpoint,
+    notification_json_data,
+    notification_json_data_different_details,
+):
     page = login_and_clear_old_notifications
     home_page_logged_in = HomePageLoggedIn(page)
     expect(home_page_logged_in.popup_notification_container).to_be_hidden()
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, \
-        f"Got status {response.status_code} while sending notification"
+    assert response.ok, f"Got status {response.status_code} while sending notification"
     expect(home_page_logged_in.popup_notification_container).to_be_visible()
-    expect(home_page_logged_in.popup_notification_container.notifications).to_have_count(1)
+    expect(
+        home_page_logged_in.popup_notification_container.notifications
+    ).to_have_count(1)
     notification = home_page_logged_in.popup_notification_container.notification(0)
     expect(notification).to_be_visible()
 
@@ -116,31 +125,39 @@ def test_two_notifications(login_and_clear_old_notifications,
     expect(link).to_have_count(1)
     expected_url = notification_json_data["link"]["url"]
     actual_url = link.get_attribute("href")
-    assert url_normalize(expected_url) == url_normalize(actual_url), \
-        f"Wrong link in notification pop up. Expected: {expected_url}, actual: {actual_url}"
+    assert url_normalize(expected_url) == url_normalize(
+        actual_url
+    ), f"Wrong link in notification pop up. Expected: {expected_url}, actual: {actual_url}"
 
     expected_target = notification_json_data["link"]["target"]
     actual_target = link.get_attribute("target")
-    assert expected_target == actual_target, \
-        f"Wrong link target in notification pop up. Expected: {expected_target}, actual: {actual_target}"
+    assert (
+        expected_target == actual_target
+    ), f"Wrong link target in notification pop up. Expected: {expected_target}, actual: {actual_target}"
     expected_link_text = notification_json_data["link"]["text"]
     actual_link_text = link.inner_text()
-    assert expected_link_text == actual_link_text, \
-        f"Wrong link text in notification pop up. Expected: {expected_link_text}, actual: {actual_link_text}"
+    assert (
+        expected_link_text == actual_link_text
+    ), f"Wrong link text in notification pop up. Expected: {expected_link_text}, actual: {actual_link_text}"
 
     expect(notification.title).to_have_text(
         f"{notification_json_data['severity'].capitalize()}: {notification_json_data['title']}",
     )
     expect(notification.details).to_have_text(notification_json_data["details"])
 
-    response = requests.post(send_notification_endpoint, json=notification_json_data_different_details)
-    assert response.ok, \
-        f"Got status {response.status_code} while sending notification"
-    home_page_logged_in.reveal_area(home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon)
+    response = requests.post(
+        send_notification_endpoint, json=notification_json_data_different_details
+    )
+    assert response.ok, f"Got status {response.status_code} while sending notification"
+    home_page_logged_in.reveal_area(
+        home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon
+    )
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(2)
     first_notification = home_page_logged_in.notification_drawer.notification(0)
     expect(first_notification).to_be_visible()
-    expect(first_notification.details).to_have_text(notification_json_data_different_details["details"])
+    expect(first_notification.details).to_have_text(
+        notification_json_data_different_details["details"]
+    )
     second_notification = home_page_logged_in.notification_drawer.notification(1)
     expect(second_notification).to_be_visible()
     expect(second_notification.details).to_have_text(notification_json_data["details"])
@@ -155,12 +172,17 @@ def logout_after_clearing_old_notifications(login_and_clear_old_notifications):
     return page
 
 
-def test_notification_expiry_time(logout_after_clearing_old_notifications,
-                                  send_notification_endpoint,
-                                  notification_json_data,
-                                  username,
-                                  password,
-                                  ):
+@pytest.mark.notifications
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_notification_expiry_time(
+    logout_after_clearing_old_notifications,
+    send_notification_endpoint,
+    notification_json_data,
+    username,
+    password,
+):
     page = logout_after_clearing_old_notifications
 
     dt_now = datetime.now(timezone.utc)
@@ -168,22 +190,28 @@ def test_notification_expiry_time(logout_after_clearing_old_notifications,
     notification_json_data["expireTime"] = expiry_dt.isoformat()
 
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, \
-        f"Got status {response.status_code} while sending notification"
+    assert response.ok, f"Got status {response.status_code} while sending notification"
     wait = (expiry_dt - dt_now).total_seconds()
     time.sleep(wait + 1)  # +1 for safety
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
     home_page_logged_in.is_displayed()
     expect(home_page_logged_in.popup_notification_container).to_be_hidden()
-    home_page_logged_in.reveal_area(home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon)
-    expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_visible()
+    home_page_logged_in.reveal_area(
+        home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon
+    )
+    expect(
+        home_page_logged_in.notification_drawer.no_notifications_heading
+    ).to_be_visible()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(0)
 
-    notification_json_data["expireTime"] = (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat()
+    notification_json_data["expireTime"] = (
+        datetime.now(timezone.utc) + timedelta(seconds=5)
+    ).isoformat()
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, \
-        f"Got status {response.status_code} while sending notification"
-    expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_hidden()
+    assert response.ok, f"Got status {response.status_code} while sending notification"
+    expect(
+        home_page_logged_in.notification_drawer.no_notifications_heading
+    ).to_be_hidden()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(1)
     expect(home_page_logged_in.notification_drawer.notification(0)).to_be_visible()

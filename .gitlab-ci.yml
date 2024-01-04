@@ -1,6 +1,9 @@
 ---
 
 variables:
+  scope:
+    description: "Pytest mark to select tests to run: acceptance_environment, development_environment, notifications, portal, i18n, saml, login, selfservice..."
+    value: "acceptance_environment"
   portal_base_url:
     description: "Base url of the portal e.g. https://portal.nightly.dev.souvap.cloud"
   username:
@@ -11,6 +14,11 @@ variables:
     description: "Username of admin user of the portal"
   admin_password:
     description: "Password of the admin user of the portal"
+  udm_admin_user:
+    description: "UDM admin user"
+    value: "cn=admin"
+  udm_admin_password:
+    description: "UDM admin password"
   keycloak_base_url:
     description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud"
   # TODO: Remove default values below once BFP is deployed in sovereign-workplace pipeline
@@ -54,10 +62,13 @@ e2e-tests:
   script:
     - |
       pytest --portal-base-url ${portal_base_url} \
+      -m ${scope} \
       --username ${username} \
       --password ${password} \
       --admin-username ${admin_username} \
       --admin-password ${admin_password} \
+      --udm-admin-username ${udm_admin_user} \
+      --udm-admin-password ${udm_admin_password} \
       --keycloak-base-url ${keycloak_base_url} \
       --kc-admin-username ${kc_admin_username} \
       --kc-admin-password ${kc_admin_password} \

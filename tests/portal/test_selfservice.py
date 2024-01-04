@@ -97,6 +97,10 @@ def dummy_user_home(
     home_page_logged_out.navigate()
 
 
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
     """
     Tests a user can update its password, doing so from the side-menu.
@@ -123,6 +127,10 @@ def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
     expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
 
 
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_set_recovery_email(dummy_user_home: (Page, str)):
     """
     Tests a user can set up a recovery email.
@@ -150,6 +158,10 @@ def test_set_recovery_email(dummy_user_home: (Page, str)):
     expect(set_recovery_email_page.retype_email_box).to_have_value(DUMMY_EMAIL)
 
 
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_manage_profile(dummy_user_home: (Page, str)):
     """
     Tests a user can manage their profile.
@@ -174,6 +186,10 @@ def test_manage_profile(dummy_user_home: (Page, str)):
     expect(set_recovery_email_page.description_box).to_have_value(DUMMY_DESCRIPTION)
 
 
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
     """
     Tests the selfservice portal is served and with the correct tiles.

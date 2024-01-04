@@ -28,10 +28,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import pytest
+
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 
 
+@pytest.mark.i18n
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_user_can_switch_language_to_german(navigate_to_home_page_logged_out):
     page = navigate_to_home_page_logged_out
     home_page = HomePageLoggedOut(page)
@@ -41,9 +47,15 @@ def test_user_can_switch_language_to_german(navigate_to_home_page_logged_out):
 
     home_page.reveal_area(home_page.right_side_menu, home_page.header.hamburger_icon)
     expect(home_page.right_side_menu.menu_entry("Sprache ändern")).to_be_visible()
-    expect(home_page.header.page_part_locator.get_by_role("button", name="Suche")).to_be_visible()
+    expect(
+        home_page.header.page_part_locator.get_by_role("button", name="Suche")
+    ).to_be_visible()
 
 
+@pytest.mark.i18n
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_user_can_switch_language_to_english(navigate_to_home_page_logged_out):
     page = navigate_to_home_page_logged_out
     home_page = HomePageLoggedOut(page)
@@ -54,4 +66,6 @@ def test_user_can_switch_language_to_english(navigate_to_home_page_logged_out):
 
     home_page.reveal_area(home_page.right_side_menu, home_page.header.hamburger_icon)
     expect(home_page.right_side_menu.menu_entry("Change Language")).to_be_visible()
-    expect(home_page.header.page_part_locator.get_by_role("button", name="Search")).to_be_visible()
+    expect(
+        home_page.header.page_part_locator.get_by_role("button", name="Search")
+    ).to_be_visible()
