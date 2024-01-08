@@ -2,7 +2,7 @@
 
 variables:
   scope:
-    description: "Pytest mark to select tests to run: acceptance_environment, development_environment, notifications, portal, i18n, saml, login, selfservice..."
+    description: "Pytest mark to select tests to run: acceptance_environment, development_environment, notifications, portal, i18n, announcements, saml, login, selfservice, cookies, users..."
     value: "acceptance_environment"
   portal_base_url:
     description: "Base url of the portal e.g. https://portal.nightly.dev.souvap.cloud"
@@ -20,25 +20,23 @@ variables:
   udm_admin_password:
     description: "UDM admin password"
   keycloak_base_url:
-    description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud"
-  # TODO: Remove default values below once BFP is deployed in sovereign-workplace pipeline
+    description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud (only needed for keycloak-extensions standalone)"
   kc_admin_username:
-    description: "Admin user for logging into Keycloak admin console"
+    description: "Admin user for logging into Keycloak admin console (only needed for keycloak-extensions standalone)"
     value: "admin"
   kc_admin_password:
-    description: "Password of Keycloak admin user"
-    value: "univention"
+    description: "Password of Keycloak admin user (only needed for keycloak-extensions standalone)"
   num_device_block:
-    description: "Number of failed logins for device block"
+    description: "Number of failed logins for device block (only needed for keycloak-extensions standalone)"
     value: "5"
   num_ip_block:
     description: "Number of failed logins for IP block"
     value: "7"
   release_duration:
-    description: "Blocks are released after this many seconds"
-    value: "60"
+    description: "Blocks are released after this many minutes"
+    value: "10"
   realm:
-    description: "Realm to attempt logins at"
+    description: "Realm to attempt logins at (only needed for keycloak-extensions standalone)"
     value: "master"
 
 
@@ -86,7 +84,8 @@ e2e-tests:
   tags:
     - "docker"
   only:
-    - "triggers"
     - "web"
     - "api"
+    - "triggers"
     - "pipelines"
+    - "schedules"

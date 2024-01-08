@@ -148,3 +148,13 @@ def udm_ldap_base(udm_rest_api_base_url, udm_session):
     result = udm_session.get(ldap_base_url)
     data = result.json()
     return data["dn"]
+
+
+@pytest.fixture
+def block_expiration_duration(pytestconfig):
+    return pytestconfig.option.release_duration
+
+
+@pytest.fixture
+def failed_attempts_before_ip_block(pytestconfig):
+    return pytestconfig.option.num_ip_block

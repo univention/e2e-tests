@@ -22,4 +22,19 @@ packages = ["src/umspages"]
 [tool.pytest.ini_options]
 pythonpath = [ "src" ]
 testpaths = [ "tests" ]
-markers = [ "saml: all tests that enforce SAML login. Other tests may also use SAML depending on the environment" ]
+markers = [
+    "saml: all tests that enforce SAML login. Other tests may also use SAML depending on the environment",
+    "acceptance_environment: target openDesk acceptance-environments",
+    "development_environment: target openDesk dev-env",
+    "portal: tests for univention-portal",
+    "selfservice: tests for updating profile, change recovery email, selfservice portal, etc.",
+    "brute_force_protection: test standalone keycloak-extensions (no univention-portal)",
+    "login: all tests related to login on univention-portal",
+    "logout: all tests related to logout on univention-portal",
+    "users: tests for user management console for admin users",
+    "notifications: tests related to univention-portal notifications",
+    "announcements: tests related to univention-portal announcements",
+    "i18n: univention-portal translations",
+    "cookies: univention-portal cookies banner and others",
+    "central_navigation: tests related to central navigation for the univention-portal"
+]

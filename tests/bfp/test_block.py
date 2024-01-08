@@ -64,7 +64,7 @@ def test_device_block(
     admin_console_home_page.is_displayed()
 
     chromium_ip_1_page.wait_for_timeout(
-        round(release_duration * 1000) + 1
+        round(release_duration * 60 * 1000) + 1
     )  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_1_page)
     admin_console_home_page.navigate(username, password)
@@ -95,7 +95,7 @@ def test_ip_block(
     admin_console_home_page.is_displayed()
 
     webkit_ip_1_page.wait_for_timeout(
-        round(release_duration * 1000) + 1
+        round(release_duration * 60 * 1000) + 1
     )  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(webkit_ip_1_page)
     admin_console_home_page.navigate(username, password)
@@ -126,7 +126,7 @@ def test_api_ip_block(
     assert r.status_code == 429
     assert r.text == "Too many failed login attempts on this IP. Wait for cooldown."
     # Allow handler to remove expired actions
-    sleep(release_duration + 1)
+    sleep(release_duration * 60 + 1)
     r = kc_api.get_oidc_token(username, password)
     assert r.status_code == 200
     assert r.json()["access_token"] is not None
