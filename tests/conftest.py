@@ -28,11 +28,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import pytest
 from urllib.parse import urljoin
 
-from univention.admin.rest.client import UDM
+import pytest
 
+from univention.admin.rest.client import UDM
 
 
 def pytest_addoption(parser):
@@ -42,28 +42,41 @@ def pytest_addoption(parser):
     parser.addoption("--password", help="Portal login password")
     parser.addoption("--admin-username", help="Portal admin login username")
     parser.addoption("--admin-password", help="Portal admin login password")
-    parser.addoption("--udm-admin-username", default="cn=admin", help="UDM admin login password")
-    parser.addoption("--udm-admin-password", default="univention", help="UDM admin login password")
+    parser.addoption(
+        "--udm-admin-username", default="cn=admin", help="UDM admin login password"
+    )
+    parser.addoption(
+        "--udm-admin-password", default="univention", help="UDM admin login password"
+    )
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
-    parser.addoption("--kc-admin-username", default="admin",
-                     help="Keycloak admin login username"
-                     )
-    parser.addoption("--kc-admin-password", default="univention",
-                     help="Keycloak admin login password"
-                     )
-    parser.addoption("--num-device-block", type=int, default=5,
-                     help="Number of failed logins for device block"
-                     )
-    parser.addoption("--num-ip-block", type=int, default=7,
-                     help="Number of failed logins for IP block"
-                     )
-    parser.addoption("--release-duration", type=int, default=60,
-                     help="Blocks are released after this many seconds"
-                     )
-    parser.addoption("--realm", default="master",
-                     help="Realm to attempt logins at"
-                     )
+    parser.addoption(
+        "--kc-admin-username", default="admin", help="Keycloak admin login username"
+    )
+    parser.addoption(
+        "--kc-admin-password",
+        default="univention",
+        help="Keycloak admin login password",
+    )
+    parser.addoption(
+        "--num-device-block",
+        type=int,
+        default=5,
+        help="Number of failed logins for device block",
+    )
+    parser.addoption(
+        "--num-ip-block",
+        type=int,
+        default=7,
+        help="Number of failed logins for IP block",
+    )
+    parser.addoption(
+        "--release-duration",
+        type=int,
+        default=60,
+        help="Blocks are released after this many seconds",
+    )
+    parser.addoption("--realm", default="master", help="Realm to attempt logins at")
 
 
 @pytest.fixture(scope="session")

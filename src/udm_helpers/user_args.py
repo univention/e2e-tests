@@ -1,8 +1,8 @@
 import random
-import univention.testing.strings as uts
-
-from typing import Optional
 from datetime import date, datetime, timedelta
+from typing import Optional
+
+from faker import Faker
 
 COUNTRY_CODES = (
     "AT",
@@ -34,6 +34,8 @@ COUNTRY_CODES = (
     "SE",
 )
 
+fake = Faker()
+
 
 def random_date(
     start_date: Optional[date] = None, end_date: Optional[date] = None
@@ -45,13 +47,13 @@ def random_date(
 
 
 def udm_user_args(minimal=True, suffix=""):
-    _username = uts.random_username() + suffix
+    _username = fake.user_name() + suffix
     result = {
-        "firstname": f"{uts.random_string()}{suffix}",
-        "lastname": f"{uts.random_string()}{suffix}",
+        "firstname": f"{fake.pystr()}{suffix}",
+        "lastname": f"{fake.pystr()}{suffix}",
         "username": _username,
         "displayName": _username,
-        "password": uts.random_string(),
+        "password": fake.pystr(),
         # 'mailHomeServer': f"{ucr['hostname']}.{ucr['domainname']}",
         # 'mailPrimaryAddress': f"{_username}@{ucr['domainname']}",
     }
@@ -61,51 +63,51 @@ def udm_user_args(minimal=True, suffix=""):
     result.update(
         {
             "birthday": random_date().strftime("%Y-%m-%d"),
-            "city": uts.random_string(),
+            "city": fake.pystr(),
             "country": random.choice(COUNTRY_CODES),
-            "description": uts.random_string(),
-            "employeeNumber": f"{3 * uts.random_int()}",
-            "employeeType": uts.random_string(),
-            "organisation": uts.random_string(),
-            "postcode": f"{3 * uts.random_int()}",
-            "street": uts.random_string(),
-            "title": uts.random_string(),
+            "description": fake.pystr(),
+            "employeeNumber": f"{3 * fake.pyint()}",
+            "employeeType": fake.pystr(),
+            "organisation": fake.pystr(),
+            "postcode": f"{3 * fake.pyint()}",
+            "street": fake.pystr(),
+            "title": fake.pystr(),
         }
     )
 
     result.update(
         {
             "roomNumber": [
-                f"{3 * uts.random_int()}",
-                f"{3 * uts.random_int()}",
+                f"{3 * fake.pyint()}",
+                f"{3 * fake.pyint()}",
             ],
             "departmentNumber": [
-                uts.random_string(),
-                uts.random_string(),
+                fake.pystr(),
+                fake.pystr(),
             ],
             "homePostalAddress": [
                 {
-                    "street": uts.random_string(),
-                    "zipcode": f"{5 * uts.random_int()}",
-                    "city": uts.random_string(),
-                    uts.random_string(): uts.random_string(),
+                    "street": fake.pystr(),
+                    "zipcode": f"{5 * fake.pyint()}",
+                    "city": fake.pystr(),
+                    fake.pystr(): fake.pystr(),
                 },
             ],
-            "homeTelephoneNumber": [uts.random_string(), uts.random_string()],
+            "homeTelephoneNumber": [fake.pystr(), fake.pystr()],
             # 'mailAlternativeAddress': [
             #     f"{uts.random_username()}@{ucr['domainname']}",
             #     f"{uts.random_username()}@{ucr['domainname']}"
             # ],
-            "mobileTelephoneNumber": [uts.random_string(), uts.random_string()],
-            "pagerTelephoneNumber": [uts.random_string(), uts.random_string()],
-            "phone": [f"{12 * uts.random_int()}", f"{12 * uts.random_int()}"],
+            "mobileTelephoneNumber": [fake.pystr(), fake.pystr()],
+            "pagerTelephoneNumber": [fake.pystr(), fake.pystr()],
+            "phone": [f"{12 * fake.pyint()}", f"{12 * fake.pyint()}"],
             # 'secretary': [
             #     f"uid=Administrator,cn=users,{ucr['ldap/base']}",
             #     f"uid=Guest,cn=users,{ucr['ldap/base']}"
             # ],
             "e-mail": [
-                f"{uts.random_username()}@{uts.random_username()}",
-                f"{uts.random_username()}@{uts.random_username()}",
+                f"{fake.user_name()}@{fake.user_name()}",
+                f"{fake.user_name()}@{fake.user_name()}",
             ],
         }
     )

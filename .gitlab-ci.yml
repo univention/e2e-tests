@@ -1,26 +1,4 @@
 ---
-include:
-  - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.12.0"
-    file:
-      - "defaults/stages.yaml"
-      - "jobs/semantic-release-env.yaml"
-      - "jobs/container-build-souvap.yaml"
-
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: '$CI_PIPELINE_SOURCE == "api"'
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    - if: '$CI_PIPELINE_SOURCE == "pipeline"'
-    - if: '$CI_PIPELINE_SOURCE == "trigger"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-
 variables:
   scope:
     description: "Pytest mark to select tests to run: acceptance_environment, development_environment, notifications, portal, i18n, announcements, saml, login, selfservice, cookies, users..."
@@ -62,81 +40,8 @@ variables:
     value: "master"
 
 
-.build-matrix: &build-matrix
-  - IMAGE_NAME:
-      - "e2e-tests-runner"
-    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
-    DOCKERFILE_PATH: "Dockerfile"
- 
-container-build:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-container-generate-sbom:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-container-sign:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-container-security-scan:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-push-image-souvap:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-container-sign-souvap:
-  parallel:
-    matrix: *build-matrix
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
-      when: "never"
-    - if: "$CI_COMMIT_BRANCH"
-
-
 e2e-tests:
-  image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:0.0.1-pre-jconde-pipeline-triggered-tests"
+  image: "mcr.microsoft.com/playwright/python:v1.37.0-jammy"
   artifacts:
     expose_as: "report"
     paths:
@@ -146,6 +51,9 @@ e2e-tests:
     reports:
       junit: "test_results.xml"
     expire_in: "14 days"
+  before_script:
+    - pip install --no-cache-dir pipenv
+    - pipenv sync --system
   script:
     - |
       pytest --portal-base-url ${portal_base_url} \

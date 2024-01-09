@@ -1,9 +1,9 @@
 from typing import Sequence, Union
 
 import pytest
-from univention.admin.rest.client import UDM, Object, ShallowObject
 
 from udm_helpers.user_args import udm_user_args
+from univention.admin.rest.client import UDM, Object, ShallowObject
 
 
 def check_group(groups: Sequence[Union[Object, ShallowObject]], name: str) -> bool:
@@ -25,7 +25,6 @@ def check_group(groups: Sequence[Union[Object, ShallowObject]], name: str) -> bo
 )
 @pytest.mark.portal
 @pytest.mark.development_environment
-@pytest.mark.acceptance_environment
 def test_udm_rest_attribute_to_group_mapper(udm: UDM, attribute_name, group_name):
     """
     The Atrribute to Group Mapper needs to be installed in both the UDM REST container

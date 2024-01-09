@@ -46,7 +46,7 @@ def test_portal_login_ip_block(
     block_expiration_duration,
 ):
     """
-    Tests the brute-force protection component IP block is working.a
+    Tests the brute-force protection component IP block is working.
 
     1. Attempt a given number of logins with wrong credentials.
     2. Expects the IP block message to appear.
