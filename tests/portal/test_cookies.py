@@ -61,9 +61,7 @@ def test_cookie_hardening_sets_samesite(logged_in_cookies):
 
 @pytest.mark.cookies
 @pytest.mark.portal
-@pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-@pytest.mark.xfail(reason="Pending fix in the deployment setup")
 def test_cookie_hardening_sets_secure(logged_in_cookies):
     umc_session_cookie = _get_cookie(logged_in_cookies, "UMCSessionId")
     assert umc_session_cookie["secure"] == True
