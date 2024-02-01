@@ -44,7 +44,7 @@ class HomePageLoggedIn(HomePage):
             "Univention Management Console", exact=True
         )
         self.users_tile = self.page.get_by_role(
-            "link", name=re.compile("User New Tab|Users iFrame")
+            "link", name=re.compile("Users New Tab|Users iFrame")
         )
         self.announcements_tile = self.page.get_by_role(
             "link", name=re.compile("Announcements New Tab")
