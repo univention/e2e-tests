@@ -114,6 +114,8 @@ def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
     change_password_page = ChangePasswordDialogPage(page)
     change_password_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
     change_password_page.change_password(DUMMY_USER_PASSWORD_1, DUMMY_USER_PASSWORD_2)
+    # NOTE: wait for the password change to occur
+    page.wait_for_timeout(5000)
 
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
