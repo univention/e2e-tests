@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import random
+from typing import Tuple
 
 import pytest
 from playwright.sync_api import Page
@@ -101,7 +102,7 @@ def dummy_user_home(
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
+def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     """
     Tests a user can update its password, doing so from the side-menu.
 
@@ -133,7 +134,7 @@ def test_non_admin_can_change_password(dummy_user_home: (Page, str)):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_set_recovery_email(dummy_user_home: (Page, str)):
+def test_set_recovery_email(dummy_user_home: Tuple[Page, str]):
     """
     Tests a user can set up a recovery email.
 
@@ -164,7 +165,7 @@ def test_set_recovery_email(dummy_user_home: (Page, str)):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_manage_profile(dummy_user_home: (Page, str)):
+def test_manage_profile(dummy_user_home: Tuple[Page, str]):
     """
     Tests a user can manage their profile.
     1. Logs in as the dummy user.
