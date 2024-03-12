@@ -29,7 +29,6 @@
 # <https://www.gnu.org/licenses/>.
 
 import re
-import string
 
 from ...common.base import BasePage
 from ..home_page.logged_in import HomePageLoggedIn
@@ -60,7 +59,7 @@ class SetRecoveryEmailDialogPage(BasePage):
         self.password_box.fill(password)
         self.next_button.click()
 
-    def set_recovery_email(self, email: string):
+    def set_recovery_email(self, email: str):
         self.email_box.fill(email)
         self.retype_email_box.fill(email)
         self.submit_button.click()
