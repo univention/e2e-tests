@@ -29,8 +29,6 @@
 # <https://www.gnu.org/licenses/>.
 
 import re
-import string
-
 from ...common.base import BasePage, BasePagePart, expect
 
 # TODO: The two classes in here should be handled in a better way,
@@ -64,14 +62,14 @@ class UsersPage(BasePage):
             .get_by_role("button", name="Delete")
         )
 
-    def add_user(self, username: string, password: string):
+    def add_user(self, username: str, password: str):
         expect(self.add_user_button).to_be_visible(timeout=10000)
         self.add_user_button.click()
         self.add_user_dialog.add_user(username, password)
         self.search_button.click()
         expect(self.page.get_by_role("gridcell", name=username)).to_be_visible()
 
-    def remove_user(self, username: string):
+    def remove_user(self, username: str):
         expect(self.add_user_button).to_be_visible(timeout=10000)
         # FIXME: If you click too fast the search button to reveal all users,
         # it will show an error. This is a workaround for that.
@@ -117,13 +115,13 @@ class UCSUsersPage(BasePage):
             .get_by_role("button", name="Delete")
         )
 
-    def add_user(self, username: string, password: string):
+    def add_user(self, username: str, password: str):
         expect(self.add_user_button).to_be_visible(timeout=10000)
         self.add_user_button.click()
         self.add_user_dialog.add_user(username, password)
         expect(self.iframe.locator(f"[id*={username}]")).to_be_visible()
 
-    def remove_user(self, username: string):
+    def remove_user(self, username: str):
         self.iframe.locator(f"[id*={username}]").click()
         self.delete_button.click()
         self.delete_confirm_button.click()
@@ -160,7 +158,7 @@ class AddUserDialog(BasePagePart):
             "button", name="Create user"
         )
 
-    def add_user(self, username: string, password: string):
+    def add_user(self, username: str, password: str):
         if self.container_indicator.is_visible():
             self.container_indicator.fill(":/users")
             self.page_part_locator.get_by_text(re.compile("users$")).click()
