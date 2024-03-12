@@ -28,8 +28,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import string
-
 from ...common.base import BasePage
 from ..home_page.logged_in import HomePageLoggedIn
 
@@ -52,7 +50,7 @@ class ChangePasswordDialogPage(BasePage):
         home_page_logged_in.right_side_menu.click_entry("User settings")
         home_page_logged_in.right_side_menu.click_sub_entry("Update my password")
 
-    def change_password(self, old_password: string, new_password: string):
+    def change_password(self, old_password: str, new_password: str):
         self.old_password_box.fill(old_password)
         self.new_password_box.fill(new_password)
         self.retype_password_box.fill(new_password)
