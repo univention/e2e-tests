@@ -1,7 +1,8 @@
-playwright==1.37.0
-pytest-html==4.0.0
-pytest-playwright==0.4.2
+playwright==1.42.0
+pytest-html==4.1.1
+pytest-playwright==0.4.4
 requests==2.31.0
+uritemplate==4.1.1
 url-normalize==1.4.3
 
 # Packages which are not available on a public package index
