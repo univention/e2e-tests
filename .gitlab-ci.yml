@@ -1,47 +1,31 @@
 ---
+include:
+  - project: "univention/customers/dataport/upx/common-ci"
+    ref: "v1.30.3"
+    file:
+      - "defaults/stages.yaml"
+      - "jobs/semantic-release-env.yaml"
+      - "jobs/container-build.yaml"
+
+
 variables:
-  scope:
-    description: "Pytest mark to select tests to run: acceptance_environment, development_environment, notifications, portal, i18n, announcements, saml, login, selfservice, cookies, users..."
-    value: "acceptance_environment"
-  portal_base_url:
-    description: "Base url of the portal e.g. https://portal.nightly.dev.souvap.cloud"
-  username:
-    description: "Username for logging into the portal"
-  password:
-    description: "Password for logging into the portal"
-  admin_username:
-    description: "Username of admin user of the portal"
-  admin_password:
-    description: "Password of the admin user of the portal"
-  udm_admin_user:
-    description: "UDM admin user"
-    value: "cn=admin"
-  udm_admin_password:
-    description: "UDM admin password"
-  keycloak_base_url:
-    description: "Base url of keycloak e.g. https://id.nightly.dev.souvap.cloud (only needed for keycloak-extensions standalone)"
-  kc_admin_username:
-    description: "Admin user for logging into Keycloak admin console (only needed for keycloak-extensions standalone)"
-    value: "admin"
-  kc_admin_password:
-    description: "Password of Keycloak admin user (only needed for keycloak-extensions standalone)"
-    value: "univention"
-  num_device_block:
-    description: "Number of failed logins for device block (only needed for keycloak-extensions standalone)"
-    value: "5"
-  num_ip_block:
-    description: "Number of failed logins for IP block"
-    value: "7"
-  release_duration:
-    description: "Blocks are released after this many minutes"
-    value: "10"
-  realm:
-    description: "Realm to attempt logins at (only needed for keycloak-extensions standalone)"
-    value: "master"
+  PORTAL_BASE_URL:
+    description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
+
+.build-matrix: &build-matrix
+  - IMAGE_NAME:
+      - "e2e-tests-runner"
+    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    DOCKERFILE_PATH: "Dockerfile"
+
+container-build:
+  parallel:
+    matrix: *build-matrix
 
 
 e2e-tests:
-  image: "mcr.microsoft.com/playwright/python:v1.37.0-jammy"
+  stage: "test"
+  image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:${RELEASE_VERSION}"
   artifacts:
     expose_as: "report"
     paths:
@@ -51,33 +35,10 @@ e2e-tests:
     reports:
       junit: "test_results.xml"
     expire_in: "14 days"
-  before_script:
-    - pip install --no-cache-dir pipenv
-    - pipenv sync --system
-  script:
-    - |
-      pytest --portal-base-url ${portal_base_url} \
-      -m ${scope} \
-      --username ${username} \
-      --password ${password} \
-      --admin-username ${admin_username} \
-      --admin-password ${admin_password} \
-      --udm-admin-username ${udm_admin_user} \
-      --udm-admin-password ${udm_admin_password} \
-      --keycloak-base-url ${keycloak_base_url} \
-      --kc-admin-username ${kc_admin_username} \
-      --kc-admin-password ${kc_admin_password} \
-      --num-device-block ${num_device_block} \
-      --num-ip-block ${num_ip_block} \
-      --release-duration ${release_duration} \
-      --realm ${realm} \
-      --junitxml test_results.xml \
-      --html report.html \
-      --self-contained-html \
-      --video retain-on-failure \
-      --tracing retain-on-failure \
-      --screenshot on \
-      --slowmo 100
+  variables:
+    PORTAL_BASE_URL: "${PORTAL_BASE_URL}"
+  script: |
+    ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
   tags:
     - "docker"
   rules:
