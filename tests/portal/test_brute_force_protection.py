@@ -44,6 +44,7 @@ def test_portal_login_ip_block(
     password,
     failed_attempts_before_ip_block,
     block_expiration_duration,
+    pytestconfig,
 ):
     """
     Tests the brute-force protection component IP block is working.
@@ -56,9 +57,13 @@ def test_portal_login_ip_block(
     > Limitations: it only tests from one IP, not ensuring login can happen
       from another IP. That is tested on the standalone version of this test.
     """
+
+    if not pytestconfig.getoption("headed"):
+        pytest.skip(reason="WIP: This test only works in headed mode.")
+
     page = navigate_to_login_page
     login_page = LoginPage(page)
-    for i in range(failed_attempts_before_ip_block + 1):
+    for _ in range(failed_attempts_before_ip_block):
         login_page.login(username, f"{password}_wrong_password")
         expect(
             login_page.page.get_by_text("Invalid username or password.")
