@@ -73,8 +73,8 @@ def pytest_addoption(parser):
     parser.addoption(
         "--release-duration",
         type=int,
-        default=60,
-        help="Blocks are released after this many seconds",
+        default=1,
+        help="Blocks are released after this many minutes",
     )
     parser.addoption("--realm", default="master", help="Realm to attempt logins at")
 
