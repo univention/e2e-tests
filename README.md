@@ -42,7 +42,7 @@ Here are **some** useful ones:
 Go to the [pipelines](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/-/pipelines)
 of this repo and run the pipeline with the following variables:
 
-- `PORTAL_BASE_URL`: The base URL of the portal to test. Example: `https://portal.uv-username.gaia.open-desk.cloud/univention/portal/`.
+- `TEST_PORTAL_BASE_URL`: The base URL of the portal to test. Example: `https://portal.uv-username.gaia.open-desk.cloud/univention/portal/`.
 
 The pipeline will use the default secrets for Gaia. But you can override them by
 setting `ADMIN_PASSWORD`, `USER_PASSWORD`, and `UDM_ADMIN_PASSWORD`.
