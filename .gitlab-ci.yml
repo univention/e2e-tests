@@ -8,10 +8,6 @@ include:
       - "jobs/container-build.yaml"
 
 
-variables:
-  PORTAL_BASE_URL:
-    description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
-
 .build-matrix: &build-matrix
   - IMAGE_NAME:
       - "e2e-tests-runner"
@@ -36,7 +32,8 @@ e2e-tests:
       junit: "test_results.xml"
     expire_in: "14 days"
   variables:
-    - PORTAL_BASE_URL
+    PORTAL_BASE_URL:
+      description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
   script: |
     ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
   tags:
