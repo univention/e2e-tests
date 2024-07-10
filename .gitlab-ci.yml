@@ -35,8 +35,8 @@ e2e-tests:
     reports:
       junit: "test_results.xml"
     expire_in: "14 days"
-    variables:
-      - PORTAL_BASE_URL
+  variables:
+    - PORTAL_BASE_URL
   script: |
     ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
   tags:
