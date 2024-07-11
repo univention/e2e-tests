@@ -65,7 +65,7 @@ class PortalPage(BasePage):
             self.page.locator("#notifications-visible"),
         )
         self.right_side_menu = RightSideMenu(self.page.locator("#portal-sidenavigation"))
-        self.cookie_dialog = CookieDialog(self.page.get_by_role("dialog", name="Cookie Consent"))
+        self.cookie_dialog = CookieDialog(self.page.get_by_role("dialog", name="Cookie Settings"))
 
     def remove_all_notifications(self):
         self.reveal_area(self.notification_drawer, self.header.bell_icon)
