@@ -48,6 +48,11 @@ def pytest_addoption(parser):
     parser.addoption(
         "--udm-admin-password", default="univention", help="UDM admin login password"
     )
+    parser.addoption(
+        "--portal-central-navigation-secret",
+        default="univention",
+        help="Shared secret with portal-server for central navigation",
+    )
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
     parser.addoption(
@@ -92,6 +97,11 @@ def udm_admin_password(pytestconfig):
 @pytest.fixture(scope="session")
 def portal_base_url(pytestconfig):
     return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture(scope="session")
+def portal_central_navigation_secret(pytestconfig):
+    return pytestconfig.getoption("--portal-central-navigation-secret")
 
 
 @pytest.fixture(scope="session")
