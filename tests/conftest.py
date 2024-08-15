@@ -34,6 +34,8 @@ import pytest
 import requests
 from univention.admin.rest.client import UDM
 
+from api.maildev import MaildevApi
+
 
 def pytest_addoption(parser):
     # Portal tests options
@@ -157,6 +159,14 @@ def _verify_email_test_api_configuration(api_session, base_url):
     config_url = urljoin(base_url, "/config")
     response = api_session.get(config_url)
     response.raise_for_status()
+
+
+@pytest.fixture(scope="session")
+def email_test_api(email_test_api_session, email_test_api_base_url):
+    """
+    An instance of `api.maildev.MaildevApi` preconfigured.
+    """
+    return MaildevApi(email_test_api_base_url, email_test_api_session)
 
 
 @pytest.fixture(scope="session")
