@@ -28,6 +28,22 @@ class MaildevApi:
 
         for email in all_emails:
             if email["to"][0]["address"] == to:
-                return email
+                return MaildevEmail(email)
         else:
             raise RuntimeError("No matching email found.")
+
+
+class MaildevEmail:
+    """
+    An abstraction of an email and the specific implementation for Maildev.
+    """
+
+    def __init__(self, data):
+        self._data = data
+
+    @property
+    def text(self):
+        """
+        The plain text variant of the email.
+        """
+        return self._data["text"]
