@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import re
+from typing import Optional
 from ...common.base import BasePage, BasePagePart, expect
 
 # TODO: The two classes in here should be handled in a better way,
@@ -145,6 +146,8 @@ class AddUserDialog(BasePagePart):
             "textbox", name="User name *"
         )
         self.next_button = self.page_part_locator.get_by_role("button", name="Next")
+        self.invite_email = self.page_part_locator.get_by_role(
+            "textbox", name="Mail address to which the invitation link is sent")
         self.set_password_button = self.page_part_locator.get_by_label(
             "Invite user via e-mail."
         )
@@ -158,7 +161,14 @@ class AddUserDialog(BasePagePart):
             "button", name="Create user"
         )
 
-    def add_user(self, username: str, password: str):
+    def add_user(
+        self,
+        username: str,
+        password: Optional[str] = None,
+        invite_email: Optional[str] = None,
+    ):
+        _assert_exactly_one_value_is_set(password, invite_email)
+
         if self.container_indicator.is_visible():
             self.container_indicator.fill(":/users")
             self.page_part_locator.get_by_text(re.compile("users$")).click()
@@ -169,9 +179,13 @@ class AddUserDialog(BasePagePart):
         self.last_name.fill(username)
         self.username.fill(username)
         self.next_button.click()
-        self.set_password_button.click()
-        self.password_box.fill(password)
-        self.retype_box.fill(password)
+        if password:
+            self.set_password_button.click()
+            self.password_box.fill(password)
+            self.retype_box.fill(password)
+        else:
+            self.invite_email.fill(invite_email)
+
         self.submit_password_button.click()
         expect(
             self.page_part_locator.get_by_text(
@@ -179,3 +193,8 @@ class AddUserDialog(BasePagePart):
             )
         ).to_be_visible()
         self.page_part_locator.press("Escape")
+
+
+def _assert_exactly_one_value_is_set(*values):
+    set_values = sum(bool(value) for value in values)
+    assert set_values == 1
