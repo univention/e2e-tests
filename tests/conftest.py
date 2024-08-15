@@ -31,7 +31,7 @@
 from urllib.parse import urljoin
 
 import pytest
-
+import requests
 from univention.admin.rest.client import UDM
 
 
@@ -47,6 +47,18 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--udm-admin-password", default="univention", help="UDM admin login password"
+    )
+    parser.addoption(
+        "--email-test-api-username", default="user", help="Username to access the email test API.")
+    parser.addoption(
+        "--email-test-api-password",
+        default="univention",
+        help="Password to access the email test API."
+    )
+    parser.addoption(
+        "--email-test-api-base-url",
+        default="",
+        help="Base URL to reach the email test API (Maildev).",
     )
     parser.addoption(
         "--portal-central-navigation-secret",
@@ -97,6 +109,54 @@ def udm_admin_password(pytestconfig):
 @pytest.fixture(scope="session")
 def portal_base_url(pytestconfig):
     return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture(scope="session")
+def email_test_api_username(pytestconfig):
+    """
+    The username required to access the email test API.
+    """
+    return pytestconfig.option.email_test_api_username
+
+
+@pytest.fixture(scope="session")
+def email_test_api_password(pytestconfig):
+    """
+    The password required to access the email test API.
+    """
+    return pytestconfig.option.email_test_api_password
+
+@pytest.fixture(scope="session")
+def email_test_api_base_url(pytestconfig):
+    """
+    The password required to access the email test API.
+    """
+    base_url = pytestconfig.option.email_test_api_base_url
+    if not base_url:
+        raise pytest.UsageError("E-Mail test API base URL is not provided.")
+    return base_url
+
+@pytest.fixture(scope="session")
+def email_test_api_session(email_test_api_username, email_test_api_password, email_test_api_base_url):
+    """
+    Prepares an instance of `requests.Session` to call the Maildev API
+
+    The object is configured with the user credentials, so that the users don't
+    have to deal with the authentication details of the api.
+    """
+    api_session = requests.Session()
+    api_session.auth = (email_test_api_username, email_test_api_password)
+    api_session.headers.update({"accept": "application/json"})
+    _verify_email_test_api_configuration(api_session, base_url=email_test_api_base_url)
+    return api_session
+
+
+def _verify_email_test_api_configuration(api_session, base_url):
+    # Using the config endpoint since the health endpoint does not require
+    # authentication.
+    config_url = urljoin(base_url, "/config")
+    response = api_session.get(config_url)
+    response.raise_for_status()
 
 
 @pytest.fixture(scope="session")
