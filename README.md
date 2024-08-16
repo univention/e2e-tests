@@ -8,6 +8,10 @@ The repository's content provides you with first insights into the containerized
 
 # End-to-end tests used by the SouvAP Dev team
 
+This README is a quick start guide to get the test suite up and running.
+
+Details about the design approach can be found in the [docs](docs) folder.
+
 ## Requirements
 
 Make sure to have `pipenv` available, see <https://pipenv.pypa.io/en/latest/>.
