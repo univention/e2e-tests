@@ -100,7 +100,7 @@ packages using the `[tool.pytest.ini_options]` in `pyproject.toml`), this will
 help the IDE in autocompletion etc., and generally improve the development
 experience.
 
-We have a [guide on writing Page Objects, tests and fixtures](guidelines.md).
+We have a [guide on writing Page Objects, tests and fixtures](docs/pom.md).
 
 ## Available tests
 

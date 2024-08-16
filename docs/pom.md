@@ -1,18 +1,6 @@
-# End-to-end testing guidelines
+# Page Object Model
 
-## Technology
-
-- We use the Python programming language for writing tests.
-- We use `playwright` for browser automation and make use of the
-  `pytest-playwright` plugin.
-
-You can find the documentation for `playwright` and `pytest` in the links below:
-
-1. [Playwright Documentation](https://playwright.dev/python/docs/intro)
-2. [Playwright API Reference](https://playwright.dev/python/docs/api/class-playwright)
-3. [Pytest docs](https://docs.pytest.org/en/7.2.x/)
-
-## Page Object Model
+## Overview
 
 We use the Page Object Model (POM) for representing webpages.
 You can find the Page Objects (POs) under `src/umspages` in this
@@ -176,13 +164,13 @@ class Header(BasePagePart):
         super().__init__(page_part_locator)
         # self.page_part_locator can be used to locate elements inside the page part
         self.subelement = self.page_part_locator.locator(...)
-   
+
     ...
 ```
 
-### More on Page Parts
+## More on Page Parts
 
-#### How to use Page Parts
+### How to use Page Parts
 
 Page Objects have a reference to the Page Parts that belong to them.
 
@@ -237,7 +225,7 @@ sidebar = hp.sidebar  # Call another Page Part directly from the parent
 sidebar.select_language("en")
 ```
 
-#### Page Parts inside Page Parts
+### Page Parts inside Page Parts
 
 Complex pages can have complex page parts, which leads to the need for nesting
 Page Parts. Luckily, due to Playwright's locator chaining, this is easy using
@@ -276,7 +264,7 @@ separated out into other Page Parts. It also encourages reusability, since a
 page part may appear in multiple locations on the page
 (more on how to do that later).
 
-### Page Object and Page Part aware `expect()`
+## Page Object and Page Part aware `expect()`
 
 In tests, we may often want to test a certain property of a page or a page
 part. In Playwright, this is done using the `expect()` method. For example,
@@ -327,11 +315,11 @@ If you follow the above rules, you should never have to access the attributes
 `page_part_locator` of Page Parts or `page` of Page Objects directly in your
 tests.
 
-### Writing custom error messages
+## Writing custom error messages
 
 Since we are on the topic of assertions using `expect()`, it is to be noted
 that at the time our test suite was first created, the Python version of Playwright
-did not support custom error messages in the `expect()` function. However, this 
+did not support custom error messages in the `expect()` function. However, this
 feature is now [available](https://playwright.dev/python/docs/test-assertions#custom-expect-message).
 
 For new page objects and tests, we recommend to include a custom
@@ -578,13 +566,13 @@ the `navigate()` method will lead to the logged-in state of the page (as expecte
 
 ### Navigating to pages that open in a new tab
 
-Navigating to certain pages from the root may be associated with opening new 
+Navigating to certain pages from the root may be associated with opening new
 tabs. In this case, we can make the page object aware of the new tab by calling
 `set_content(new_tab)` inside the `navigate()` method. This will make `self.page`
-point to the new tab and the page elements being defined with respect to the 
+point to the new tab and the page elements being defined with respect to the
 new tab.
 
-When the `navigate()` method opens new tabs, these tabs should be returned as 
+When the `navigate()` method opens new tabs, these tabs should be returned as
 a tuple by the method.
 
 Here's an example.
@@ -648,7 +636,7 @@ limitations. Here are the guidelines regarding that.
             self.header.click_hamburger_icon()
         expect(self.side_nav_drawer).to_be_visible()  # Checks performed at end
     ```
-   
+
 3. If you are implementing a more complex method, composed of multiple steps
    to achieve a goal, e.g. `remove_all_notifications()`, then you should
    perform assertions to check that the intermediate results are correct.
