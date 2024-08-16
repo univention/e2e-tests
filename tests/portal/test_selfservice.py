@@ -29,11 +29,13 @@
 # <https://www.gnu.org/licenses/>.
 
 import random
+import time
 from typing import Tuple
 
 import pytest
 from playwright.sync_api import Page
 
+from e2e.email.password_reset import PasswordResetEmail
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
@@ -42,6 +44,7 @@ from umspages.portal.selfservice.change_password import \
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
+from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import \
     SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UsersPage
@@ -115,6 +118,8 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     change_password_page = ChangePasswordDialogPage(page)
     change_password_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
     change_password_page.change_password(DUMMY_USER_PASSWORD_1, DUMMY_USER_PASSWORD_2)
+
+    # TODO: This is discouraged, use a different approach
     # NOTE: wait for the password change to occur
     page.wait_for_timeout(5000)
 
@@ -215,3 +220,44 @@ def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
     expect(selfservice_portal_logged_out.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_out.protect_account_tile).to_be_visible()
     expect(selfservice_portal_logged_out.password_forgotten_tile).to_be_visible()
+
+
+def test_admin_invites_new_user_via_email(
+        navigate_to_home_page_logged_in_as_admin,
+        dummy_username,
+        email_test_api,
+):
+    recovery_email = f'{dummy_username}@external-domain.test'
+    page = navigate_to_home_page_logged_in_as_admin
+    home_page_logged_in = HomePageLoggedIn(page)
+    home_page_logged_out = HomePageLoggedOut(page)
+
+    users_page = UsersPage(home_page_logged_in.click_users_tile())
+    users_page.add_user_button.click()
+    users_page.add_user_dialog.add_user(
+        username=dummy_username, invite_email=recovery_email)
+    users_page.close()
+
+    # TODO: Replace by a retry with timeout or maxretry
+    time.sleep(5)
+
+    email = email_test_api.get_one_email(to=recovery_email)
+
+    home_page_logged_out.navigate()
+
+    password_reset_email = PasswordResetEmail(email)
+    password_change_page = SetNewPasswordPage(page)
+    password_change_page.navigate(url=password_reset_email.link_with_token)
+    password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
+
+    # TODO: Replace this with a proper approach, it takes sometimes plenty of
+    # time until the login is possible.
+    time.sleep(60)
+
+    dummy_user_home_logged_in = HomePageLoggedIn(page)
+    dummy_user_home_logged_in.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    dummy_user_home_logged_in.reveal_area(
+        dummy_user_home_logged_in.right_side_menu,
+        dummy_user_home_logged_in.header.hamburger_icon,
+    )
+    expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
