@@ -34,9 +34,11 @@ default_user_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" nubus-nubus-
 default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" nubus-nubus-credentials -o jsonpath='{.data.admin_password}' | base64 -d)
 udm_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" nubus-udm-rest-api-credentials -o jsonpath="{.data['machine\.secret']}" | base64 -d)
 portal_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" nubus-portal-server -o jsonpath="{.spec.rules[0].host}")
+email_test_api_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
+email_test_api_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" maildev-web -o jsonpath='{.data.web-password}' | base64 -d)
 
 
-export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --username=default.user --password=${default_user_password} --udm-admin-username='cn=admin' --udm-admin-password=${udm_admin_password} --admin-username=default.admin --admin-password=${default_admin_password}"
+export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --username=default.user --password=${default_user_password} --udm-admin-username='cn=admin' --udm-admin-password=${udm_admin_password} --admin-username=default.admin --admin-password=${default_admin_password} --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
 
 
 echo
