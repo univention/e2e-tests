@@ -1,5 +1,29 @@
 # Code Structure of the Test Suite
 
+## Overview
+
+- `/docs` - Documentation about the e2e test suite and its design.
+
+- `/src` - Source code of the utilities which support the test suite.
+
+- `/src/e2e` - Base package for the source code.
+
+   This does contain the implementation of the Page Object models and various
+   utilities used as or by pytest fixtures.
+
+   Note: We are moving the other packages into the `e2e` package to avoid
+   clashes with other top level packages.
+
+- `/src/e2e/api` - (former `/src/api`) Utilities for API interaction.
+
+- `/src/e2e/email` - Contains email related models.
+
+- `/src/e2e/pages` - (former `/src/umspages`) Contains the Page Object Model
+  implementations.
+
+- `/tests` - All test cases are within this top level folder.
+
+
 ## Page Objects
 
 Page Objects are organized as follows in the `tests/pages` folder.
