@@ -7,4 +7,5 @@ available:
 - [Pytest Fixtures](./fixtures.md)
 - [Playwright usage recommendations](./playwright)
 - [Page Object Model](./pom.md)
+- [Stub data](./stub-data.md)
 - [Technology overview](./technology.md)
