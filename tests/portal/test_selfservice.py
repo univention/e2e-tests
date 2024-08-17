@@ -29,7 +29,6 @@
 # <https://www.gnu.org/licenses/>.
 
 import random
-import time
 from typing import Tuple
 
 import pytest
@@ -222,8 +221,25 @@ def test_admin_invites_new_user_via_email(
         dummy_username,
         email_test_api,
 ):
-    recovery_email = f'{dummy_username}@external-domain.test'
     page = navigate_to_home_page_logged_in_as_admin
+    password_change_page = SetNewPasswordPage(page)
+    recovery_email = f'{dummy_username}@external-domain.test'
+
+    create_user_via_ui_with_email_invitation(page, dummy_username, recovery_email)
+    password_reset_link = get_password_reset_link_with_token(email_test_api, recovery_email)
+    password_change_page.navigate(url=password_reset_link)
+    password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
+
+    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_1)
+
+
+def get_password_reset_link_with_token(email_test_api, recovery_email):
+    email = retrying(email_test_api.get_one_email)(to=recovery_email)
+    password_reset_email = PasswordResetEmail(email)
+    return password_reset_email.link_with_token
+
+
+def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_email):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
@@ -232,17 +248,7 @@ def test_admin_invites_new_user_via_email(
     users_page.add_user_dialog.add_user(
         username=dummy_username, invite_email=recovery_email)
     users_page.close()
-
-    email = retrying(email_test_api.get_one_email)(to=recovery_email)
-
     home_page_logged_out.navigate()
-
-    password_reset_email = PasswordResetEmail(email)
-    password_change_page = SetNewPasswordPage(page)
-    password_change_page.navigate(url=password_reset_email.link_with_token)
-    password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
-
-    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_1)
 
 
 def assert_user_can_log_in(page, username, password):
