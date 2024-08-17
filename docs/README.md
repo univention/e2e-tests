@@ -5,9 +5,10 @@ available:
 
 - [Code Structure](./code-structure.md)
 - [Pytest Fixtures](./fixtures.md)
-- [Playwright usage recommendations](./playwright)
+- [Playwright usage recommendations](./playwright.md)
 - [Page Object Model](./pom.md)
 - [Page Object Model - Email](./pom-email.md)
 - [Page Object Model - Inheritance](./pom-inheritance.md)
+- [Pytest recommendations](./pytest.md)
 - [Stub data](./stub-data.md)
 - [Technology overview](./technology.md)
