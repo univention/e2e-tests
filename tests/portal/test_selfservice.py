@@ -127,13 +127,7 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
 
-    dummy_user_home_logged_in = HomePageLoggedIn(page)
-    dummy_user_home_logged_in.navigate(dummy_username, DUMMY_USER_PASSWORD_2)
-    dummy_user_home_logged_in.reveal_area(
-        dummy_user_home_logged_in.right_side_menu,
-        dummy_user_home_logged_in.header.hamburger_icon,
-    )
-    expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
+    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_2)
 
 
 @pytest.mark.selfservice
@@ -248,9 +242,12 @@ def test_admin_invites_new_user_via_email(
     password_change_page.navigate(url=password_reset_email.link_with_token)
     password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
 
+    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_1)
 
+
+def assert_user_can_log_in(page, username, password):
     dummy_user_home_logged_in = HomePageLoggedIn(page)
-    dummy_user_home_logged_in.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    dummy_user_home_logged_in.navigate(username, password)
     dummy_user_home_logged_in.reveal_area(
         dummy_user_home_logged_in.right_side_menu,
         dummy_user_home_logged_in.header.hamburger_icon,
