@@ -36,6 +36,7 @@ import pytest
 from playwright.sync_api import Page
 
 from e2e.email.password_reset import PasswordResetEmail
+from e2e.decorators import retrying
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
@@ -238,10 +239,7 @@ def test_admin_invites_new_user_via_email(
         username=dummy_username, invite_email=recovery_email)
     users_page.close()
 
-    # TODO: Replace by a retry with timeout or maxretry
-    time.sleep(5)
-
-    email = email_test_api.get_one_email(to=recovery_email)
+    email = retrying(email_test_api.get_one_email)(to=recovery_email)
 
     home_page_logged_out.navigate()
 
