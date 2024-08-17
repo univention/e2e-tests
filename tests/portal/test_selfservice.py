@@ -248,9 +248,6 @@ def test_admin_invites_new_user_via_email(
     password_change_page.navigate(url=password_reset_email.link_with_token)
     password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
 
-    # TODO: Replace this with a proper approach, it takes sometimes plenty of
-    # time until the login is possible.
-    time.sleep(60)
 
     dummy_user_home_logged_in = HomePageLoggedIn(page)
     dummy_user_home_logged_in.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
