@@ -13,5 +13,6 @@ pdbpp = "*"
 faker = "==22.1.0"
 uritemplate = "==4.1.1"
 pytest = "*"
+tenacity = "*"
 
 [dev-packages]
