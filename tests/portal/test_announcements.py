@@ -30,6 +30,7 @@
 
 import pytest
 
+from e2e.decorators import retrying
 from umspages.common.base import expect
 from umspages.portal.announcements.announcements_page import AnnouncementsPage
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
@@ -66,10 +67,14 @@ def test_anonymous_user_sees_announcement(
     udm_fixtures, page, stub_announcement
 ):
     home_page = HomePage(page)
-    home_page.navigate()
     announcement_data = udm_fixtures.ensure_announcement(stub_announcement)
-    expected_title = announcement_data["properties"]["title"]["en_US"]
-    home_page.announcement_container.assert_announcement(title=expected_title)
+
+    def assert_announcement_is_visible():
+        home_page.navigate()
+        expected_title = announcement_data["properties"]["title"]["en_US"]
+        home_page.announcement_container.assert_announcement(title=expected_title)
+
+    retrying(assert_announcement_is_visible)()
 
 
 @pytest.mark.announcements
