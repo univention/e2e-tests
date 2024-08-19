@@ -22,6 +22,8 @@ class SetNewPasswordPage(BasePage):
         # self.retype_password_box = self.page.get_by_role("textbox", name="New password (retype)")
 
         self.submit_button = self.page.get_by_role("button", name="Change password")
+        self.password_change_successful_dialog = self.page.get_by_role(
+            "dialog", name="Password change successful")
 
     def navigate(self, url):
         self.page.goto(url)
@@ -30,5 +32,3 @@ class SetNewPasswordPage(BasePage):
         self.new_password_box.fill(password)
         self.retype_password_box.fill(password)
         self.submit_button.click()
-
-        # TODO: Expect "Your password has been successfully changed"
