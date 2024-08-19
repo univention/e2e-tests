@@ -30,11 +30,9 @@
 
 from ...common.base import BasePagePart
 
-from umspages.common.base import expect
-
 
 class AnnouncementContainer(BasePagePart):
 
-    def assert_announcement(self, title):
+    def get_title(self, title):
         announcement_title = self.page_part_locator.get_by_text(title)
-        expect(announcement_title).to_be_visible()
+        return announcement_title

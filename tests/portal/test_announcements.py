@@ -38,7 +38,7 @@ from umspages.portal.home_page.base import HomePage
 
 
 @pytest.fixture
-def stub_announcement(udm_ldap_base):
+def stub_announcement_data(udm_ldap_base):
     data = {
         "properties": {
             "allowedGroups": [],
@@ -59,20 +59,25 @@ def stub_announcement(udm_ldap_base):
     return data
 
 
+@pytest.fixture
+def stub_announcement(stub_announcement_data, udm_fixtures):
+    announcement = udm_fixtures.ensure_announcement(stub_announcement_data)
+    yield announcement
+    udm_fixtures.delete_resource(announcement)
+
+
 @pytest.mark.announcements
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_anonymous_user_sees_announcement(
-    udm_fixtures, page, stub_announcement
-):
+def test_anonymous_user_sees_announcement(page, stub_announcement):
     home_page = HomePage(page)
-    announcement_data = udm_fixtures.ensure_announcement(stub_announcement)
 
     def assert_announcement_is_visible():
         home_page.navigate()
-        expected_title = announcement_data["properties"]["title"]["en_US"]
-        home_page.announcement_container.assert_announcement(title=expected_title)
+        expected_title = stub_announcement["properties"]["title"]["en_US"]
+        title = home_page.announcement_container.get_title(title=expected_title)
+        expect(title).to_be_visible(timeout=1)
 
     retrying(assert_announcement_is_visible)()
 
