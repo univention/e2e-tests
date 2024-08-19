@@ -33,7 +33,7 @@ import pytest
 from umspages.common.base import expect
 from umspages.portal.announcements.announcements_page import AnnouncementsPage
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
-from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.home_page.base import HomePage
 
 
 @pytest.fixture
@@ -63,11 +63,11 @@ def stub_announcement(udm_ldap_base):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_anonymous_user_sees_announcement(
-    udm_fixtures, navigate_to_home_page_logged_out, stub_announcement
+    udm_fixtures, page, stub_announcement
 ):
+    home_page = HomePage(page)
+    home_page.navigate()
     announcement_data = udm_fixtures.ensure_announcement(stub_announcement)
-    page = navigate_to_home_page_logged_out
-    home_page = HomePageLoggedOut(page)
     expected_title = announcement_data["properties"]["title"]["en_US"]
     home_page.announcement_container.assert_announcement(title=expected_title)
 
