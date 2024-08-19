@@ -114,6 +114,11 @@ def portal_base_url(pytestconfig):
 
 
 @pytest.fixture(scope="session")
+def keycloak_base_url(pytestconfig):
+    return pytestconfig.getoption("--keycloak-base-url")
+
+
+@pytest.fixture(scope="session")
 def email_test_api_username(pytestconfig):
     """
     The username required to access the email test API.

@@ -57,11 +57,6 @@ def realm(pytestconfig):
     return pytestconfig.option.realm
 
 
-@pytest.fixture(scope="session")
-def keycloak_base_url(pytestconfig):
-    return pytestconfig.getoption("--keycloak-base-url")
-
-
 @pytest.fixture
 def num_device_block(pytestconfig):
     return pytestconfig.getoption("--num-device-block")
