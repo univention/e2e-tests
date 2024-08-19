@@ -73,13 +73,14 @@ def stub_announcement(stub_announcement_data, udm_fixtures):
 def test_anonymous_user_sees_announcement(page, stub_announcement):
     home_page = HomePage(page)
 
+    @retrying
     def assert_announcement_is_visible():
         home_page.navigate()
         expected_title = stub_announcement["properties"]["title"]["en_US"]
         title = home_page.announcement_container.get_title(title=expected_title)
         expect(title).to_be_visible(timeout=1)
 
-    retrying(assert_announcement_is_visible)()
+    assert_announcement_is_visible()
 
 
 @pytest.mark.announcements
