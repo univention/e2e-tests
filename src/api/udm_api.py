@@ -76,3 +76,13 @@ class UDMFixtures:
         assert result_data["properties"] == data["properties"]
         assert result_data["position"] == data["position"]
         return result_data
+
+    def delete_resource(self, data):
+        delete_url = _delete_url_from_resource_data(data)
+        response = self._session.delete(delete_url)
+        assert response.status_code == HTTPStatus.NO_CONTENT
+
+
+def _delete_url_from_resource_data(data):
+    delete_url = data["_links"]["udm:object/remove"][0]["href"]
+    return delete_url
