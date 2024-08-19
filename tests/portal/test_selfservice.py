@@ -222,14 +222,14 @@ def test_admin_invites_new_user_via_email(
         email_test_api,
 ):
     page = navigate_to_home_page_logged_in_as_admin
-    password_change_page = SetNewPasswordPage(page)
+    set_new_password_page = SetNewPasswordPage(page)
     recovery_email = f'{dummy_username}@external-domain.test'
 
     create_user_via_ui_with_email_invitation(page, dummy_username, recovery_email)
     password_reset_link = get_password_reset_link_with_token(email_test_api, recovery_email)
-    password_change_page.navigate(url=password_reset_link)
-    password_change_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
-    expect(password_change_page.password_change_successful_dialog).to_be_visible()
+    set_new_password_page.navigate(url=password_reset_link)
+    set_new_password_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
+    expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
 
     assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_1)
 
