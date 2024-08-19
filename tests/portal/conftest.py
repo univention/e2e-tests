@@ -63,8 +63,12 @@ def admin_password(pytestconfig):
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args, portal_base_url):
-    browser_context_args["base_url"] = portal_base_url
-    return browser_context_args
+    return {
+        **browser_context_args,
+        "base_url": portal_base_url,
+        "locale": "en-US",
+        "timezone_id": "Europe/Berlin",
+    }
 
 
 @pytest.fixture()
