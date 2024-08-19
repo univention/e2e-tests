@@ -38,7 +38,7 @@ from umspages.portal.home_page.base import HomePage
 
 
 @pytest.fixture
-def stub_announcement_data(udm_ldap_base):
+def stub_announcement_data(faker, udm_ldap_base):
     data = {
         "properties": {
             "allowedGroups": [],
@@ -46,7 +46,7 @@ def stub_announcement_data(udm_ldap_base):
             "message": {
                 "en_US": "Message content of E2E Test Announcement e2e-test-001."
             },
-            "name": "e2e-test-001",
+            "name": faker.numerify("e2e-test-%###"),
             "needsConfirmation": False,
             "objectFlag": [],
             "severity": "warn",
