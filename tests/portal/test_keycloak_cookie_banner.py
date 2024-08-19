@@ -70,8 +70,10 @@ def test_cookie_banner(page, show_banner, expected_visibility):
     cookie_banner = page.locator(".cookie-banner")
 
     if expected_visibility == "visible":
-        banner_text = cookie_banner.inner_text()
-        assert banner_text == "Test Cookie Settings EN\nTest cookie banner message EN\nACCEPT"
+        expect(cookie_banner).to_have_text(
+            "Test Cookie Settings EN\nTest cookie banner message EN\nACCEPT",
+            use_inner_text=True,
+        )
         button = page.locator("button.cookie-banner-button")
         expect(button).to_have_text("Accept")
         button.click()
