@@ -90,6 +90,6 @@ def test_cookie_banner(page, show_banner, expected_visibility):
         button = page.locator("button.cookie-banner-button")
         expect(button).to_have_text("Accept")
         button.click()
-        expect(cookie_banner).to_be_hidden(timeout=5000)
+        expect(cookie_banner).to_be_hidden()
     else:
-        expect(cookie_banner).to_be_hidden(timeout=5000)
+        expect(cookie_banner).to_be_hidden()
