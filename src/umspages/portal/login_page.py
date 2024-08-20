@@ -35,6 +35,7 @@ from .common.portal_page import PortalPage
 from .home_page.logged_out import HomePageLoggedOut
 
 
+# TODO: Split into UCSLoginPage and KeycloakLoginPage
 class LoginPage(PortalPage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
@@ -44,6 +45,11 @@ class LoginPage(PortalPage):
         self.password_input = self.page.get_by_label(re.compile("^Passwor(d|t)"))
         # TODO: Using regular expression to target both UCS and SouvAP envs. Needs a better solution.
         self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In|Anmelden)"))
+        # Keycloak login specific
+
+        # TODO: Missing role in the sources
+        # Should use "page.get_by_role("dialog", ...)" instead
+        self.cookie_dialog = self.page.locator(".cookie-banner .dialog")
 
     def navigate(self, cookies_accepted=False):
         home_page = HomePageLoggedOut(self.page)
