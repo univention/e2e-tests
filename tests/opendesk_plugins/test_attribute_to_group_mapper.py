@@ -42,6 +42,7 @@ def test_udm_rest_attribute_to_group_mapper(udm: UDM, attribute_name, group_name
 
     test_user.properties.update(
         {
+            # TODO: Use correct mail domain
             "mailPrimaryAddress": f"{test_user.properties['username']}@univention-organization.test",
         }
     )
