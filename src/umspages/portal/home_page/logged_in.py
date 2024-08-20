@@ -30,9 +30,9 @@
 
 import re
 
-from ...common.base import expect
 from ..login_page import LoginPage
 from .base import HomePage
+from e2e.decorators import retrying
 
 
 class HomePageLoggedIn(HomePage):
@@ -73,27 +73,35 @@ class HomePageLoggedIn(HomePage):
 
     def navigate(self, username, password):
         self.page.goto("/")
-        try:
-            expect(self.cookie_dialog).to_be_visible()
-        except AssertionError:
-            pass
-        else:
-            self.accept_cookies()
-        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-        try:
-            expect(self.right_side_menu.login_button).to_be_visible()
-        except AssertionError:
-            expect(self.right_side_menu.logout_button).to_be_visible()
-        else:
+
+        # TODO: Calling "navigate" should ensure that we are logged in.
+        # Detection of the login state either by checking the cookie or by
+        # looking at an element.
+        #
+        # Since every test case has a fresh browser context, we do actually
+        # know if we are logged in or not. This means that we could also remove
+        # the login-on-demand here and keep navigate very simple, and then
+        # instead demand that a test case states if it needs the login state or
+        # something else.
+        #
+        # Triggering the login is something which actually should NOT be done
+        # by the LoginPage, it does not know if which way the user wants to log
+        # in. The portal page should have a way to say "login_via_menu.click()"
+        # and then the LoginPage.login(username, password) can be called.
+
+        @retrying
+        def login():
             login_page = LoginPage(self.page)
             login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
             login_page.login(username, password)
-            self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-            expect(self.right_side_menu.logout_button).to_be_visible()
-            expect(self.right_side_menu.login_button).to_be_hidden()
-        finally:
-            self.hide_area(self.right_side_menu, self.header.hamburger_icon)
+            self.page.wait_for_url("/univention/portal/**", timeout=500)
+
+        login()
+
+        # TODO: Add logic to ensure that the portal does show tiles
+        import time
+        time.sleep(5)
 
     def is_displayed(self):
         # TODO: There seems to be nothing that's necessarily common between the UCS and SouvAP envs
