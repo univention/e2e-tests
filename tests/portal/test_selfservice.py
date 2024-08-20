@@ -335,7 +335,9 @@ def assert_user_can_log_in(page, username, password):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_user_requests_password_forgotten_link_from_login_page(page, user, email_test_api):
+def test_user_requests_password_forgotten_link_from_login_page(
+    page, user, email_test_api, faker,
+):
     login_page = LoginPage(page)
     login_page.navigate(cookies_accepted=True)
     login_page.forgot_password_link.click()
@@ -348,6 +350,14 @@ def test_user_requests_password_forgotten_link_from_login_page(page, user, email
 
     expect(notification).to_contain_text("Successfully sent Token")
 
-    email = retrying(email_test_api.get_one_email)(to=user.properties["PasswordRecoveryEmail"])
-    password_reset_email = PasswordResetEmail(email)
-    assert password_reset_email.link_with_token
+    link_with_token = get_password_reset_link_with_token(
+        email_test_api, user.properties["PasswordRecoveryEmail"])
+    assert link_with_token
+
+    page.goto(link_with_token)
+    new_password = faker.password()
+    set_new_password_page = SetNewPasswordPage(page)
+    set_new_password_page.set_new_password(password=new_password)
+    expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
+
+    assert_user_can_log_in(page, user.properties["username"], new_password)
