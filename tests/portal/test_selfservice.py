@@ -337,6 +337,9 @@ def test_user_requests_password_forgotten_link_from_login_page(
 
     expect(notification).to_contain_text("Successfully sent Token")
 
+    set_new_password_page = SetNewPasswordPage(page)
+    assert set_new_password_page.is_displayed()
+
     link_with_token = get_password_reset_link_with_token(
         email_test_api, user.properties["PasswordRecoveryEmail"])
     assert link_with_token
