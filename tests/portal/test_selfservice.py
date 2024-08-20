@@ -72,6 +72,48 @@ def email_domain(udm):
     mail_domains_module = udm.get("mail/domain")
     mail_domain = next(mail_domains_module.search()).open()
     return mail_domain.properties["name"]
+
+
+@pytest.fixture
+def external_email_domain(faker):
+    """
+    Returns an external email domain.
+
+    External means that this domain is not managed by the system under test. It
+    is intended for cases when a password recovery email shall be configured.
+    """
+    domain = f"{faker.domain_word()}.test"
+    return domain
+
+
+@pytest.fixture
+def user(udm, faker, email_domain, external_email_domain):
+    """
+    A regular user.
+
+    The user will be created for the test case and removed after the test case.
+    """
+    users_user = udm.get("users/user")
+    test_user = users_user.new()
+    username = f"test-{faker.user_name()}"
+
+    test_user.properties.update({
+        "firstname": faker.first_name(),
+        "lastname": faker.last_name(),
+        "username": username,
+        "displayName": faker.name(),
+        "password": faker.password(),
+        "mailPrimaryAddress": f"{username}@{email_domain}",
+        "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
+    })
+    test_user.save()
+
+    yield test_user
+
+    test_user.reload()
+    test_user.delete()
+
+
 @pytest.fixture()
 def dummy_user_home(
     navigate_to_home_page_logged_in_as_admin: Page,
