@@ -71,6 +71,36 @@ def mail_domain(udm):
     mail_domains_module = udm.get("mail/domain")
     mail_domain = next(mail_domains_module.search()).open()
     return mail_domain.properties["name"]
+
+
+@pytest.fixture
+def user(udm, faker, mail_domain):
+    """
+    A regular user.
+
+    The user will be created for the test case and removed after the test case.
+    """
+    users_user = udm.get("users/user")
+    test_user = users_user.new()
+    username = f"test-{faker.user_name()}"
+    external_mail_domain = "external-domain.test"
+
+    test_user.properties.update({
+        "firstname": faker.first_name(),
+        "lastname": faker.last_name(),
+        "username": username,
+        "displayName": faker.name(),
+        "password": faker.password(),
+        "mailPrimaryAddress": f"{username}@{mail_domain}",
+        "PasswordRecoveryEmail": f"{username}@{external_mail_domain}",
+    })
+    test_user.save()
+
+    yield test_user
+
+    test_user.delete()
+
+
 @pytest.fixture()
 def dummy_user_home(
     navigate_to_home_page_logged_in_as_admin: Page,
