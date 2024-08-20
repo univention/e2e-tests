@@ -80,11 +80,20 @@ class BasePage:
         """
         raise NotImplementedError
 
-    def is_displayed(self):
-        """Checks if the page corresponding to this Page Object is displayed
+    def is_displayed(self) -> bool:
+        """
+        Check if the page is displayed.
+
+        Checks if the page corresponding to this Page Object is displayed
         in the Playwright Page (browser tab).
         """
         raise NotImplementedError
+
+    def assert_is_displayed(self) -> None:
+        """
+        Asserts that this page is displayed.
+        """
+        assert self.is_displayed()
 
     def get_new_tab(self, clickable):
         """Clicking on some clickable elements opens a new tab/window.
