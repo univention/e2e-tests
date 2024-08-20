@@ -5,10 +5,14 @@ class SetNewPasswordPage(BasePage):
     """
     This is the page one reaches when using the "password reset" functionality.
 
-    This page can only be reached through a second channel like email or sms.
-    Either the user or an administrator does request a password reset. This
-    will trigger a message to the password recovery email address. The email
-    does contain a link with a token which must be used to reach this page.
+    This page can only be reached in the following ways:
+
+    1. Using the "Password forgotten" link in the `LoginPage`. After requesting
+       the token via e.g. email successfully this page will be shown.
+
+    2. Using one of the links from the email sent. Apart from (1) this email
+       can also be triggered by an administrator or through the Selfservice
+       portal.
     """
 
     def set_content(self, *args, **kwargs):
