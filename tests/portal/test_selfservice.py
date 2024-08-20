@@ -225,6 +225,10 @@ def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
     expect(selfservice_portal_logged_out.password_forgotten_tile).to_be_visible()
 
 
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_admin_invites_new_user_via_email(
         navigate_to_home_page_logged_in_as_admin,
         dummy_username,
