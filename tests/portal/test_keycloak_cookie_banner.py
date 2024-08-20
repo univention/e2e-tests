@@ -79,9 +79,10 @@ def test_cookie_banner(page, show_banner, expected_visibility):
 
     login_page = LoginPage(page)
     login_page.navigate()
-    cookie_banner = page.locator(".cookie-banner")
+    cookie_banner = page.locator(".cookie-banner .dialog")
 
     if expected_visibility == "visible":
+        expect(cookie_banner).to_be_visible()
         expect(cookie_banner).to_have_text(
             "Test Cookie Settings EN\nTest cookie banner message EN\nACCEPT",
             use_inner_text=True,
