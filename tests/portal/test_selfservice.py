@@ -63,7 +63,7 @@ def dummy_username():
 
 
 # TODO: Session scope
-@pytest.fixture
+@pytest.fixture(scope="class")
 def mail_domain(udm):
     """
     Returns a valid mail domain.
@@ -75,7 +75,7 @@ def mail_domain(udm):
     return mail_domain.properties["name"]
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def user(udm, faker, mail_domain):
     """
     A regular user.
@@ -322,32 +322,58 @@ def assert_user_can_log_in(page, username, password):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_user_requests_password_forgotten_link_from_login_page(
-    page, user, email_test_api, faker,
-):
-    login_page = LoginPage(page)
-    login_page.navigate(cookies_accepted=True)
-    login_page.forgot_password_link.click()
+class TestUserRequestsPasswordForgottenLinkFromLoginPage:
 
-    password_forgotten_page = PasswordForgottenPage(page)
-    password_forgotten_page.request_token_via_email(user.properties["username"])
+    @pytest.fixture(scope="class")
+    def page(self, browser, browser_context_args):
+        browser_context_args = browser_context_args.copy()
+        context = browser.new_context(**browser_context_args)
+        page = context.new_page()
+        yield page
+        page.close()
+        context.close()
 
-    expect(password_forgotten_page.popup_notification_container).to_be_visible()
-    notification = password_forgotten_page.popup_notification_container.notification(0)
+    @pytest.fixture(scope="class", autouse=True)
+    def request_password_link(self, page, user):
+        login_page = LoginPage(page)
+        login_page.navigate(cookies_accepted=True)
+        login_page.forgot_password_link.click()
 
-    expect(notification).to_contain_text("Successfully sent Token")
+        password_forgotten_page = PasswordForgottenPage(page)
+        password_forgotten_page.request_token_via_email(user.properties["username"])
 
-    set_new_password_page = SetNewPasswordPage(page)
-    assert set_new_password_page.is_displayed()
+    def test_notification_pops_up(self, page):
+        password_forgotten_page = PasswordForgottenPage(page)
+        expect(password_forgotten_page.popup_notification_container).to_be_visible()
+        notification = password_forgotten_page.popup_notification_container.notification(0)
 
-    link_with_token = get_password_reset_link_with_token(
-        email_test_api, user.properties["PasswordRecoveryEmail"])
-    assert link_with_token
+        expect(notification).to_contain_text("Successfully sent Token")
 
-    page.goto(link_with_token)
-    new_password = faker.password()
-    set_new_password_page = SetNewPasswordPage(page)
-    set_new_password_page.set_new_password(password=new_password)
-    expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
+    def test_set_new_password_page_is_displayed(self, page):
+        set_new_password_page = SetNewPasswordPage(page)
+        assert set_new_password_page.is_displayed()
 
-    assert_user_can_log_in(page, user.properties["username"], new_password)
+    @pytest.fixture(scope="class")
+    def link_with_token(self, email_test_api, user):
+        link_with_token = get_password_reset_link_with_token(
+            email_test_api, user.properties["PasswordRecoveryEmail"])
+        return link_with_token
+
+    def test_email_with_password_reset_link_has_been_sent(self, link_with_token):
+        assert link_with_token
+
+    @pytest.fixture(scope="class")
+    def set_new_password(self, page, link_with_token, faker):
+        page.goto(link_with_token)
+        new_password = faker.password()
+        set_new_password_page = SetNewPasswordPage(page)
+        set_new_password_page.set_new_password(password=new_password)
+        return new_password
+
+    def test_link_can_be_used_to_set_a_new_password(self, page, set_new_password):
+        set_new_password_page = SetNewPasswordPage(page)
+        expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
+
+    def test_login_with_new_password_is_possible(self, page, user, set_new_password):
+        new_password = set_new_password
+        assert_user_can_log_in(page, user.properties["username"], new_password)

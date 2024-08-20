@@ -185,9 +185,32 @@ def udm_rest_api_base_url(portal_base_url):
     return urljoin(portal_base_url, "/univention/udm/")
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def udm(udm_rest_api_base_url, udm_admin_username, udm_admin_password):
     udm = UDM(udm_rest_api_base_url, udm_admin_username, udm_admin_password)
     # test the connection
     udm.get_ldap_base()
     return udm
+
+
+@pytest.fixture(scope="class")
+def faker(request):
+    """
+    Returns a seeded and suitable `Faker` instance on "class" scope.
+    """
+    from faker import Faker
+    DEFAULT_SEED = 0
+
+    if "faker_locale" in request.fixturenames:
+        locale = request.getfixturevalue("faker_locale")
+        fake = Faker(locale=locale)
+    else:
+        fake = request.getfixturevalue("_session_faker")
+
+    seed = DEFAULT_SEED
+    if "faker_seed" in request.fixturenames:
+        seed = request.getfixturevalue("faker_seed")
+    fake.seed_instance(seed=seed)
+    fake.unique.clear()
+
+    return fake
