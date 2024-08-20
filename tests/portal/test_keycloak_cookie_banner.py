@@ -33,6 +33,18 @@ import json
 from umspages.common.base import expect
 from umspages.portal.login_page import LoginPage
 
+
+@pytest.fixture
+def browser_context_args(browser_context_args):
+    return {
+        **browser_context_args,
+        "storage_state": {
+            "cookies": [],
+            "origins": [],
+        },
+    }
+
+
 @pytest.mark.cookie_banner
 @pytest.mark.portal
 @pytest.mark.acceptance_environment
