@@ -39,11 +39,13 @@ from e2e.decorators import retrying
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.login_page import LoginPage
 from umspages.portal.selfservice.change_password import \
     ChangePasswordDialogPage
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
+from umspages.portal.selfservice.password_forgotten import PasswordForgottenPage
 from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import \
     SetRecoveryEmailDialogPage
@@ -314,3 +316,25 @@ def assert_user_can_log_in(page, username, password):
         dummy_user_home_logged_in.header.hamburger_icon,
     )
     expect(dummy_user_home_logged_in.right_side_menu.logout_button).to_be_visible()
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_user_requests_password_forgotten_link_from_login_page(page, user, email_test_api):
+    login_page = LoginPage(page)
+    login_page.navigate(cookies_accepted=True)
+    login_page.forgot_password_link.click()
+
+    password_forgotten_page = PasswordForgottenPage(page)
+    password_forgotten_page.request_token_via_email(user.properties["username"])
+
+    expect(password_forgotten_page.popup_notification_container).to_be_visible()
+    notification = password_forgotten_page.popup_notification_container.notification(0)
+
+    expect(notification).to_contain_text("Successfully sent Token")
+
+    email = retrying(email_test_api.get_one_email)(to=user.properties["PasswordRecoveryEmail"])
+    password_reset_email = PasswordResetEmail(email)
+    assert password_reset_email.link_with_token
