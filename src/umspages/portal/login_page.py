@@ -50,6 +50,7 @@ class LoginPage(PortalPage):
         # TODO: Missing role in the sources
         # Should use "page.get_by_role("dialog", ...)" instead
         self.cookie_dialog = self.page.locator(".cookie-banner .dialog")
+        self.forgot_password_link = self.page.get_by_role("link", name="Forgot password")
 
     def navigate(self, cookies_accepted=False):
         home_page = HomePageLoggedOut(self.page)
