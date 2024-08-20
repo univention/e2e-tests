@@ -54,10 +54,12 @@ def login_and_clear_old_notifications(
 ):
     page = navigate_to_home_page_logged_in
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.navigate(username, password)
-    home_page_logged_in.is_displayed()
     home_page_logged_in.remove_all_notifications()
     yield page
+    # TODO: Clear notifications in another way, e.g. fresh context? We don't
+    # know if we are logged in or not and instead of doing "if then else and if
+    # not" magic, a clean browser context, login, cleanup would be easier to
+    # understand.
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
     home_page_logged_in.remove_all_notifications()
