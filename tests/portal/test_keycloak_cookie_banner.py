@@ -86,8 +86,7 @@ def test_cookie_banner(page, show_banner, expected_visibility):
             "Test Cookie Settings EN\nTest cookie banner message EN",
             use_inner_text=True,
         )
-        button = page.locator("button.cookie-banner-button")
-        expect(button).to_have_text("Accept")
+        button = page.get_by_role("button", name="Accept")
         button.click()
         expect(login_page.cookie_dialog).to_be_hidden()
     else:
