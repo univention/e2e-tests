@@ -1,5 +1,8 @@
 
+from operator import attrgetter
 from urllib.parse import urljoin
+
+import dateutil.parser
 
 
 class MaildevApi:
@@ -26,11 +29,17 @@ class MaildevApi:
         response.raise_for_status()
         all_emails = response.json()
 
+        found_emails = []
         for email in all_emails:
             if email["to"][0]["address"] == to:
-                return MaildevEmail(email)
-        else:
+                found_emails.append(MaildevEmail(email))
+
+        if not found_emails:
             raise RuntimeError("No matching email found.")
+
+        found_emails = sorted(found_emails, key=attrgetter("date"), reverse=True)
+
+        return found_emails[0]
 
 
 class MaildevEmail:
@@ -47,3 +56,10 @@ class MaildevEmail:
         The plain text variant of the email.
         """
         return self._data["text"]
+
+    @property
+    def date(self):
+        """
+        The datetime based on the email's header "Date".
+        """
+        return dateutil.parser.isoparse(self._data["date"])
