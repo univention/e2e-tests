@@ -60,6 +60,18 @@ def dummy_username():
     yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 
 
+# TODO: Session scope
+@pytest.fixture
+def email_domain(udm):
+    """
+    Returns a valid email domain.
+
+    The email domain is valid in the context of the system under test and
+    discovered out of the configuration automatically.
+    """
+    mail_domains_module = udm.get("mail/domain")
+    mail_domain = next(mail_domains_module.search()).open()
+    return mail_domain.properties["name"]
 @pytest.fixture()
 def dummy_user_home(
     navigate_to_home_page_logged_in_as_admin: Page,
