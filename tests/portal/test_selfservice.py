@@ -120,7 +120,16 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     change_password_page.change_password(DUMMY_USER_PASSWORD_1, DUMMY_USER_PASSWORD_2)
 
     # TODO: This is discouraged, use a different approach
-    # NOTE: wait for the password change to occur
+    #
+    # Wait for the password change to occur. An improved version has to do the
+    # following things:
+    #
+    # 1. Retry the login. Sometimes it takes a few seconds until the login
+    #    works.
+    #
+    # 2. Reload the home page until the portal shows some content (tiles). This
+    #    happens because the consumers have to process the change events so
+    #    that the user is added into the portal data.
     page.wait_for_timeout(5000)
 
     dummy_user_home_logged_out = HomePageLoggedOut(page)
