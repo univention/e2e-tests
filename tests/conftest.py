@@ -198,3 +198,11 @@ def udm(udm_rest_api_base_url, udm_admin_username, udm_admin_password):
 def _verify_udm_rest_api_configuration(udm):
     ldap_base = udm.get_ldap_base()
     assert ldap_base
+
+
+@pytest.fixture(scope="session")
+def ldap_base_dn(udm) -> str:
+    """
+    Base DN of the LDAP directory.
+    """
+    return udm.get_ldap_base()
