@@ -40,7 +40,7 @@ from univention.admin.rest.client import UDM
 
 
 @contextmanager
-def create_visible_portal_entry(udm: UDM, udm_ldap_base):
+def create_visible_portal_entry(udm: UDM, ldap_base_dn):
     portals = udm.get("portals/entry")
     assert portals
     portal_entry = portals.new()
@@ -56,7 +56,7 @@ def create_visible_portal_entry(udm: UDM, udm_ldap_base):
 
     # Add portal_entry to the portal categories to make it visible and accessible through the URL
     # f"{portal_endpoint}/univention/portal/portal.json"
-    category = udm.obj_by_dn(f"cn=domain-service,cn=category,cn=portals,cn=univention,{udm_ldap_base}")
+    category = udm.obj_by_dn(f"cn=domain-service,cn=category,cn=portals,cn=univention,{ldap_base_dn}")
     category.properties["entries"].append(portal_entry.dn)
     category.save()
 
@@ -92,7 +92,7 @@ def wait_for_portal_update(udm: UDM, portal_base_url: str, portal_api_url):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_create_portal_entry(udm, wait_for_portal_update, udm_ldap_base):
-    with create_visible_portal_entry(udm, udm_ldap_base) as portal_entry:
+def test_create_portal_entry(udm, wait_for_portal_update, ldap_base_dn):
+    with create_visible_portal_entry(udm, ldap_base_dn) as portal_entry:
         entry_exists = wait_for_portal_update(portal_entry.dn)
         assert entry_exists

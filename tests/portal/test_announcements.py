@@ -38,7 +38,7 @@ from umspages.portal.home_page.base import HomePage
 
 
 @pytest.fixture
-def stub_announcement_data(faker, udm_ldap_base):
+def stub_announcement_data(faker, ldap_base_dn):
     data = {
         "properties": {
             "allowedGroups": [],
@@ -54,7 +54,7 @@ def stub_announcement_data(faker, udm_ldap_base):
             "visibleFrom": None,
             "visibleUntil": None,
         },
-        "position": f"cn=announcement,cn=portals,cn=univention,{udm_ldap_base}",
+        "position": f"cn=announcement,cn=portals,cn=univention,{ldap_base_dn}",
     }
     return data
 
