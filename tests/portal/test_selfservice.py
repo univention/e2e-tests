@@ -62,8 +62,7 @@ def dummy_username():
     yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 
 
-# TODO: Session scope
-@pytest.fixture
+@pytest.fixture(scope="session")
 def email_domain(udm):
     """
     Returns a valid email domain.
