@@ -37,9 +37,15 @@ class MaildevApi:
         if not found_emails:
             raise RuntimeError("No matching email found.")
 
-        found_emails = sorted(found_emails, key=attrgetter("date"), reverse=True)
+        found_email = _get_latest_email(found_emails)
 
-        return found_emails[0]
+        return found_email
+
+
+def _get_latest_email(emails):
+    emails = sorted(emails, key=attrgetter("date"), reverse=True)
+    return emails[0]
+
 
 
 class MaildevEmail:
