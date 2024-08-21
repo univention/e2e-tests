@@ -49,7 +49,7 @@ def notifications_api_base_url(portal_base_url):
 
 
 @pytest.fixture()
-def login_and_clear_old_notifications(navigate_to_home_page_logged_in, username, password):
+def login_and_clear_old_notifications(navigate_to_home_page_logged_in, admin_username, admin_password):
     page = navigate_to_home_page_logged_in
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.remove_all_notifications()
@@ -59,7 +59,7 @@ def login_and_clear_old_notifications(navigate_to_home_page_logged_in, username,
     # not" magic, a clean browser context, login, cleanup would be easier to
     # understand.
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.navigate(username, password)
+    home_page_logged_in.navigate(admin_username, admin_password)
     home_page_logged_in.remove_all_notifications()
 
 
@@ -172,8 +172,8 @@ def test_notification_expiry_time(
     logout_after_clearing_old_notifications,
     send_notification_endpoint,
     notification_json_data,
-    username,
-    password,
+    admin_username,
+    admin_password,
 ):
     page = logout_after_clearing_old_notifications
 
@@ -186,7 +186,7 @@ def test_notification_expiry_time(
     wait = (expiry_dt - dt_now).total_seconds()
     time.sleep(wait + 1)  # +1 for safety
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.navigate(username, password)
+    home_page_logged_in.navigate(admin_username, admin_password)
     home_page_logged_in.is_displayed()
     expect(home_page_logged_in.popup_notification_container).to_be_hidden()
     home_page_logged_in.reveal_area(home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon)

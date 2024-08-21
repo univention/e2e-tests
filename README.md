@@ -136,7 +136,7 @@ of this repo and run the pipeline with the following variables:
 - `TEST_PORTAL_BASE_URL`: The base URL of the portal to test. Example: `https://portal.uv-username.gaia.open-desk.cloud/univention/portal/`.
 
 The pipeline will use the default secrets for Gaia. But you can override them by
-setting `ADMIN_PASSWORD`, `USER_PASSWORD`, and `UDM_ADMIN_PASSWORD`.
+setting `ADMIN_PASSWORD` and `PORTAL_CENTRAL_NAVIGATION_SECRET`.
 
 
 ## Getting started based on a container
@@ -172,8 +172,6 @@ Once finished, run the following command:
 docker run -it --network="host" \
   -e NAMESPACE=uv-username \
   -e ADMIN_PASSWORD=secret \
-  -e USER_PASSWORD=secret \
-  -e UDM_ADMIN_PASSWORD=secret \
   e2e:latest
 ```
 
@@ -187,7 +185,7 @@ docker run -it --network="host" -e PYTEST_ADDOPTS="..." e2e:latest pytest --pdb
 Or just override one (or many) of the `PYTEST_ADDOPTS` flags:
 
 ```shell
-docker run -it --network="host" e2e:latest pytest --password custom_password
+docker run -it --network="host" e2e:latest pytest --admin-password custom_password
 ```
 
 

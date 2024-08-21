@@ -41,27 +41,11 @@ from univention.admin.rest.client import UDM
 def pytest_addoption(parser):
     # Portal tests options
     parser.addoption("--portal-base-url", help="Base URL of the univention portal")
-    parser.addoption("--username", help="Portal login username")
-    parser.addoption("--password", help="Portal login password")
-    parser.addoption("--admin-username", help="Portal admin login username")
-    parser.addoption("--admin-password", help="Portal admin login password")
-    parser.addoption("--udm-admin-username", default="cn=admin", help="UDM admin login password")
-    parser.addoption("--udm-admin-password", default="univention", help="UDM admin login password")
-    parser.addoption(
-        "--email-test-api-username",
-        default="user",
-        help="Username to access the email test API.",
-    )
-    parser.addoption(
-        "--email-test-api-password",
-        default="univention",
-        help="Password to access the email test API.",
-    )
-    parser.addoption(
-        "--email-test-api-base-url",
-        default="",
-        help="Base URL to reach the email test API (Maildev).",
-    )
+    parser.addoption("--admin-username", default="Administrator", help="Portal admin login username")
+    parser.addoption("--admin-password", default="univention", help="Portal admin login password")
+    parser.addoption("--email-test-api-username", default="user", help="Username to access the email test API.")
+    parser.addoption("--email-test-api-password", default="univention", help="Password to access the email test API.")
+    parser.addoption("--email-test-api-base-url", default="", help="Base URL to reach the email test API (Maildev).")
     parser.addoption(
         "--portal-central-navigation-secret",
         default="univention",
@@ -70,41 +54,22 @@ def pytest_addoption(parser):
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin", help="Keycloak admin login username")
-    parser.addoption(
-        "--kc-admin-password",
-        default="univention",
-        help="Keycloak admin login password",
-    )
-    parser.addoption(
-        "--num-device-block",
-        type=int,
-        default=5,
-        help="Number of failed logins for device block",
-    )
-    parser.addoption(
-        "--num-ip-block",
-        type=int,
-        default=7,
-        help="Number of failed logins for IP block",
-    )
-    parser.addoption(
-        "--release-duration",
-        type=int,
-        default=1,
-        help="Blocks are released after this many minutes",
-    )
+    parser.addoption("--kc-admin-password", default="univention", help="Keycloak admin login password")
+    parser.addoption("--num-device-block", type=int, default=5, help="Number of failed logins for device block")
+    parser.addoption("--num-ip-block", type=int, default=7, help="Number of failed logins for IP block")
+    parser.addoption("--release-duration", type=int, default=1, help="Blocks are released after this many minutes")
     parser.addoption("--realm", default="master", help="Realm to attempt logins at")
     parser.addoption("--randomly-seed", help="Seed to use for randomization.")
 
 
 @pytest.fixture(scope="session")
-def udm_admin_username(pytestconfig):
-    return pytestconfig.option.udm_admin_username
+def admin_username(pytestconfig):
+    return pytestconfig.option.admin_username
 
 
 @pytest.fixture(scope="session")
-def udm_admin_password(pytestconfig):
-    return pytestconfig.option.udm_admin_password
+def admin_password(pytestconfig):
+    return pytestconfig.option.admin_password
 
 
 @pytest.fixture(scope="session")
@@ -192,11 +157,11 @@ def udm_rest_api_base_url(portal_base_url):
 
 
 @pytest.fixture(scope="session")
-def udm(udm_rest_api_base_url, udm_admin_username, udm_admin_password):
+def udm(udm_rest_api_base_url, admin_username, admin_password):
     """
     A configured instance of the UDM Rest API client.
     """
-    udm = UDM(udm_rest_api_base_url, udm_admin_username, udm_admin_password)
+    udm = UDM(udm_rest_api_base_url, admin_username, admin_password)
     _verify_udm_rest_api_configuration(udm)
     return udm
 

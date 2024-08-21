@@ -39,11 +39,11 @@ from umspages.portal.login_page import LoginPage
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_login(navigate_to_login_page, username, password):
+def test_login(navigate_to_login_page, admin_username, admin_password):
     """Tests the plain UMC login in our devenv but the SAML login in the nightly deployment"""
     page = navigate_to_login_page
     login_page = LoginPage(page)
-    login_page.login(username, password)
+    login_page.login(admin_username, admin_password)
 
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.assert_logged_in()
@@ -53,11 +53,11 @@ def test_login(navigate_to_login_page, username, password):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_logout(navigate_to_login_page, username, password):
+def test_logout(navigate_to_login_page, admin_username, admin_password):
     """Tests the plain UMC logout in our devenv but the SAML login in the nightly deployment"""
     page = navigate_to_login_page
     login_page = LoginPage(page)
-    login_page.login(username, password)
+    login_page.login(admin_username, admin_password)
     home_page_logged_in = HomePageLoggedIn(page)
 
     home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
@@ -68,20 +68,20 @@ def test_logout(navigate_to_login_page, username, password):
 
 
 @pytest.mark.saml()
-def test_saml_login(navigate_to_saml_login_page, username, password):
+def test_saml_login(navigate_to_saml_login_page, admin_username, admin_password):
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
-    login_page.login(username, password)
+    login_page.login(admin_username, admin_password)
 
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.assert_logged_in()
 
 
 @pytest.mark.saml()
-def test_saml_logout(navigate_to_saml_login_page, username, password):
+def test_saml_logout(navigate_to_saml_login_page, admin_username, admin_password):
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
-    login_page.login(username, password)
+    login_page.login(admin_username, admin_password)
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.assert_logged_in()
 

@@ -40,8 +40,8 @@ from umspages.portal.login_page import LoginPage
 @pytest.mark.acceptance_environment
 def test_portal_login_ip_block(
     navigate_to_login_page,
-    username,
-    password,
+    admin_username,
+    admin_password,
     failed_attempts_before_ip_block,
     block_expiration_duration,
     pytestconfig,
@@ -64,12 +64,12 @@ def test_portal_login_ip_block(
     page = navigate_to_login_page
     login_page = LoginPage(page)
     for _ in range(failed_attempts_before_ip_block):
-        login_page.login(username, f"{password}_wrong_password")
+        login_page.login(admin_username, f"{admin_password}_wrong_password")
         expect(login_page.page.get_by_text("Invalid username or password.")).to_be_visible(timeout=4000)
     # keycloak-extensions handler processes all the failed login events every
     # two seconds
     page.wait_for_timeout(2200)
-    login_page.login(username, f"{password}_wrong_password")
+    login_page.login(admin_username, f"{admin_password}_wrong_password")
     ip_block_page = OnIPBlockPage(page)
     ip_block_page.is_displayed()
 
@@ -77,6 +77,6 @@ def test_portal_login_ip_block(
     page.wait_for_timeout(round(block_expiration_duration * 60 * 1000) + 1)
     login_page = LoginPage(page)
     login_page.navigate()
-    login_page.login(username, password)
+    login_page.login(admin_username, admin_password)
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.assert_logged_in()

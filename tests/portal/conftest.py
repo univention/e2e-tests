@@ -43,26 +43,6 @@ from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 
 
 @pytest.fixture(scope="session")
-def username(pytestconfig):
-    return pytestconfig.option.username
-
-
-@pytest.fixture(scope="session")
-def password(pytestconfig):
-    return pytestconfig.option.password
-
-
-@pytest.fixture(scope="session")
-def admin_username(pytestconfig):
-    return pytestconfig.option.admin_username
-
-
-@pytest.fixture(scope="session")
-def admin_password(pytestconfig):
-    return pytestconfig.option.admin_password
-
-
-@pytest.fixture(scope="session")
 def browser_context_args(browser_context_args, portal_base_url, keycloak_base_url):
     in_a_week = datetime.now() + timedelta(weeks=1)
     portal_cookie_domain = urlparse(portal_base_url).hostname
@@ -137,16 +117,16 @@ def navigate_to_saml_login_page(page):
 
 
 @pytest.fixture()
-def navigate_to_home_page_logged_in(page, username, password):
+def navigate_to_home_page_logged_in(page, admin_username, admin_password):
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.navigate(username, password)
+    home_page_logged_in.navigate(admin_username, admin_password)
     return page
 
 
 @pytest.fixture()
-def navigate_to_selfservice_portal_logged_in(page, username, password):
+def navigate_to_selfservice_portal_logged_in(page, admin_username, admin_password):
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_in.navigate(username, password)
+    selfservice_portal_logged_in.navigate(admin_username, admin_password)
     return page
 
 
@@ -158,7 +138,7 @@ def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_passwor
 
 
 @pytest.fixture(scope="session")
-def udm_session(udm_admin_username, udm_admin_password):
+def udm_session(admin_username, admin_password):
     """
     Prepares an instance of `requests.Session` to call the UDM Rest API.
 
@@ -166,7 +146,7 @@ def udm_session(udm_admin_username, udm_admin_password):
     requests will run with full permissions in the UDM Rest API.
     """
     udm_session = requests.Session()
-    udm_session.auth = (udm_admin_username, udm_admin_password)
+    udm_session.auth = (admin_username, admin_password)
     udm_session.headers.update({"accept": "application/json"})
     return udm_session
 

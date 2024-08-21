@@ -44,9 +44,9 @@ def test_navigation_api_returns_valid_icon_urls(navigation_api_url):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_navigation_api_returns_data_for_authenticated_user(
-    navigation_api_url, username, portal_central_navigation_secret
+    navigation_api_url, admin_username, portal_central_navigation_secret
 ):
-    response = requests.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
+    response = requests.get(navigation_api_url, auth=(admin_username, portal_central_navigation_secret))
     data = response.json()
 
     assert response.status_code == requests.codes.ok

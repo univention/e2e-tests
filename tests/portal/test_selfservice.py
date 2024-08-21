@@ -107,7 +107,7 @@ def user(udm, faker, email_domain, external_email_domain, user_password):
     """
     users_user = udm.get("users/user")
     test_user = users_user.new()
-    username = f"test-{faker.user_name()}"
+    username = f"test-{faker.unique.user_name()}"
 
     test_user.properties.update(
         {
@@ -333,9 +333,9 @@ def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_emai
     home_page_logged_out.navigate()
 
 
-def assert_user_can_log_in(page, username, password):
+def assert_user_can_log_in(page, admin_username, admin_password):
     dummy_user_home_logged_in = HomePageLoggedIn(page)
-    dummy_user_home_logged_in.navigate(username, password)
+    dummy_user_home_logged_in.navigate(admin_username, admin_password)
     dummy_user_home_logged_in.reveal_area(
         dummy_user_home_logged_in.right_side_menu,
         dummy_user_home_logged_in.header.hamburger_icon,
