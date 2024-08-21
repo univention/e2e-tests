@@ -177,20 +177,6 @@ def udm_fixtures(udm_rest_api_base_url, udm_session):
     return UDMFixtures(base_url=udm_rest_api_base_url, session=udm_session)
 
 
-@pytest.fixture()
-def udm_ldap_base(udm_rest_api_base_url, udm_session):
-    """
-    The base DN used by the LDAP directory behind the UDM Rest API.
-
-    This value is dynamically discovered and will only be available if the UDM
-    Rest API is up and running.
-    """
-    ldap_base_url = urljoin(udm_rest_api_base_url, "ldap/base/")
-    result = udm_session.get(ldap_base_url)
-    data = result.json()
-    return data["dn"]
-
-
 @pytest.fixture
 def block_expiration_duration(pytestconfig):
     return pytestconfig.option.release_duration
