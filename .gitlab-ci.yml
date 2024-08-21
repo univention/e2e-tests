@@ -4,6 +4,7 @@ include:
     ref: "v1.31.1"
     file:
       - "defaults/stages.yaml"
+      - "defaults/nubus-workflow.yaml"
       - "jobs/semantic-release-env.yaml"
       - "jobs/container-build.yaml"
 
