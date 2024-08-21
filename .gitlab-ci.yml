@@ -1,7 +1,7 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.30.3"
+    ref: "v1.31.1"
     file:
       - "defaults/stages.yaml"
       - "jobs/semantic-release-env.yaml"
@@ -46,4 +46,3 @@ e2e-tests:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "pipeline"'
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
-
