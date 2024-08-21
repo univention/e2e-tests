@@ -185,9 +185,16 @@ def udm_rest_api_base_url(portal_base_url):
     return urljoin(portal_base_url, "/univention/udm/")
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def udm(udm_rest_api_base_url, udm_admin_username, udm_admin_password):
+    """
+    A configured instance of the UDM Rest API client.
+    """
     udm = UDM(udm_rest_api_base_url, udm_admin_username, udm_admin_password)
-    # test the connection
-    udm.get_ldap_base()
+    _verify_udm_rest_api_configuration(udm)
     return udm
+
+
+def _verify_udm_rest_api_configuration(udm):
+    ldap_base = udm.get_ldap_base()
+    assert ldap_base
