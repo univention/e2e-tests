@@ -23,6 +23,17 @@ container-build:
     matrix: *build-matrix
 
 
+test-container:
+  stage: "test"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: "never"
+    - when: "on_success"
+  image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
+  script:
+    - pytest --fixtures
+
+
 e2e-tests:
   stage: "test"
   image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:${RELEASE_VERSION}"
@@ -47,4 +58,3 @@ e2e-tests:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "pipeline"'
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
-
