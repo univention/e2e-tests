@@ -27,4 +27,11 @@ if [ -z "$PYTEST_ADDOPTS" ]; then
     export PYTEST_ADDOPTS="-m ${MARKER} --admin-username ${ADMIN_USERNAME} --admin-password ${ADMIN_PASSWORD} --username ${USER_USERNAME} --password ${USER_PASSWORD} --udm-admin-username ${UDM_ADMIN_USERNAME} --udm-admin-password ${UDM_ADMIN_PASSWORD} --portal-central-navigation-secret ${PORTAL_CENTRAL_NAVIGATION_SECRET} --num-ip-block 7 --release-duration 1 --portal-base-url ${PORTAL_BASE_URL} --email-test-api-username=${EMAIL_TEST_API_USERNAME} --email-test-api-password=${EMAIL_TEST_API_PASSWORD} --email-test-api-base-url=${EMAIL_TEST_API_BASE_URL}"
 fi
 
+# NOTE: This will show secrets in the test logs.
+if [ -n "${DEBUG_PYTEST_ADDOPTS}" ]
+then
+    echo "PYTEST_ADDOPTS"
+    echo "${PYTEST_ADDOPTS}"
+fi
+
 exec "$@"
