@@ -78,7 +78,7 @@ def test_anonymous_user_sees_announcement(page, stub_announcement):
         home_page.navigate()
         expected_title = stub_announcement["properties"]["title"]["en_US"]
         title = home_page.announcement_container.get_title(title=expected_title)
-        expect(title).to_be_visible(timeout=1)
+        expect(title).to_be_visible(timeout=1000)
 
     assert_announcement_is_visible()
 
