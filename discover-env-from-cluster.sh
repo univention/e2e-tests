@@ -46,8 +46,17 @@ portal_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEAS
 keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-extensions-proxy" -o jsonpath="{.spec.rules[0].host}")
 email_test_api_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
 email_test_api_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" maildev-web -o jsonpath="{.data.web-password}" | base64 -d)
-portal_central_navigation_secret=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server-central-navigation-shared-secret" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
 
+# TODO: This is a workaround to mitigate the current secret handling
+the_usual_portal_central_navigation_secret=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server-central-navigation-shared-secret" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
+the_other_portal_central_navigation_secret=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-opendesk-portal-server-central-navigation" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
+
+if [ -n "$the_other_portal_central_navigation_secret" ]
+then
+    portal_central_navigation_secret="${the_other_portal_central_navigation_secret}"
+else
+    portal_central_navigation_secret="${the_usual_portal_central_navigation_secret}"
+fi
 
 export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --username=default.user --password=${default_user_password} --udm-admin-username='cn=admin' --udm-admin-password=${udm_admin_password} --admin-username=default.admin --admin-password=${default_admin_password} --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url} --portal-central-navigation-secret=${portal_central_navigation_secret} --keycloak-base-url=${keycloak_base_url}"
 
