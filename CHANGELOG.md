@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.3.0...v0.4.0) (2024-08-23)
+
+
+### Features
+
+* Allow a custom release name in discover script ([7c2a87f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/7c2a87fbfd9c74583f04a8873a4ac99aa754685a))
+
 ## [0.3.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.2.0...v0.3.0) (2024-08-23)
 
 
