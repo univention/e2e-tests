@@ -136,11 +136,16 @@ def email_test_api_password(pytestconfig):
 @pytest.fixture(scope="session")
 def email_test_api_base_url(pytestconfig):
     """
-    The password required to access the email test API.
+    The URL to reach the Maildev API.
+
+    This fixture does automatically flag test cases to be skipped if the URL is
+    not configured. This way the test suite can reasonably be used to test
+    deployments which don't have the full e2e testing support infrastructure
+    available.
     """
     base_url = pytestconfig.option.email_test_api_base_url
     if not base_url:
-        raise pytest.UsageError("E-Mail test API base URL is not provided.")
+        pytest.skip("Skipping, no email_test_api configuration provided.")
     return base_url
 
 @pytest.fixture(scope="session")
