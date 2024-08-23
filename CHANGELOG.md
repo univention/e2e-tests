@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.4.0...v0.5.0) (2024-08-23)
+
+
+### Features
+
+* Skip tests which require Maildev if no URL is configured ([0199319](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/019931967286227d50bf71cfb8bd3e570e47f174))
+
 ## [0.4.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.3.0...v0.4.0) (2024-08-23)
 
 
