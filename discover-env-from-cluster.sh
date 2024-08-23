@@ -44,7 +44,13 @@ default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_
 udm_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-udm-rest-api-credentials" -o jsonpath="{.data['machine\.secret']}" | base64 -d)
 portal_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
 keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-extensions-proxy" -o jsonpath="{.spec.rules[0].host}")
-email_test_api_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
+
+email_test_api_base_url=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
+if [ -n "$email_test_api_base_url" ]
+then
+    email_test_api_base_url="https://${email_test_api_base_url}"
+fi
+
 email_test_api_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" maildev-web -o jsonpath="{.data.web-password}" | base64 -d)
 
 # TODO: This is a workaround to mitigate the current secret handling
