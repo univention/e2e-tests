@@ -38,3 +38,14 @@ markers = [
     "cookies: univention-portal cookies banner and others",
     "central_navigation: tests related to central navigation for the univention-portal"
 ]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["I"]  # activate isort
+
+[tool.ruff.lint.isort]
+known-first-party = ["umspages", "e2e", "udm_helpers", "api", "univention"]
+known-local-folder = ["tests"]
