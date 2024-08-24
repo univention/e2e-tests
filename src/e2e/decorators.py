@@ -1,5 +1,9 @@
-from tenacity import retry, stop_after_delay, wait_fixed, before_sleep_log
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import logging
+
+from tenacity import before_sleep_log, retry, stop_after_delay, wait_fixed
 
 log = logging.getLogger(__name__)
 

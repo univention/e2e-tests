@@ -34,8 +34,7 @@ import pytest
 from playwright.sync_api import expect
 
 from api.keycloak_api import KeycloakAPI
-from umspages.keycloak.admin_console.admin_console_home_page import \
-    AdminConsoleHomePage
+from umspages.keycloak.admin_console.admin_console_home_page import AdminConsoleHomePage
 from umspages.keycloak.admin_login_page import AdminLoginPage
 from umspages.keycloak.on_block_page import OnDeviceBlockPage, OnIPBlockPage
 
@@ -63,9 +62,7 @@ def test_device_block(
     admin_console_home_page = AdminConsoleHomePage(webkit_ip_1_page)
     admin_console_home_page.is_displayed()
 
-    chromium_ip_1_page.wait_for_timeout(
-        round(release_duration * 60 * 1000) + 1
-    )  # + 1 for safety
+    chromium_ip_1_page.wait_for_timeout(round(release_duration * 60 * 1000) + 1)  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_1_page)
     admin_console_home_page.navigate(username, password)
     admin_console_home_page.is_displayed()
@@ -94,9 +91,7 @@ def test_ip_block(
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_2_page)
     admin_console_home_page.is_displayed()
 
-    webkit_ip_1_page.wait_for_timeout(
-        round(release_duration * 60 * 1000) + 1
-    )  # + 1 for safety
+    webkit_ip_1_page.wait_for_timeout(round(release_duration * 60 * 1000) + 1)  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(webkit_ip_1_page)
     admin_console_home_page.navigate(username, password)
     admin_console_home_page.is_displayed()

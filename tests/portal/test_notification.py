@@ -49,9 +49,7 @@ def notifications_api_base_url(portal_base_url):
 
 
 @pytest.fixture()
-def login_and_clear_old_notifications(
-    navigate_to_home_page_logged_in, username, password
-):
+def login_and_clear_old_notifications(navigate_to_home_page_logged_in, username, password):
     page = navigate_to_home_page_logged_in
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(username, password)
@@ -115,9 +113,7 @@ def test_two_notifications(
     response = requests.post(send_notification_endpoint, json=notification_json_data)
     assert response.ok, f"Got status {response.status_code} while sending notification"
     expect(home_page_logged_in.popup_notification_container).to_be_visible()
-    expect(
-        home_page_logged_in.popup_notification_container.notifications
-    ).to_have_count(1)
+    expect(home_page_logged_in.popup_notification_container.notifications).to_have_count(1)
     notification = home_page_logged_in.popup_notification_container.notification(0)
     expect(notification).to_be_visible()
 
@@ -145,19 +141,13 @@ def test_two_notifications(
     )
     expect(notification.details).to_have_text(notification_json_data["details"])
 
-    response = requests.post(
-        send_notification_endpoint, json=notification_json_data_different_details
-    )
+    response = requests.post(send_notification_endpoint, json=notification_json_data_different_details)
     assert response.ok, f"Got status {response.status_code} while sending notification"
-    home_page_logged_in.reveal_area(
-        home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon
-    )
+    home_page_logged_in.reveal_area(home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon)
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(2)
     first_notification = home_page_logged_in.notification_drawer.notification(0)
     expect(first_notification).to_be_visible()
-    expect(first_notification.details).to_have_text(
-        notification_json_data_different_details["details"]
-    )
+    expect(first_notification.details).to_have_text(notification_json_data_different_details["details"])
     second_notification = home_page_logged_in.notification_drawer.notification(1)
     expect(second_notification).to_be_visible()
     expect(second_notification.details).to_have_text(notification_json_data["details"])
@@ -197,21 +187,13 @@ def test_notification_expiry_time(
     home_page_logged_in.navigate(username, password)
     home_page_logged_in.is_displayed()
     expect(home_page_logged_in.popup_notification_container).to_be_hidden()
-    home_page_logged_in.reveal_area(
-        home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon
-    )
-    expect(
-        home_page_logged_in.notification_drawer.no_notifications_heading
-    ).to_be_visible()
+    home_page_logged_in.reveal_area(home_page_logged_in.notification_drawer, home_page_logged_in.header.bell_icon)
+    expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_visible()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(0)
 
-    notification_json_data["expireTime"] = (
-        datetime.now(timezone.utc) + timedelta(seconds=5)
-    ).isoformat()
+    notification_json_data["expireTime"] = (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat()
     response = requests.post(send_notification_endpoint, json=notification_json_data)
     assert response.ok, f"Got status {response.status_code} while sending notification"
-    expect(
-        home_page_logged_in.notification_drawer.no_notifications_heading
-    ).to_be_hidden()
+    expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_hidden()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(1)
     expect(home_page_logged_in.notification_drawer.notification(0)).to_be_visible()

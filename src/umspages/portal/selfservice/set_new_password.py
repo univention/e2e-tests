@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 from ...common.base import BasePage
 
 
@@ -27,8 +30,7 @@ class SetNewPasswordPage(BasePage):
         # self.retype_password_box = self.page.get_by_role("textbox", name="New password (retype)")
 
         self.submit_button = self.set_new_password_dialog.get_by_role("button", name="Change password")
-        self.password_change_successful_dialog = self.page.get_by_role(
-            "dialog", name="Password change successful")
+        self.password_change_successful_dialog = self.page.get_by_role("dialog", name="Password change successful")
 
     def navigate(self, url):
         self.page.goto(url)

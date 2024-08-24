@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
 
 from operator import attrgetter
 from urllib.parse import urljoin
@@ -45,7 +47,6 @@ class MaildevApi:
 def _get_latest_email(emails):
     emails = sorted(emails, key=attrgetter("date"), reverse=True)
     return emails[0]
-
 
 
 class MaildevEmail:

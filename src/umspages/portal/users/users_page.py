@@ -30,6 +30,7 @@
 
 import re
 from typing import Optional
+
 from ...common.base import BasePage, BasePagePart, expect
 
 # TODO: The two classes in here should be handled in a better way,
@@ -58,9 +59,7 @@ class UsersPage(BasePage):
         self.add_user_dialog = AddUserDialog(self.page.locator(":scope"))
         self.delete_button = self.page.get_by_role("button", name="Delete")
         self.delete_confirm_button = (
-            self.page.get_by_role("dialog")
-            .filter(has_text="Delete objects")
-            .get_by_role("button", name="Delete")
+            self.page.get_by_role("dialog").filter(has_text="Delete objects").get_by_role("button", name="Delete")
         )
 
     def add_user(self, username: str, password: str):
@@ -77,9 +76,7 @@ class UsersPage(BasePage):
         # objectProperty: Value is too short, it has to be at least of length 1
         self.search_button.click()
         try:
-            expect(
-                self.page.get_by_role("heading", name="Validation error")
-            ).to_be_visible()
+            expect(self.page.get_by_role("heading", name="Validation error")).to_be_visible()
             self.page.get_by_role("button", name="Ok").click()
             self.search_button.click()
         except AssertionError:
@@ -111,9 +108,7 @@ class UCSUsersPage(BasePage):
         self.column_header_path = self.iframe.get_by_role("columnheader", name="Path")
         self.delete_button = self.iframe.get_by_role("button", name="Delete")
         self.delete_confirm_button = (
-            self.iframe.get_by_role("dialog")
-            .filter(has_text="Delete objects")
-            .get_by_role("button", name="Delete")
+            self.iframe.get_by_role("dialog").filter(has_text="Delete objects").get_by_role("button", name="Delete")
         )
 
     def add_user(self, username: str, password: str):
@@ -132,34 +127,19 @@ class UCSUsersPage(BasePage):
 class AddUserDialog(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.container_indicator = self.page_part_locator.get_by_label(
-            "Container", exact=True
-        )
+        self.container_indicator = self.page_part_locator.get_by_label("Container", exact=True)
         self.template = self.page_part_locator.get_by_label("User template")
-        self.first_name = self.page_part_locator.get_by_role(
-            "textbox", name="First name *"
-        )
-        self.last_name = self.page_part_locator.get_by_role(
-            "textbox", name="Last name *"
-        )
-        self.username = self.page_part_locator.get_by_role(
-            "textbox", name="User name *"
-        )
+        self.first_name = self.page_part_locator.get_by_role("textbox", name="First name *")
+        self.last_name = self.page_part_locator.get_by_role("textbox", name="Last name *")
+        self.username = self.page_part_locator.get_by_role("textbox", name="User name *")
         self.next_button = self.page_part_locator.get_by_role("button", name="Next")
         self.invite_email = self.page_part_locator.get_by_role(
-            "textbox", name="Mail address to which the invitation link is sent")
-        self.set_password_button = self.page_part_locator.get_by_label(
-            "Invite user via e-mail."
+            "textbox", name="Mail address to which the invitation link is sent"
         )
-        self.password_box = self.page_part_locator.get_by_role(
-            "textbox", name="Password *"
-        )
-        self.retype_box = self.page_part_locator.get_by_role(
-            "textbox", name="Password (retype) *"
-        )
-        self.submit_password_button = self.page_part_locator.get_by_role(
-            "button", name="Create user"
-        )
+        self.set_password_button = self.page_part_locator.get_by_label("Invite user via e-mail.")
+        self.password_box = self.page_part_locator.get_by_role("textbox", name="Password *")
+        self.retype_box = self.page_part_locator.get_by_role("textbox", name="Password (retype) *")
+        self.submit_password_button = self.page_part_locator.get_by_role("button", name="Create user")
 
     def add_user(
         self,
@@ -187,11 +167,7 @@ class AddUserDialog(BasePagePart):
             self.invite_email.fill(invite_email)
 
         self.submit_password_button.click()
-        expect(
-            self.page_part_locator.get_by_text(
-                f'The user "{username}" has been created.'
-            )
-        ).to_be_visible()
+        expect(self.page_part_locator.get_by_text(f'The user "{username}" has been created.')).to_be_visible()
         self.page_part_locator.press("Escape")
 
 

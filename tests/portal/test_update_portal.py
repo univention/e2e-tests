@@ -44,14 +44,15 @@ def create_visible_portal_entry(udm: UDM, ldap_base_dn):
     portals = udm.get("portals/entry")
     assert portals
     portal_entry = portals.new()
-    portal_entry.properties.update({
-        "name": str(uuid.uuid1()),
-        "description": {"en_US": "New portal tile"},
-        "displayName": {"en_US": "New portal tile"},
-        "link": [["en_US", "http://example.com"]],
-        "activated": True,
-
-    })
+    portal_entry.properties.update(
+        {
+            "name": str(uuid.uuid1()),
+            "description": {"en_US": "New portal tile"},
+            "displayName": {"en_US": "New portal tile"},
+            "link": [["en_US", "http://example.com"]],
+            "activated": True,
+        }
+    )
     portal_entry.save()
 
     # Add portal_entry to the portal categories to make it visible and accessible through the URL

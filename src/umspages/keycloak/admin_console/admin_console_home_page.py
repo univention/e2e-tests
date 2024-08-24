@@ -29,8 +29,8 @@
 # <https://www.gnu.org/licenses/>.
 
 from ...common.base import expect
-from .common.admin_console_page import AdminConsolePage
 from ..admin_login_page import AdminLoginPage
+from .common.admin_console_page import AdminConsolePage
 
 
 class AdminConsoleHomePage(AdminConsolePage):

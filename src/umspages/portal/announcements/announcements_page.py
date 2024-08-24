@@ -32,7 +32,6 @@ from ...common.base import BasePage
 
 
 class AnnouncementsPage(BasePage):
-
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
 

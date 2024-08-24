@@ -35,8 +35,7 @@ class Header(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.account_menu_button = self.page_part_locator.get_by_role("button", name="admin")
-        self.account_menu_dropdown = AccountMenuDropdown(
-            self.page_part_locator.get_by_role("menu", name="admin"))
+        self.account_menu_dropdown = AccountMenuDropdown(self.page_part_locator.get_by_role("menu", name="admin"))
 
     def click_account_menu_button(self):
         self.account_menu_button.click()

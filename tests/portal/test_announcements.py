@@ -33,8 +33,8 @@ import pytest
 from e2e.decorators import retrying
 from umspages.common.base import expect
 from umspages.portal.announcements.announcements_page import AnnouncementsPage
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.base import HomePage
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
 
 
 @pytest.fixture
@@ -43,9 +43,7 @@ def stub_announcement_data(faker, ldap_base_dn):
         "properties": {
             "allowedGroups": [],
             "isSticky": False,
-            "message": {
-                "en_US": "Message content of E2E Test Announcement e2e-test-001."
-            },
+            "message": {"en_US": "Message content of E2E Test Announcement e2e-test-001."},
             "name": faker.numerify("e2e-test-%###"),
             "needsConfirmation": False,
             "objectFlag": [],
@@ -92,7 +90,5 @@ def test_admin_user_can_view_announcements_page(
 ):
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
-    announcements_page = AnnouncementsPage(
-        home_page_logged_in.click_announcements_tile()
-    )
+    announcements_page = AnnouncementsPage(home_page_logged_in.click_announcements_tile())
     expect(announcements_page.add_button).to_be_visible()

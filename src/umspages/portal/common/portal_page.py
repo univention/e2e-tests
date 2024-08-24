@@ -29,12 +29,12 @@
 # <https://www.gnu.org/licenses/>.
 
 from ...common.base import BasePage, expect
+from ..exceptions import PortalError
 from .announcements import AnnouncementContainer
 from .cookie_dialog import CookieDialog
 from .header import Header
 from .notifications import NotificationDrawer, PopupNotificationContainer
 from .right_side_menu import RightSideMenu
-from ..exceptions import PortalError
 
 
 class PortalPage(BasePage):

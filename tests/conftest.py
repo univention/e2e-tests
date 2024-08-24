@@ -32,9 +32,9 @@ from urllib.parse import urljoin
 
 import pytest
 import requests
-from univention.admin.rest.client import UDM
 
 from api.maildev import MaildevApi
+from univention.admin.rest.client import UDM
 
 
 def pytest_addoption(parser):
@@ -44,18 +44,17 @@ def pytest_addoption(parser):
     parser.addoption("--password", help="Portal login password")
     parser.addoption("--admin-username", help="Portal admin login username")
     parser.addoption("--admin-password", help="Portal admin login password")
+    parser.addoption("--udm-admin-username", default="cn=admin", help="UDM admin login password")
+    parser.addoption("--udm-admin-password", default="univention", help="UDM admin login password")
     parser.addoption(
-        "--udm-admin-username", default="cn=admin", help="UDM admin login password"
+        "--email-test-api-username",
+        default="user",
+        help="Username to access the email test API.",
     )
-    parser.addoption(
-        "--udm-admin-password", default="univention", help="UDM admin login password"
-    )
-    parser.addoption(
-        "--email-test-api-username", default="user", help="Username to access the email test API.")
     parser.addoption(
         "--email-test-api-password",
         default="univention",
-        help="Password to access the email test API."
+        help="Password to access the email test API.",
     )
     parser.addoption(
         "--email-test-api-base-url",
@@ -69,9 +68,7 @@ def pytest_addoption(parser):
     )
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
-    parser.addoption(
-        "--kc-admin-username", default="admin", help="Keycloak admin login username"
-    )
+    parser.addoption("--kc-admin-username", default="admin", help="Keycloak admin login username")
     parser.addoption(
         "--kc-admin-password",
         default="univention",
@@ -133,6 +130,7 @@ def email_test_api_password(pytestconfig):
     """
     return pytestconfig.option.email_test_api_password
 
+
 @pytest.fixture(scope="session")
 def email_test_api_base_url(pytestconfig):
     """
@@ -147,6 +145,7 @@ def email_test_api_base_url(pytestconfig):
     if not base_url:
         pytest.skip("Skipping, no email_test_api configuration provided.")
     return base_url
+
 
 @pytest.fixture(scope="session")
 def email_test_api_session(email_test_api_username, email_test_api_password, email_test_api_base_url):

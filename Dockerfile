@@ -1,8 +1,11 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 FROM mcr.microsoft.com/playwright/python:v1.37.0-jammy as build
 WORKDIR /e2e/
 COPY ./Pipfile .
 COPY ./Pipfile.lock .
-RUN pip install --no-cache-dir pipenv && \
+RUN pip install --no-cache-dir pipenv==2024.0.1 && \
     pipenv sync --system && \
     playwright install --with-deps
 

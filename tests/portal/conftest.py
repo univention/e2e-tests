@@ -29,7 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from datetime import datetime, timedelta
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 import pytest
 import requests
@@ -81,29 +81,29 @@ def browser_context_args(browser_context_args, portal_base_url, keycloak_base_ur
             # Tests which explicitly need fresh cookies can use e.g.
             # `pytest.mark.browser_context_args` or define this fixture in a
             # smaller scope to adjust things.
-            'cookies': [
+            "cookies": [
                 {
-                    'domain': f'.{keycloak_cookie_domain}',
-                    'expires': in_a_week.timestamp(),
-                    'httpOnly': False,
-                    'name': 'univentionCookieSettingsAccepted',
-                    'path': '/',
-                    'sameSite': 'Strict',
-                    'secure': False,
-                    'value': 'do-not-change-me',
+                    "domain": f".{keycloak_cookie_domain}",
+                    "expires": in_a_week.timestamp(),
+                    "httpOnly": False,
+                    "name": "univentionCookieSettingsAccepted",
+                    "path": "/",
+                    "sameSite": "Strict",
+                    "secure": False,
+                    "value": "do-not-change-me",
                 },
                 {
-                    'domain': f'.{portal_cookie_domain}',
-                    'expires': in_a_week.timestamp(),
-                    'httpOnly': False,
-                    'name': 'univentionCookieSettingsAccepted',
-                    'path': '/',
-                    'sameSite': 'Strict',
-                    'secure': False,
-                    'value': 'do-not-change-me',
+                    "domain": f".{portal_cookie_domain}",
+                    "expires": in_a_week.timestamp(),
+                    "httpOnly": False,
+                    "name": "univentionCookieSettingsAccepted",
+                    "path": "/",
+                    "sameSite": "Strict",
+                    "secure": False,
+                    "value": "do-not-change-me",
                 },
             ],
-            'origins': [],
+            "origins": [],
         },
     }
 

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 from urllib.parse import urljoin
 
 import pytest
@@ -43,9 +46,7 @@ def test_navigation_api_returns_valid_icon_urls(navigation_api_url):
 def test_navigation_api_returns_data_for_authenticated_user(
     navigation_api_url, username, portal_central_navigation_secret
 ):
-    response = requests.get(
-        navigation_api_url, auth=(username, portal_central_navigation_secret)
-    )
+    response = requests.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
     data = response.json()
 
     assert response.status_code == requests.codes.ok

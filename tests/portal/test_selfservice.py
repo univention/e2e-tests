@@ -34,21 +34,19 @@ from typing import Tuple
 import pytest
 from playwright.sync_api import Page
 
-from e2e.email.password_reset import PasswordResetEmail
 from e2e.decorators import retrying
+from e2e.email.password_reset import PasswordResetEmail
 from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
-from umspages.portal.selfservice.change_password import \
-    ChangePasswordDialogPage
+from umspages.portal.selfservice.change_password import ChangePasswordDialogPage
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
 from umspages.portal.selfservice.password_forgotten import PasswordForgottenPage
 from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
-from umspages.portal.selfservice.set_recovery_email import \
-    SetRecoveryEmailDialogPage
+from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UsersPage
 
 DUMMY_USER_PASSWORD_1 = "firstpass"
@@ -98,15 +96,17 @@ def user(udm, faker, email_domain, external_email_domain):
     test_user = users_user.new()
     username = f"test-{faker.user_name()}"
 
-    test_user.properties.update({
-        "firstname": faker.first_name(),
-        "lastname": faker.last_name(),
-        "username": username,
-        "displayName": faker.name(),
-        "password": faker.password(),
-        "mailPrimaryAddress": f"{username}@{email_domain}",
-        "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
-    })
+    test_user.properties.update(
+        {
+            "firstname": faker.first_name(),
+            "lastname": faker.last_name(),
+            "username": username,
+            "displayName": faker.name(),
+            "password": faker.password(),
+            "mailPrimaryAddress": f"{username}@{email_domain}",
+            "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
+        }
+    )
     test_user.save()
 
     yield test_user
@@ -285,13 +285,13 @@ def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_admin_invites_new_user_via_email(
-        navigate_to_home_page_logged_in_as_admin,
-        dummy_username,
-        email_test_api,
+    navigate_to_home_page_logged_in_as_admin,
+    dummy_username,
+    email_test_api,
 ):
     page = navigate_to_home_page_logged_in_as_admin
     set_new_password_page = SetNewPasswordPage(page)
-    recovery_email = f'{dummy_username}@external-domain.test'
+    recovery_email = f"{dummy_username}@external-domain.test"
 
     create_user_via_ui_with_email_invitation(page, dummy_username, recovery_email)
     password_reset_link = get_password_reset_link_with_token(email_test_api, recovery_email)
@@ -314,8 +314,7 @@ def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_emai
 
     users_page = UsersPage(home_page_logged_in.click_users_tile())
     users_page.add_user_button.click()
-    users_page.add_user_dialog.add_user(
-        username=dummy_username, invite_email=recovery_email)
+    users_page.add_user_dialog.add_user(username=dummy_username, invite_email=recovery_email)
     users_page.close()
     home_page_logged_out.navigate()
 
@@ -335,7 +334,11 @@ def assert_user_can_log_in(page, username, password):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_user_requests_password_forgotten_link_from_login_page(
-    page, user, email_test_api, faker, subtests,
+    page,
+    user,
+    email_test_api,
+    faker,
+    subtests,
 ):
     login_page = LoginPage(page)
     login_page.navigate(cookies_accepted=True)
@@ -355,8 +358,7 @@ def test_user_requests_password_forgotten_link_from_login_page(
         set_new_password_page = SetNewPasswordPage(page)
         assert set_new_password_page.is_displayed()
 
-    link_with_token = get_password_reset_link_with_token(
-        email_test_api, user.properties["PasswordRecoveryEmail"])
+    link_with_token = get_password_reset_link_with_token(email_test_api, user.properties["PasswordRecoveryEmail"])
     assert link_with_token
 
     page.goto(link_with_token)

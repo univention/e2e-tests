@@ -39,9 +39,10 @@ class NotificationsContainer(BasePagePart):
     def notification(self, n):
         count = self.notifications.count()
         if n >= count:
-            raise IndexError(f"You are trying to access the {n}th popup notification, "
-                             f"but here are only {count} popup notifications",
-                             )
+            raise IndexError(
+                f"You are trying to access the {n}th popup notification, "
+                f"but here are only {count} popup notifications",
+            )
         return NotificationElement(self.notifications.nth(n))
 
 

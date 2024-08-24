@@ -39,9 +39,7 @@ class SelfservicePortalLoggedOut(SelfservicePortal):
 
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.password_forgotten_tile = self.page.get_by_label(
-            "Password forgotten Same tab"
-        )
+        self.password_forgotten_tile = self.page.get_by_label("Password forgotten Same tab")
 
     def navigate(self):
         self.logout()

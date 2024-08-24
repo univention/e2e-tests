@@ -65,9 +65,7 @@ def test_portal_login_ip_block(
     login_page = LoginPage(page)
     for _ in range(failed_attempts_before_ip_block):
         login_page.login(username, f"{password}_wrong_password")
-        expect(
-            login_page.page.get_by_text("Invalid username or password.")
-        ).to_be_visible(timeout=4000)
+        expect(login_page.page.get_by_text("Invalid username or password.")).to_be_visible(timeout=4000)
     # keycloak-extensions handler processes all the failed login events every
     # two seconds
     page.wait_for_timeout(2200)

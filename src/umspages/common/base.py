@@ -28,7 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from playwright.sync_api import Locator, Page, expect as playwright_expect
+from playwright.sync_api import Locator, Page
+from playwright.sync_api import expect as playwright_expect
 
 
 def expect(actual, *args, **kwargs):

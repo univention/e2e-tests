@@ -32,7 +32,6 @@ from ...common.base import BasePagePart
 
 
 class AnnouncementContainer(BasePagePart):
-
     def get_title(self, title):
         announcement_title = self.page_part_locator.get_by_text(title)
         return announcement_title

@@ -29,11 +29,10 @@
 # <https://www.gnu.org/licenses/>.
 
 from http import HTTPStatus
-from urllib.parse import urljoin, quote
+from urllib.parse import quote, urljoin
 
 
 class UDMFixtures:
-
     def __init__(self, base_url, session):
         self._base_url = base_url
         self._session = session

@@ -32,12 +32,11 @@ import datetime
 import os
 import tempfile
 
-from playwright.sync_api import expect, Error
 import pytest
+from playwright.sync_api import Error, expect
 from slugify import slugify
 
 from umspages.keycloak.admin_login_page import AdminLoginPage
-
 
 artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
 
@@ -114,25 +113,20 @@ def get_page(browser_name, ip):
         yield page
         browser_context.close()
         video_option = pytestconfig.getoption("--video")
-        failed = request.node.rep_call.failed if hasattr(
-            request.node, "rep_call") else True
-        preserve_video = video_option == "on" or (
-            failed and video_option == "retain-on-failure"
-        )
+        failed = request.node.rep_call.failed if hasattr(request.node, "rep_call") else True
+        preserve_video = video_option == "on" or (failed and video_option == "retain-on-failure")
         if preserve_video:
             video = page.video
             if video:
                 try:
                     video_path = video.path()
                     file_name = os.path.basename(video_path)
-                    video.save_as(
-                        path=build_artifact_test_folder(
-                            pytestconfig, request, file_name)
-                    )
+                    video.save_as(path=build_artifact_test_folder(pytestconfig, request, file_name))
                 except Error:
                     # Silent catch empty videos.
                     pass
         browser.close()
+
     return get_page_for_browser_and_ip
 
 
@@ -163,12 +157,13 @@ def navigate_to_login_page_webkit_ip_1(webkit_ip_1_page):
 
 
 @pytest.fixture
-def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
-                                       username,
-                                       wrong_password,
-                                       num_device_block,
-                                       release_duration
-                                       ):
+def trigger_device_block_chromium_ip_1(
+    navigate_to_login_page_chromium_ip_1,
+    username,
+    wrong_password,
+    num_device_block,
+    release_duration,
+):
     page = navigate_to_login_page_chromium_ip_1
     login_page = AdminLoginPage(page)
     for _ in range(num_device_block):
@@ -186,15 +181,16 @@ def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
 
 
 @pytest.fixture
-def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
-                     navigate_to_login_page_webkit_ip_1,
-                     username,
-                     password,
-                     wrong_password,
-                     num_device_block,
-                     num_ip_block,
-                     release_duration
-                     ):
+def trigger_ip_block(
+    navigate_to_login_page_chromium_ip_1,
+    navigate_to_login_page_webkit_ip_1,
+    username,
+    password,
+    wrong_password,
+    num_device_block,
+    num_ip_block,
+    release_duration,
+):
     chromium_ip_1_page = navigate_to_login_page_chromium_ip_1
     login_page = AdminLoginPage(chromium_ip_1_page)
     for _ in range(num_device_block):
@@ -212,5 +208,4 @@ def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)
-    chromium_ip_1_page.wait_for_timeout(
-        round(remaining * 1000) + 1)  # + 1 for safety
+    chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety

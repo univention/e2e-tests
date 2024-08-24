@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import random
 from datetime import date, datetime, timedelta
 from typing import Optional
@@ -37,9 +40,7 @@ COUNTRY_CODES = (
 fake = Faker()
 
 
-def random_date(
-    start_date: Optional[date] = None, end_date: Optional[date] = None
-) -> date:
+def random_date(start_date: Optional[date] = None, end_date: Optional[date] = None) -> date:
     end_date = end_date or datetime.now().date()
     start_date = start_date or end_date - timedelta(365 * 20)
 

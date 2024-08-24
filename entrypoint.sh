@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 
 : "${ADMIN_PASSWORD:=univention}"
 : "${ADMIN_USERNAME:=default.admin}"

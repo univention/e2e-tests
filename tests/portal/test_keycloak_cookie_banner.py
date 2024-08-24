@@ -28,8 +28,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import pytest
 import json
+
+import pytest
+
 from umspages.common.base import expect
 from umspages.portal.login_page import LoginPage
 
@@ -48,10 +50,7 @@ def browser_context_args(browser_context_args):
 @pytest.mark.cookie_banner
 @pytest.mark.portal
 @pytest.mark.acceptance_environment
-@pytest.mark.parametrize("show_banner, expected_visibility", [
-    (True, "visible"),
-    (False, "hidden")
-])
+@pytest.mark.parametrize("show_banner, expected_visibility", [(True, "visible"), (False, "hidden")])
 def test_cookie_banner(page, show_banner, expected_visibility):
     """Tests the presence/absence and content of the cookie banner"""
     # Mock the request to meta.json
@@ -67,10 +66,13 @@ def test_cookie_banner(page, show_banner, expected_visibility):
                         "domains": [],
                         "show": show_banner,
                         "text": {
-                            "de": 'Test cookie banner message DE',
-                            "en": 'Test cookie banner message EN',
+                            "de": "Test cookie banner message DE",
+                            "en": "Test cookie banner message EN",
                         },
-                        "title": {"de": "Test Cookie Setting DE", "en": "Test Cookie Settings EN"},
+                        "title": {
+                            "de": "Test Cookie Setting DE",
+                            "en": "Test Cookie Settings EN",
+                        },
                     },
                 }
             ),

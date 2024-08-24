@@ -28,6 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+
 class PortalError(Exception):
     """
     Should be raised by Page Object methods if an expectation from the portal

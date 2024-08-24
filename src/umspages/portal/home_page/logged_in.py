@@ -40,15 +40,9 @@ class HomePageLoggedIn(HomePage):
 
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.umc_heading = self.page.get_by_text(
-            "Univention Management Console", exact=True
-        )
-        self.users_tile = self.page.get_by_role(
-            "link", name=re.compile("Users New Tab|Users iFrame")
-        )
-        self.announcements_tile = self.page.get_by_role(
-            "link", name=re.compile("Announcements New Tab")
-        )
+        self.umc_heading = self.page.get_by_text("Univention Management Console", exact=True)
+        self.users_tile = self.page.get_by_role("link", name=re.compile("Users New Tab|Users iFrame"))
+        self.announcements_tile = self.page.get_by_role("link", name=re.compile("Announcements New Tab"))
 
         self.mail_tile = self.page.get_by_role("link", name="E-Mail New Tab")
         self.calendar_tile = self.page.get_by_role("link", name="Calendar New Tab")
@@ -57,19 +51,13 @@ class HomePageLoggedIn(HomePage):
 
         self.files_tile = self.page.get_by_role("link", name="Files New Tab")
         self.activity_tile = self.page.get_by_role("link", name="Activity New Tab")
-        self.new_files_folder_tile = self.page.get_by_role(
-            "button", name="Create new files Folder", exact=False
-        )
+        self.new_files_folder_tile = self.page.get_by_role("button", name="Create new files Folder", exact=False)
 
         self.projects_tile = self.page.get_by_role("link", name="Projects New Tab")
         self.knowledge_tile = self.page.get_by_role("link", name="Knowledge New Tab")
 
-        self.collaboration_tile = self.page.get_by_role(
-            "link", name="Collaboration New Tab"
-        )
-        self.video_conference_tile = self.page.get_by_role(
-            "link", name="Ad hoc videoconference New Tab"
-        )
+        self.collaboration_tile = self.page.get_by_role("link", name="Collaboration New Tab")
+        self.video_conference_tile = self.page.get_by_role("link", name="Ad hoc videoconference New Tab")
 
     def navigate(self, username, password):
         self.page.goto("/")

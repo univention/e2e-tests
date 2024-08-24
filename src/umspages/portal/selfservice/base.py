@@ -31,6 +31,4 @@ class SelfservicePortal(PortalPage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.my_profile_tile = self.page.get_by_label("My Profile Same tab")
-        self.protect_account_tile = self.page.get_by_label(
-            "Protect your account Same tab"
-        )
+        self.protect_account_tile = self.page.get_by_label("Protect your account Same tab")

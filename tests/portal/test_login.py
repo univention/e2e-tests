@@ -60,9 +60,7 @@ def test_logout(navigate_to_login_page, username, password):
     login_page.login(username, password)
     home_page_logged_in = HomePageLoggedIn(page)
 
-    home_page_logged_in.reveal_area(
-        home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon
-    )
+    home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
     home_page_logged_in.right_side_menu.click_logout_button()
 
     home_page_logged_out = HomePageLoggedOut(page)
@@ -87,9 +85,7 @@ def test_saml_logout(navigate_to_saml_login_page, username, password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.assert_logged_in()
 
-    home_page_logged_in.reveal_area(
-        home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon
-    )
+    home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
     home_page_logged_in.right_side_menu.click_logout_button()
 
     home_page_logged_out = HomePageLoggedOut(page)

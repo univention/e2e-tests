@@ -38,8 +38,7 @@ class AdminLoginPage(BasePage):
         self.username_input = self.page.get_by_label("Username or email")
         self.password_input = self.page.get_by_label("Password")
         self.submit_button = self.page.get_by_role("button", name="Sign In")
-        self.invalid_login_message = self.page.get_by_text(
-            "Invalid username or password.")
+        self.invalid_login_message = self.page.get_by_text("Invalid username or password.")
 
     def is_displayed(self):
         expect(self.username_input).to_be_visible()

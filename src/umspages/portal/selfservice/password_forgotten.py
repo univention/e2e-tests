@@ -1,8 +1,10 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 from ..common.portal_page import PortalPage
 
 
 class PasswordForgottenPage(PortalPage):
-
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.password_forgotten_dialog = self.page.get_by_role("dialog", name="Password forgotten")
