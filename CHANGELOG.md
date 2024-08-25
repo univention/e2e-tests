@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.5.0...v0.6.0) (2024-08-25)
+
+
+### Features
+
+* **discover:** Be flexible about secret names and values ([641345a](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/641345a811d613a86be9ed07fba98368dc02de69))
+* **discover:** Maildev is not always available ([79f2035](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/79f2035ad127bdb767b93bd0f3c4282f5e0387b0))
+
 ## [0.5.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.4.0...v0.5.0) (2024-08-23)
 
 
