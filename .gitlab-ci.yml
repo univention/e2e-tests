@@ -8,6 +8,8 @@ include:
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
+      - "jobs/lint-pre-commit.yaml"
+      - "jobs/lint-commit-messages.yaml"
       - "jobs/semantic-release-env.yaml"
       - "jobs/container-build.yaml"
 
