@@ -210,7 +210,7 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_set_recovery_email(user, page):
+def test_set_recovery_email(user, user_password, page):
     """
     Tests a user can set up a recovery email.
 
@@ -222,10 +222,9 @@ def test_set_recovery_email(user, page):
     same.
     """
     username = user.properties["username"]
-    password = user.properties["password"]
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
-    set_recovery_email_page.navigate(username, password)
+    set_recovery_email_page.navigate(username, user_password)
     expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
     set_recovery_email_page.set_recovery_email(DUMMY_EMAIL)
 
@@ -233,7 +232,7 @@ def test_set_recovery_email(user, page):
     dummy_user_home_logged_out.navigate()
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
-    set_recovery_email_page.navigate(username, password)
+    set_recovery_email_page.navigate(username, user_password)
     expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
     expect(set_recovery_email_page.email_box).to_have_value(DUMMY_EMAIL)
     expect(set_recovery_email_page.retype_email_box).to_have_value(DUMMY_EMAIL)
