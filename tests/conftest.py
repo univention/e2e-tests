@@ -28,6 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import random
 from urllib.parse import urljoin
 
 import pytest
@@ -93,6 +94,7 @@ def pytest_addoption(parser):
         help="Blocks are released after this many minutes",
     )
     parser.addoption("--realm", default="master", help="Realm to attempt logins at")
+    parser.addoption("--randomly-seed", help="Seed to use for randomization.")
 
 
 @pytest.fixture(scope="session")
@@ -210,3 +212,17 @@ def ldap_base_dn(udm) -> str:
     Base DN of the LDAP directory.
     """
     return udm.get_ldap_base()
+
+
+@pytest.fixture(scope='session', autouse=True)
+def faker_seed(pytestconfig):
+    """
+    Interim solution to randomize the integrated Faker.
+
+    Long term we aim to go for ``pytest-randomly``.
+    """
+    seed = pytestconfig.getoption("--randomly-seed")
+    if not seed:
+        seed = random.randint(1000, 9999)
+    print("Faker seed: ", seed)
+    return seed
