@@ -32,7 +32,8 @@ import re
 
 from ..login_page import LoginPage
 from .base import HomePage
-from e2e.decorators import retrying
+from e2e.decorators import retrying, retrying_slow
+from umspages.common.base import expect
 
 
 class HomePageLoggedIn(HomePage):
@@ -87,9 +88,18 @@ class HomePageLoggedIn(HomePage):
 
         login()
 
-        # TODO: Add logic to ensure that the portal does show tiles
-        import time
-        time.sleep(5)
+        @retrying_slow
+        def assert_tiles():
+            # TODO: We miss a proper way to find the element, a "data-testid"
+            # would be helpful in this case.
+            tiles = self.page.locator("a.portal-tile")
+            try:
+                expect(tiles.first).to_be_visible(timeout=500)
+            except Exception:
+                self.page.reload()
+                raise
+
+        assert_tiles()
 
     def is_displayed(self):
         # TODO: There seems to be nothing that's necessarily common between the UCS and SouvAP envs
