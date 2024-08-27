@@ -56,3 +56,10 @@ option::
 
 See: https://tenacity.readthedocs.io/en/latest/
 """
+
+
+retrying_slow = retry(
+    stop=stop_after_delay(20),
+    wait=wait_fixed(2),
+    before_sleep=before_sleep_log(log, logging.WARNING),
+)
