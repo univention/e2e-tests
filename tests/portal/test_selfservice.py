@@ -86,11 +86,24 @@ def external_email_domain(faker):
 
 
 @pytest.fixture
-def user(udm, faker, email_domain, external_email_domain):
+def user_password(faker):
+    """
+    The password used for the fixture ``user``.
+
+    This is split out so that it can be accessed easily. The UDM object
+    ``user`` does not contain the password itself anymore.
+    """
+    return faker.password()
+
+
+@pytest.fixture
+def user(udm, faker, email_domain, external_email_domain, user_password):
     """
     A regular user.
 
     The user will be created for the test case and removed after the test case.
+
+    The password is available in the fixture ``user_password``.
     """
     users_user = udm.get("users/user")
     test_user = users_user.new()
@@ -102,7 +115,7 @@ def user(udm, faker, email_domain, external_email_domain):
             "lastname": faker.last_name(),
             "username": username,
             "displayName": faker.name(),
-            "password": faker.password(),
+            "password": user_password,
             "mailPrimaryAddress": f"{username}@{email_domain}",
             "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
         }
@@ -197,7 +210,7 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_set_recovery_email(dummy_user_home: Tuple[Page, str]):
+def test_set_recovery_email(user, page):
     """
     Tests a user can set up a recovery email.
 
@@ -208,9 +221,11 @@ def test_set_recovery_email(dummy_user_home: Tuple[Page, str]):
     5. Triggers the recovery email window and checks the recovery email is the
     same.
     """
-    page, dummy_username = dummy_user_home
+    username = user.properties["username"]
+    password = user.properties["password"]
+
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
-    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    set_recovery_email_page.navigate(username, password)
     expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
     set_recovery_email_page.set_recovery_email(DUMMY_EMAIL)
 
@@ -218,7 +233,7 @@ def test_set_recovery_email(dummy_user_home: Tuple[Page, str]):
     dummy_user_home_logged_out.navigate()
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
-    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    set_recovery_email_page.navigate(username, password)
     expect(set_recovery_email_page.submit_button).to_be_visible(timeout=10000)
     expect(set_recovery_email_page.email_box).to_have_value(DUMMY_EMAIL)
     expect(set_recovery_email_page.retype_email_box).to_have_value(DUMMY_EMAIL)
