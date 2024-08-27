@@ -214,7 +214,7 @@ def ldap_base_dn(udm) -> str:
     return udm.get_ldap_base()
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def faker_seed(pytestconfig):
     """
     Interim solution to randomize the integrated Faker.

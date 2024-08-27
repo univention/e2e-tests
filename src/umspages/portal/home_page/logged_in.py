@@ -30,10 +30,11 @@
 
 import re
 
-from ..login_page import LoginPage
-from .base import HomePage
 from e2e.decorators import retrying, retrying_slow
 from umspages.common.base import expect
+
+from ..login_page import LoginPage
+from .base import HomePage
 
 
 class HomePageLoggedIn(HomePage):
