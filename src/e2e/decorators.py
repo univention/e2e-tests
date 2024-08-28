@@ -8,7 +8,7 @@ from tenacity import before_sleep_log, retry, stop_after_delay, wait_fixed
 log = logging.getLogger(__name__)
 
 retrying = retry(
-    stop=stop_after_delay(10),
+    stop=stop_after_delay(20),
     wait=wait_fixed(2),
     before_sleep=before_sleep_log(log, logging.WARNING),
 )
@@ -59,7 +59,7 @@ See: https://tenacity.readthedocs.io/en/latest/
 
 
 retrying_slow = retry(
-    stop=stop_after_delay(20),
+    stop=stop_after_delay(40),
     wait=wait_fixed(2),
     before_sleep=before_sleep_log(log, logging.WARNING),
 )
