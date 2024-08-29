@@ -95,7 +95,7 @@ class HomePageLoggedIn(HomePage):
             # would be helpful in this case.
             tiles = self.page.locator("a.portal-tile")
             try:
-                expect(tiles.first).to_be_visible(timeout=500)
+                expect(tiles.first).to_be_visible(timeout=2000)
             except Exception:
                 self.page.reload()
                 raise
