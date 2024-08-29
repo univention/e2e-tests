@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import random
+import time
 from typing import Tuple
 
 import pytest
@@ -173,7 +174,8 @@ def dummy_user_home(
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
+def test_non_admin_can_change_password(navigate_to_login_page: Page, user, user_password: str):
+    # def test_non_admin_can_change_password( dummy_user_home: Tuple[Page, str]):
     """
     Tests a user can update its password, doing so from the side-menu.
 
@@ -182,10 +184,13 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     3. Logs out from the dummy user.
     4. Logs in with the new password.
     """
-    page, dummy_username = dummy_user_home
+    username = user.properties["username"]
+
+    time.sleep(2)
+    page = navigate_to_login_page
     change_password_page = ChangePasswordDialogPage(page)
-    change_password_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
-    change_password_page.change_password(DUMMY_USER_PASSWORD_1, DUMMY_USER_PASSWORD_2)
+    change_password_page.navigate(username, user_password)
+    change_password_page.change_password(user_password, DUMMY_USER_PASSWORD_2)
 
     # TODO: This is discouraged, use a different approach
     #
@@ -203,7 +208,7 @@ def test_non_admin_can_change_password(dummy_user_home: Tuple[Page, str]):
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
 
-    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_2)
+    assert_user_can_log_in(page, username, DUMMY_USER_PASSWORD_2)
 
 
 @pytest.mark.selfservice
