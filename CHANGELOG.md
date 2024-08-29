@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.7.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.6.0...v0.7.0) (2024-08-29)
+
+
+### Features
+
+* Add decorator "retrying_slow" for special cases ([594ef64](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/594ef64d3b28ae4f11d18bf593553efbdd8fc316))
+* Add fixture "user_password" ([5f9045f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/5f9045f51129e06347978a7848acc9334c12f44d))
+* Double timeouts for retrying ([8231bc6](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8231bc626fb4f1fd630a2e3fdf28ff776d271f02))
+* Randomize the faker instance ([b22fefc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b22fefc4b31dd246f837d3442d0ee039ebfe4f1c))
+
+
+### Bug Fixes
+
+* Add minimal delay when filling the set new password form ([5e0cda1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/5e0cda1f28191184307c0d52ee1306397bc1b5da))
+* Avoid double login when clearing notifications ([cd7379b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/cd7379ba92221cd8d42814de7c65588fb9edab30))
+* Further increase the timeout for the login redirect ([468cf73](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/468cf73659af8f56cf74ee1184b52d877a2d8f02))
+* HomepageLoggedIn.navigate simplification ([49e7142](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/49e714238dfbb39517fe8cea677083100bd8fbde))
+* Increase the timeout for the tiles to become visible ([c188a3b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c188a3bf325de8e7413a78e5fa909b5049b26f00))
+* Increase timeout for the redirect in login ([2aeb40d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2aeb40d6055ecadaeb28e283c4f0fc710c998365))
+* Retry until the tiles are visible in HomePageLoggedIn ([e12e05b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/e12e05b25ef6b895b6bba62ce0090b2c1865bab7))
+* Use "retrying_slow" also for the login ([2848158](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2848158931c4cc29506af3c5e4b7894302c4894a))
+
 ## [0.6.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.5.0...v0.6.0) (2024-08-25)
 
 
