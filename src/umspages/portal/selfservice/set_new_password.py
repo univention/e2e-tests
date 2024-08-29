@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
+import time
+
 from ...common.base import BasePage
 
 
@@ -36,10 +38,16 @@ class SetNewPasswordPage(BasePage):
         self.page.goto(url)
 
     def is_displayed(self):
-        self.set_new_password_dialog.wait_for(state="visible", timeout=500)
+        self.set_new_password_dialog.wait_for(state="visible", timeout=1000)
         return True
 
     def set_new_password(self, password):
         self.new_password_box.fill(password)
+
+        # TODO: The retype box is re-rendered and sometimes filled too early
+        # and then empty. Find a way to wait until this did happen instead of
+        # waiting a fixed amount of time.
+        time.sleep(0.1)
+
         self.retype_password_box.fill(password)
         self.submit_button.click()
