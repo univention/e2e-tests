@@ -43,6 +43,7 @@ class ChangePasswordDialogPage(BasePage):
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
         home_page_logged_in.navigate(username, password)
+
         home_page_logged_in.reveal_area(
             home_page_logged_in.right_side_menu,
             home_page_logged_in.header.hamburger_icon,

@@ -28,6 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+
 from ...common.base import BasePage, expect
 from ..home_page.logged_in import HomePageLoggedIn
 
@@ -51,6 +52,7 @@ class ManageProfileDialogPage(BasePage):
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
         home_page_logged_in.navigate(username, password)
+
         home_page_logged_in.reveal_area(
             home_page_logged_in.right_side_menu,
             home_page_logged_in.header.hamburger_icon,

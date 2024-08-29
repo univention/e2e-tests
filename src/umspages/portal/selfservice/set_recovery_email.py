@@ -30,9 +30,6 @@
 
 import re
 
-# from playwright._impl._api_types import TimeoutError
-from playwright.sync_api import TimeoutError
-
 from ...common.base import BasePage
 from ..home_page.logged_in import HomePageLoggedIn
 
@@ -50,17 +47,14 @@ class SetRecoveryEmailDialogPage(BasePage):
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
         home_page_logged_in.navigate(username, password)
-        for _ in range(3):
-            try:
-                home_page_logged_in.reveal_area(
-                    home_page_logged_in.right_side_menu,
-                    home_page_logged_in.header.hamburger_icon,
-                )
-                home_page_logged_in.right_side_menu.click_entry("User settings")
-                break
-            except TimeoutError:
-                self.page.reload()
+
+        home_page_logged_in.reveal_area(
+            home_page_logged_in.right_side_menu,
+            home_page_logged_in.header.hamburger_icon,
+        )
+        home_page_logged_in.right_side_menu.click_entry("User settings")
         home_page_logged_in.right_side_menu.click_sub_entry(re.compile("My password recovery options"))
+
         self.username_box.fill(username)
         self.password_box.fill(password)
         self.next_button.click()

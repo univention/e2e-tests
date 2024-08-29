@@ -28,9 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import logging
 import random
-import time
-from typing import Tuple
 
 import pytest
 from playwright.sync_api import Page
@@ -50,10 +49,14 @@ from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UsersPage
 
-DUMMY_USER_PASSWORD_1 = "firstpass"
+from tests.portal.conftest import WaitForPortalJson
+
 DUMMY_USER_PASSWORD_2 = "secondpass"
 DUMMY_EMAIL = "mail@example.org"
 DUMMY_DESCRIPTION = "some description"
+
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture()
@@ -61,121 +64,25 @@ def dummy_username():
     yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
 
 
-@pytest.fixture(scope="session")
-def email_domain(udm):
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_json: WaitForPortalJson):
     """
-    Returns a valid email domain.
-
-    The email domain is valid in the context of the system under test and
-    discovered out of the configuration automatically.
+    Prerequisite for all other selfservice tests.
+    If the portal-consumer does not works, nothing else will either.
     """
-    mail_domains_module = udm.get("mail/domain")
-    mail_domain = next(mail_domains_module.search()).open()
-    return mail_domain.properties["name"]
-
-
-@pytest.fixture
-def external_email_domain(faker):
-    """
-    Returns an external email domain.
-
-    External means that this domain is not managed by the system under test. It
-    is intended for cases when a password recovery email shall be configured.
-    """
-    domain = f"{faker.domain_word()}.test"
-    return domain
-
-
-@pytest.fixture
-def user_password(faker):
-    """
-    The password used for the fixture ``user``.
-
-    This is split out so that it can be accessed easily. The UDM object
-    ``user`` does not contain the password itself anymore.
-    """
-    return faker.password()
-
-
-@pytest.fixture
-def user(udm, faker, email_domain, external_email_domain, user_password):
-    """
-    A regular user.
-
-    The user will be created for the test case and removed after the test case.
-
-    The password is available in the fixture ``user_password``.
-    """
-    users_user = udm.get("users/user")
-    test_user = users_user.new()
-    username = f"test-{faker.unique.user_name()}"
-
-    test_user.properties.update(
-        {
-            "firstname": faker.first_name(),
-            "lastname": faker.last_name(),
-            "username": username,
-            "displayName": faker.name(),
-            "password": user_password,
-            "mailPrimaryAddress": f"{username}@{email_domain}",
-            "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
-        }
-    )
-    test_user.save()
-
-    yield test_user
-
-    test_user.reload()
-    test_user.delete()
-
-
-@pytest.fixture()
-def dummy_user_home(
-    navigate_to_home_page_logged_in_as_admin: Page,
-    admin_username,
-    admin_password,
-    dummy_username,
-) -> Page:
-    """
-    Creates a dummy user from the UI.
-
-    1. Logs in as an admin user.
-    2. Creates a dummy user from the `Users` tile.
-    3. Logs out from admin.
-    4. Yields the page and the created username.
-    5. Logs in as an admin user.
-    6. Deletes the dummy user from step 2.
-    """
-    page = navigate_to_home_page_logged_in_as_admin
-    home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_out = HomePageLoggedOut(page)
-
-    users_page = UsersPage(home_page_logged_in.click_users_tile())
-    users_page.add_user(dummy_username, DUMMY_USER_PASSWORD_1)
-    users_page.close()
-
-    home_page_logged_out.navigate()
-
-    yield page, dummy_username
-
-    dummy_user_home_logged_out = HomePageLoggedOut(page)
-    dummy_user_home_logged_out.navigate()
-
-    home_page_logged_in.navigate(admin_username, admin_password)
-
-    users_page = UsersPage(home_page_logged_in.click_users_tile())
-    users_page.remove_user(dummy_username)
-    users_page.close()
-
-    home_page_logged_out.navigate()
+    username = user.properties["username"]
+    assert wait_for_portal_json(username, 4)
 
 
 @pytest.mark.selfservice
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_non_admin_can_change_password(navigate_to_login_page: Page, user, user_password: str):
-    # def test_non_admin_can_change_password( dummy_user_home: Tuple[Page, str]):
+def test_non_admin_can_change_password(
+    navigate_to_login_page: Page, user, user_password: str, wait_for_portal_json: WaitForPortalJson
+):
     """
     Tests a user can update its password, doing so from the side-menu.
 
@@ -185,8 +92,8 @@ def test_non_admin_can_change_password(navigate_to_login_page: Page, user, user_
     4. Logs in with the new password.
     """
     username = user.properties["username"]
+    assert wait_for_portal_json(username, 4)
 
-    time.sleep(2)
     page = navigate_to_login_page
     change_password_page = ChangePasswordDialogPage(page)
     change_password_page.navigate(username, user_password)
@@ -227,6 +134,7 @@ def test_set_recovery_email(user, user_password, page):
     same.
     """
     username = user.properties["username"]
+    assert wait_for_portal_json(username, 4)
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
     set_recovery_email_page.navigate(username, user_password)
@@ -247,7 +155,7 @@ def test_set_recovery_email(user, user_password, page):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_manage_profile(dummy_user_home: Tuple[Page, str]):
+def test_manage_profile(user, user_password, wait_for_portal_json: WaitForPortalJson, page):
     """
     Tests a user can manage their profile.
     1. Logs in as the dummy user.
@@ -256,9 +164,11 @@ def test_manage_profile(dummy_user_home: Tuple[Page, str]):
     4. Logs in again to the dummy user.
     5. Checks the description remains the same.
     """
-    page, dummy_username = dummy_user_home
+    username = user.properties["username"]
+    assert wait_for_portal_json(username, 4)
+
     manage_profile_page = ManageProfileDialogPage(page)
-    manage_profile_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    manage_profile_page.navigate(username, user_password)
     expect(manage_profile_page.save_button).to_be_visible()
     manage_profile_page.change_description(DUMMY_DESCRIPTION)
 
@@ -266,7 +176,7 @@ def test_manage_profile(dummy_user_home: Tuple[Page, str]):
     dummy_user_home_logged_out.navigate()
 
     set_recovery_email_page = ManageProfileDialogPage(page)
-    set_recovery_email_page.navigate(dummy_username, DUMMY_USER_PASSWORD_1)
+    set_recovery_email_page.navigate(username, user_password)
     expect(set_recovery_email_page.save_button).to_be_visible(timeout=10000)
     expect(set_recovery_email_page.description_box).to_have_value(DUMMY_DESCRIPTION)
 
@@ -306,6 +216,7 @@ def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
 def test_admin_invites_new_user_via_email(
     navigate_to_home_page_logged_in_as_admin,
     dummy_username,
+    user_password,
     email_test_api,
 ):
     page = navigate_to_home_page_logged_in_as_admin
@@ -315,10 +226,10 @@ def test_admin_invites_new_user_via_email(
     create_user_via_ui_with_email_invitation(page, dummy_username, recovery_email)
     password_reset_link = get_password_reset_link_with_token(email_test_api, recovery_email)
     set_new_password_page.navigate(url=password_reset_link)
-    set_new_password_page.set_new_password(password=DUMMY_USER_PASSWORD_1)
+    set_new_password_page.set_new_password(password=user_password)
     expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
 
-    assert_user_can_log_in(page, dummy_username, DUMMY_USER_PASSWORD_1)
+    assert_user_can_log_in(page, dummy_username, user_password)
 
 
 def get_password_reset_link_with_token(email_test_api, recovery_email):

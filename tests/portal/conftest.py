@@ -28,11 +28,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import logging
+import time
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
+from typing import Callable
+from urllib.parse import urljoin, urlparse
 
 import pytest
 import requests
+from tenacity import RetryError, Retrying, before_sleep_log, retry_if_not_result, stop_after_delay
 
 from api.udm_api import UDMFixtures
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
@@ -40,6 +44,8 @@ from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session")
@@ -165,3 +171,118 @@ def block_expiration_duration(pytestconfig):
 @pytest.fixture
 def failed_attempts_before_ip_block(pytestconfig):
     return pytestconfig.option.num_ip_block
+
+
+@pytest.fixture
+def navigation_api_url(portal_base_url):
+    """URL of the navigation API in the Portal."""
+    return urljoin(portal_base_url, "/univention/portal/navigation.json")
+
+
+@pytest.fixture(scope="session")
+def email_domain(udm):
+    """
+    Returns a valid email domain.
+
+    The email domain is valid in the context of the system under test and
+    discovered out of the configuration automatically.
+    """
+    mail_domains_module = udm.get("mail/domain")
+    mail_domain = next(mail_domains_module.search()).open()
+    return mail_domain.properties["name"]
+
+
+@pytest.fixture
+def external_email_domain(faker):
+    """
+    Returns an external email domain.
+
+    External means that this domain is not managed by the system under test. It
+    is intended for cases when a password recovery email shall be configured.
+    """
+    domain = f"{faker.domain_word()}.test"
+    return domain
+
+
+@pytest.fixture
+def user_password(faker):
+    """
+    The password used for the fixture ``user``.
+
+    This is split out so that it can be accessed easily. The UDM object
+    ``user`` does not contain the password itself anymore.
+    """
+    return faker.password()
+
+
+@pytest.fixture
+def user(udm, faker, email_domain, external_email_domain, user_password):
+    """
+    A regular user.
+
+    The user will be created for the test case and removed after the test case.
+
+    The password is available in the fixture ``user_password``.
+    """
+    users_user = udm.get("users/user")
+    test_user = users_user.new()
+    username = f"test-{faker.user_name()}"
+
+    test_user.properties.update(
+        {
+            "firstname": faker.first_name(),
+            "lastname": faker.last_name(),
+            "username": username,
+            "displayName": faker.name(),
+            "password": user_password,
+            "mailPrimaryAddress": f"{username}@{email_domain}",
+            "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
+        }
+    )
+    test_user.save()
+
+    yield test_user
+
+    test_user.reload()
+    test_user.delete()
+
+
+WaitForPortalJson = Callable[[str, int], bool]
+
+
+@pytest.fixture
+def wait_for_portal_json(navigation_api_url, portal_central_navigation_secret) -> WaitForPortalJson:
+    def _wait_for_portal_json(username: str, minimum_categories: int) -> bool:
+        start = time.perf_counter()
+
+        def has_central_navigation_categories(response: requests.Response):
+            if len(response.json()["categories"]) >= minimum_categories:
+                return True
+            return False
+
+        logger.info(
+            "Waiting for the portal-server to send up-to-date portal.json and navigation.json effectively waiting for the portal-consumer to catch up."
+        )
+        retryer = Retrying(
+            stop=stop_after_delay(30),
+            retry=retry_if_not_result(has_central_navigation_categories),
+            before_sleep=before_sleep_log(logger, logging.INFO),
+        )
+        with requests.Session() as session:
+            try:
+                retryer(session.get, navigation_api_url, auth=(username, portal_central_navigation_secret))
+            except RetryError:
+                logger.error(
+                    "Retry timeout exhausted after: %.3f seconds while waiting for the portal-consumer to catch up,"
+                    "look into the portal-consumer logs for more info",
+                    time.perf_counter() - start,
+                )
+                raise
+
+        logger.warning(
+            "portal-server and portal-consumer have caught up after: %.3f seconds",
+            time.perf_counter() - start,
+        )
+        return True
+
+    return _wait_for_portal_json

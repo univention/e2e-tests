@@ -1,16 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
-from urllib.parse import urljoin
-
 import pytest
 import requests
-
-
-@pytest.fixture
-def navigation_api_url(portal_base_url):
-    """URL of the navigation API in the Portal."""
-    return urljoin(portal_base_url, "/univention/portal/navigation.json")
 
 
 @pytest.mark.central_navigation
