@@ -84,3 +84,12 @@ class LoginPage(PortalPage):
         self.fill_username(username)
         self.fill_password(password)
         self.click_login_button()
+
+    def assert_successful_login(self, response_text):
+        """
+        Ensure that the ``response_text`` does indicate a successful login.
+
+        ``response_text`` is expected to be the full body text of the
+        response to the endpoint ``"login-actions/authenticate"``.
+        """
+        assert "Redirecting, please wait." in response_text, "Login failed"

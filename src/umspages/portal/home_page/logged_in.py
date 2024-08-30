@@ -79,12 +79,24 @@ class HomePageLoggedIn(HomePage):
         # in. The portal page should have a way to say "login_via_menu.click()"
         # and then the LoginPage.login(username, password) can be called.
 
+        # TODO: This should be in the login page
+        authenticate_url_pattern = re.compile(
+            r".*/realms/(?P<realm_name>.*?)/login-actions/authenticate")
+
         @retrying_slow
         def login():
             login_page = LoginPage(self.page)
             login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
-            login_page.login(username, password)
+
+            # TODO: Consider putting this into the login page, it should have
+            # the knowledge of how to ensure that a login was successful and
+            # raise an exception if not.
+            with self.page.expect_response(authenticate_url_pattern) as response_event:
+                login_page.login(username, password)
+
+            response_text = response_event.value.text()
+            login_page.assert_successful_login(response_text)
             self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         login()
