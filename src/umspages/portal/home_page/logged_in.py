@@ -85,7 +85,7 @@ class HomePageLoggedIn(HomePage):
             login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
             login_page.login(username, password)
-            self.page.wait_for_url("/univention/portal/**", timeout=2000)
+            self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         login()
 
