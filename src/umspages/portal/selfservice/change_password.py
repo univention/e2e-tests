@@ -44,11 +44,12 @@ class ChangePasswordDialogPage(BasePage):
         home_page_logged_in = HomePageLoggedIn(self.page)
         home_page_logged_in.navigate(username, password)
 
+        self.page.reload()
         home_page_logged_in.reveal_area(
             home_page_logged_in.right_side_menu,
             home_page_logged_in.header.hamburger_icon,
         )
-        home_page_logged_in.right_side_menu.click_entry("User settings")
+        home_page_logged_in.right_side_menu.menu_entry("User settings").click(timeout=5000)
         home_page_logged_in.right_side_menu.click_sub_entry("Update my password")
 
     def change_password(self, old_password: str, new_password: str):
