@@ -87,7 +87,6 @@ class HomePageLoggedIn(HomePage):
             login_page.login_and_ensure_success(username, password)
 
         login()
-
         self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         @retrying_slow

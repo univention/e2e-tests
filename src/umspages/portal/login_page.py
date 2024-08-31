@@ -99,14 +99,17 @@ class LoginPage(PortalPage):
         self.fill_password(password)
         self.click_login_button()
 
-    def assert_successful_login(self, response_text):
+    def assert_successful_login(self, response_value):
         """
         Ensure that the ``response_text`` does indicate a successful login.
 
         ``response_text`` is expected to be the full body text of the
         response to the endpoint ``"login-actions/authenticate"``.
         """
-        assert "Redirecting, please wait." in response_text, "Login failed"
+        assert response_value.status == 200, "Login failed, probably due to a failed LDAP Connection"
+        assert (
+            "Redirecting, please wait." in response_value.text()
+        ), "Login failed, probably due to a wrong username or password."
 
 
 @contextmanager
