@@ -28,6 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import logging
 import random
 from urllib.parse import urljoin
 
@@ -36,6 +37,8 @@ import requests
 
 from api.maildev import MaildevApi
 from univention.admin.rest.client import UDM
+
+logger = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
@@ -179,15 +182,36 @@ def ldap_base_dn(udm) -> str:
     return udm.get_ldap_base()
 
 
-@pytest.fixture(scope="session", autouse=True)
-def faker_seed(pytestconfig):
+@pytest.fixture(scope="session")
+def base_seed(pytestconfig) -> int:
     """
     Interim solution to randomize the integrated Faker.
 
     Long term we aim to go for ``pytest-randomly``.
     """
-    seed = pytestconfig.getoption("--randomly-seed")
-    if not seed:
-        seed = random.randint(1000, 9999)
-    print("Faker seed: ", seed)
+    base_seed = pytestconfig.getoption("--randomly-seed")
+    if not base_seed:
+        base_seed = random.randint(1000, 9999)
+    print("base seed: ", base_seed)
+    return base_seed
+
+
+@pytest.fixture(scope="function", autouse=True)
+def faker_seed(base_seed, request):
+    """
+    Generates unique but deterministic seeds for every test function.
+    Based on a root seed and the test function name.
+
+    When faker is used in a fixture that is used by multiple test functions.
+    Each function expects different faker data.
+    This is essential to avoid cross-contamination between tests
+    because of test objects like LDAP users or groups.
+    At the same time, the faker seed needs to stay deterministic.
+    """
+    test_function_name = request.node.name
+    if hasattr(request, "param"):
+        seed = f"{base_seed}-{test_function_name}-{request.param}"
+    else:
+        seed = f"{base_seed}-{test_function_name}"
+    logger.info("Generated faker seed unique to the test function is: %s", seed)
     return seed
