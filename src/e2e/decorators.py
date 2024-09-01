@@ -3,14 +3,29 @@
 
 import logging
 
-from tenacity import before_sleep_log, retry, stop_after_delay, wait_fixed
+from tenacity import RetryError, before_sleep_log, retry, stop_after_delay, wait_fixed
 
 log = logging.getLogger(__name__)
+
+
+class BetterRetryError(RetryError):
+    def __str__(self) -> str:
+        start = f"attempt_number={self.last_attempt.attempt_number}, "
+        end = f"failed={self.last_attempt.failed}, done={self.last_attempt.done()}, cancelled={self.last_attempt.cancelled()}"
+
+        if (exception := self.last_attempt.exception()) is not None:
+            result = f"{start}exception={exception}, exception_type={type(exception)}"
+        else:
+            result = f"{start}result={self.last_attempt.result()}"
+
+        return (result + end).replace("\n", "; ")
+
 
 retrying = retry(
     stop=stop_after_delay(20),
     wait=wait_fixed(2),
     before_sleep=before_sleep_log(log, logging.WARNING),
+    retry_error_cls=BetterRetryError,
 )
 """
 A prepared decorator to retry a call with a default configuration.
@@ -62,4 +77,5 @@ retrying_slow = retry(
     stop=stop_after_delay(40),
     wait=wait_fixed(6),
     before_sleep=before_sleep_log(log, logging.WARNING),
+    retry_error_cls=BetterRetryError,
 )

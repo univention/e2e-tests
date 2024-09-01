@@ -39,6 +39,7 @@ import requests
 from tenacity import RetryError, Retrying, before_sleep_log, retry_if_not_result, stop_after_delay
 
 from api.udm_api import UDMFixtures
+from e2e.decorators import BetterRetryError
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
@@ -272,6 +273,7 @@ def wait_for_portal_json(navigation_api_url, portal_central_navigation_secret) -
             stop=stop_after_delay(30),
             retry=retry_if_not_result(has_central_navigation_categories),
             before_sleep=before_sleep_log(logger, logging.INFO),
+            retry_error_cls=BetterRetryError,
         )
         with requests.Session() as session:
             try:
