@@ -28,9 +28,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-
 import re
 from contextlib import contextmanager
+
+from playwright.sync_api import Error
 
 from ..common.base import expect
 from .common.portal_page import PortalPage
@@ -97,18 +98,31 @@ class LoginPage(PortalPage):
     def login(self, username, password):
         self.fill_username(username)
         self.fill_password(password)
-        self.click_login_button()
+        with self.page.expect_response(self.authenticate_url_pattern, timeout=10000) as response_event:
+            self.click_login_button()
+        self.assert_successful_login(response_event.value)
 
     def assert_successful_login(self, response_value):
         """
-        Ensure that the ``response_text`` does indicate a successful login.
+        Ensure that the response status and text indicate a successful login.
 
+        429 indicates that the brute-force detection was triggered
+        400 indicates that the LDAP Server request from Keycloak failed.
+        These failure scenarios can easily be reproduced
+        by deleting all ldap-server-secondary pods.
+
+        200 could mean success or that the username or password was wrong.
+        To differentiate these cases, we check the response text.
         ``response_text`` is expected to be the full body text of the
         response to the endpoint ``"login-actions/authenticate"``.
         """
-        assert response_value.status == 200, "Login failed, probably due to a failed LDAP Connection"
         assert (
-            "Redirecting, please wait." in response_value.text()
+            response_value.status != 429
+        ), "Login failed, probably reached the brute-force detection limits of keycloak-extensions"
+        assert response_value.status == 200, "Login failed, probably due to a failed LDAP Connection"
+        text = response_value.text()
+        assert (
+            "Redirecting, please wait." in text
         ), "Login failed, probably due to a wrong username or password."
 
 

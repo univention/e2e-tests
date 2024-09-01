@@ -40,15 +40,13 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
             expect(self.right_side_menu.login_button).to_be_visible()
         except AssertionError:
             expect(self.right_side_menu.logout_button).to_be_visible()
-        else:
-            self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-            expect(self.right_side_menu.login_button).to_be_visible()
-            expect(self.right_side_menu.logout_button).to_be_hidden()
-            self.right_side_menu.click_login_button()
-            login_page = LoginPage(self.page)
-            login_page.login(username, password)
-            self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-            expect(self.right_side_menu.logout_button).to_be_visible()
-            expect(self.right_side_menu.login_button).to_be_hidden()
-        finally:
             self.hide_area(self.right_side_menu, self.header.hamburger_icon)
+            return
+
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
+        expect(self.right_side_menu.login_button).to_be_visible()
+        expect(self.right_side_menu.logout_button).to_be_hidden()
+        self.right_side_menu.login_button.click(timeout=2000)
+
+        login_page = LoginPage(self.page)
+        login_page.login(username, password)

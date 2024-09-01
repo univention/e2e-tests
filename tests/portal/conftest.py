@@ -131,6 +131,11 @@ def navigate_to_home_page_logged_in(page, admin_username, admin_password):
 
 @pytest.fixture()
 def navigate_to_selfservice_portal_logged_in(page, admin_username, admin_password):
+    """
+    The openDesk customization has no portal tile pointing to this UI.
+    The only way to reach this UI on an openDesk deployment
+    is by manually navigating to the url path: `/univention/selfservice/#/`
+    """
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
     selfservice_portal_logged_in.navigate(admin_username, admin_password)
     return page
