@@ -31,12 +31,12 @@
 import logging
 import time
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Callable, Generator
 from urllib.parse import urljoin, urlparse
 
 import pytest
 import requests
-from tenacity import RetryError, Retrying, before_sleep_log, retry_if_not_result, stop_after_delay
+from tenacity import RetryError, before_sleep_log, retry, retry_if_not_result, stop_after_delay
 
 from api.udm_api import UDMFixtures
 from e2e.decorators import BetterRetryError
@@ -257,39 +257,44 @@ WaitForPortalJson = Callable[[str, int], bool]
 
 
 @pytest.fixture
-def wait_for_portal_json(navigation_api_url, portal_central_navigation_secret) -> WaitForPortalJson:
-    def _wait_for_portal_json(username: str, minimum_categories: int) -> bool:
-        start = time.perf_counter()
+def wait_for_portal_json(
+    navigation_api_url, portal_central_navigation_secret
+) -> Generator[WaitForPortalJson, None, None]:
+    with requests.Session() as session:
 
-        def has_central_navigation_categories(response: requests.Response):
-            if len(response.json()["categories"]) >= minimum_categories:
-                return True
-            return False
+        def _wait_for_portal_json(username: str, minimum_categories: int) -> bool:
+            start = time.perf_counter()
 
-        logger.info(
-            "Waiting for the portal-server to send up-to-date portal.json and navigation.json effectively waiting for the portal-consumer to catch up."
-        )
-        retryer = Retrying(
-            stop=stop_after_delay(30),
-            retry=retry_if_not_result(has_central_navigation_categories),
-            before_sleep=before_sleep_log(logger, logging.INFO),
-            retry_error_cls=BetterRetryError,
-        )
-        with requests.Session() as session:
-            try:
-                retryer(session.get, navigation_api_url, auth=(username, portal_central_navigation_secret))
-            except RetryError:
-                logger.error(
-                    "Retry timeout exhausted after: %.3f seconds while waiting for the portal-consumer to catch up,"
-                    "look into the portal-consumer logs for more info",
-                    time.perf_counter() - start,
-                )
-                raise
+            def has_central_navigation_categories(response: requests.Response):
+                if len(response.json()["categories"]) >= minimum_categories:
+                    return True
+                return False
 
-        logger.warning(
-            "portal-server and portal-consumer have caught up after: %.3f seconds",
-            time.perf_counter() - start,
-        )
-        return True
+            @retry(
+                stop=stop_after_delay(30),
+                retry=retry_if_not_result(has_central_navigation_categories),
+                before_sleep=before_sleep_log(logger, logging.INFO),
+                retry_error_cls=BetterRetryError,
+            )
+            def poll_central_navigation():
+                try:
+                    session.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
+                except RetryError:
+                    logger.error(
+                        "Retry timeout exhausted after: %.3f seconds while waiting for the portal-consumer to catch up,"
+                        "look into the portal-consumer logs for more info",
+                        time.perf_counter() - start,
+                    )
+                    raise
 
-    return _wait_for_portal_json
+            logger.info(
+                "Waiting for the portal-server to send up-to-date portal.json and navigation.json effectively waiting for the portal-consumer to catch up."
+            )
+            poll_central_navigation()
+            logger.warning(
+                "portal-server and portal-consumer have caught up after: %.3f seconds",
+                time.perf_counter() - start,
+            )
+            return True
+
+        yield _wait_for_portal_json
