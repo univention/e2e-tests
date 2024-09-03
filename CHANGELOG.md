@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.7.0...v0.8.0) (2024-09-03)
+
+
+### Features
+
+* remove default.user and admin for Administrator ([c41869b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c41869bc85a8786862e1c98265eac2f5619291fb))
+
 ## [0.7.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.6.0...v0.7.0) (2024-08-29)
 
 
