@@ -49,7 +49,7 @@ from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UsersPage
 
-from tests.portal.conftest import WaitForPortalJson
+from tests.portal.conftest import WaitForPortalSync
 
 DUMMY_USER_PASSWORD_2 = "secondpass"
 DUMMY_EMAIL = "mail@example.org"
@@ -67,13 +67,13 @@ def dummy_username():
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_json: WaitForPortalJson):
+def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: WaitForPortalSync):
     """
     Prerequisite for all other selfservice tests.
     If the portal-consumer does not works, nothing else will either.
     """
     username = user.properties["username"]
-    assert wait_for_portal_json(username, 4)
+    wait_for_portal_sync(username, 4)
 
 
 @pytest.mark.selfservice
@@ -81,7 +81,7 @@ def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_json: 
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_non_admin_can_change_password(
-    navigate_to_login_page: Page, user, user_password: str, wait_for_portal_json: WaitForPortalJson
+    navigate_to_login_page: Page, user, user_password: str, wait_for_portal_sync: WaitForPortalSync
 ):
     """
     Tests a user can update its password, doing so from the side-menu.
@@ -92,7 +92,7 @@ def test_non_admin_can_change_password(
     4. Logs in with the new password.
     """
     username = user.properties["username"]
-    assert wait_for_portal_json(username, 4)
+    wait_for_portal_sync(username, 4)
 
     page = navigate_to_login_page
     change_password_page = ChangePasswordDialogPage(page)
@@ -122,7 +122,7 @@ def test_non_admin_can_change_password(
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_set_recovery_email(user, user_password, page):
+def test_set_recovery_email(user, user_password, wait_for_portal_sync: WaitForPortalSync, page):
     """
     Tests a user can set up a recovery email.
 
@@ -134,7 +134,7 @@ def test_set_recovery_email(user, user_password, page):
     same.
     """
     username = user.properties["username"]
-    assert wait_for_portal_json(username, 4)
+    wait_for_portal_sync(username, 4)
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
     set_recovery_email_page.navigate(username, user_password)
@@ -155,7 +155,7 @@ def test_set_recovery_email(user, user_password, page):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_manage_profile(user, user_password, wait_for_portal_json: WaitForPortalJson, page):
+def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortalSync, page):
     """
     Tests a user can manage their profile.
     1. Logs in as the dummy user.
@@ -165,7 +165,7 @@ def test_manage_profile(user, user_password, wait_for_portal_json: WaitForPortal
     5. Checks the description remains the same.
     """
     username = user.properties["username"]
-    assert wait_for_portal_json(username, 4)
+    wait_for_portal_sync(username, 4)
 
     manage_profile_page = ManageProfileDialogPage(page)
     manage_profile_page.navigate(username, user_password)

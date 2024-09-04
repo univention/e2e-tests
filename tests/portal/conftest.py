@@ -29,14 +29,13 @@
 # <https://www.gnu.org/licenses/>.
 
 import logging
-import time
 from datetime import datetime, timedelta
-from typing import Callable, Generator
+from typing import Callable
 from urllib.parse import urljoin, urlparse
 
 import pytest
 import requests
-from tenacity import RetryError, before_sleep_log, retry, retry_if_not_result, stop_after_delay
+from tenacity import before_sleep_log, retry, stop_after_delay, wait_fixed
 
 from api.udm_api import UDMFixtures
 from e2e.decorators import BetterRetryError
@@ -47,6 +46,9 @@ from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 
 logger = logging.getLogger(__name__)
+
+
+WaitForPortalSync = Callable[[str, int], None]
 
 
 @pytest.fixture(scope="session")
@@ -253,48 +255,28 @@ def user(udm, faker, email_domain, external_email_domain, user_password):
     test_user.delete()
 
 
-WaitForPortalJson = Callable[[str, int], bool]
+def has_central_navigation_categories(response: requests.Response, minimum_categories):
+    return len(response.json()["categories"]) >= minimum_categories
 
 
 @pytest.fixture
-def wait_for_portal_json(
-    navigation_api_url, portal_central_navigation_secret
-) -> Generator[WaitForPortalJson, None, None]:
-    with requests.Session() as session:
+def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -> WaitForPortalSync:
+    """
+    Allows to wait until the portal data for a user is complete.
+    """
 
-        def _wait_for_portal_json(username: str, minimum_categories: int) -> bool:
-            start = time.perf_counter()
+    def _wait_for_portal_json(username: str, minimum_categories: int, timeout: int | float = 30) -> None:
+        @retry(
+            stop=stop_after_delay(30),
+            wait=wait_fixed(timeout),
+            before_sleep=before_sleep_log(logger, logging.INFO),
+            retry_error_cls=BetterRetryError,
+        )
+        def poll_central_navigation():
+            result = requests.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
+            if not has_central_navigation_categories(result, minimum_categories):
+                raise Exception(f"Portal tiles for user {username} are not (yet) up to date")
 
-            def has_central_navigation_categories(response: requests.Response):
-                if len(response.json()["categories"]) >= minimum_categories:
-                    return True
-                return False
+        poll_central_navigation()
 
-            @retry(
-                stop=stop_after_delay(30),
-                retry=retry_if_not_result(has_central_navigation_categories),
-                before_sleep=before_sleep_log(logger, logging.INFO),
-                retry_error_cls=BetterRetryError,
-            )
-            def poll_central_navigation():
-                try:
-                    session.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
-                except RetryError:
-                    logger.error(
-                        "Retry timeout exhausted after: %.3f seconds while waiting for the portal-consumer to catch up,"
-                        "look into the portal-consumer logs for more info",
-                        time.perf_counter() - start,
-                    )
-                    raise
-
-            logger.info(
-                "Waiting for the portal-server to send up-to-date portal.json and navigation.json effectively waiting for the portal-consumer to catch up."
-            )
-            poll_central_navigation()
-            logger.warning(
-                "portal-server and portal-consumer have caught up after: %.3f seconds",
-                time.perf_counter() - start,
-            )
-            return True
-
-        yield _wait_for_portal_json
+    return _wait_for_portal_json
