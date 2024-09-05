@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.0...v0.8.1) (2024-09-05)
+
+
+### Bug Fixes
+
+* Make support for "RELEASE_NAME" work again ([eb9a0c7](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/eb9a0c7dc70deda7aa06559e9325c53a4aaaac09))
+
 ## [0.8.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.7.0...v0.8.0) (2024-09-03)
 
 
