@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.2...v0.8.3) (2024-09-06)
+
+
+### Bug Fixes
+
+* Increase the timeout of the login redirection to 5 seconds ([526c8fe](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/526c8fefddc8f2358a657c731f9e4e2500ac7001))
+
 ## [0.8.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.1...v0.8.2) (2024-09-06)
 
 
