@@ -88,12 +88,18 @@ class LoginPage(PortalPage):
         self.login_button.click()
 
     def login_and_ensure_success(self, username, password):
-        with self.page.expect_response(self.authenticate_url_pattern) as response_event:
-            self.login(username, password)
 
-        response = response_event.value
-        response.finished()
-        response_text = response.text()
+        def handle_route(request):
+            response = request.fetch()
+            self.content = response.text()
+            request.fulfill(response=response)
+
+        self.page.route(self.authenticate_url_pattern, handle_route)
+        try:
+            self.login(username, password)
+        finally:
+            self.page.unroute(self.authenticate_url_pattern, handle_route)
+        response_text = self.content
 
         self.assert_successful_login(response_text)
 
