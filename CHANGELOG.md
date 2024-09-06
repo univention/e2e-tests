@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.1...v0.8.2) (2024-09-06)
+
+
+### Bug Fixes
+
+* Avoid failing if some secrets are missing ([a79b60c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a79b60c71295283dd6ea9b8368d1b18f3a9394ea))
+
 ## [0.8.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.0...v0.8.1) (2024-09-05)
 
 
