@@ -28,7 +28,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+
 import re
+from contextlib import contextmanager
 
 from ..common.base import expect
 from .common.portal_page import PortalPage
@@ -88,20 +90,9 @@ class LoginPage(PortalPage):
         self.login_button.click()
 
     def login_and_ensure_success(self, username, password):
-
-        def handle_route(request):
-            response = request.fetch()
-            self.content = response.text()
-            request.fulfill(response=response)
-
-        self.page.route(self.authenticate_url_pattern, handle_route)
-        try:
+        with capture_response_body(self.page, self.authenticate_url_pattern) as response_info:
             self.login(username, password)
-        finally:
-            self.page.unroute(self.authenticate_url_pattern, handle_route)
-        response_text = self.content
-
-        self.assert_successful_login(response_text)
+        self.assert_successful_login(response_info.text)
 
     def login(self, username, password):
         self.fill_username(username)
@@ -116,3 +107,39 @@ class LoginPage(PortalPage):
         response to the endpoint ``"login-actions/authenticate"``.
         """
         assert "Redirecting, please wait." in response_text, "Login failed"
+
+
+@contextmanager
+def capture_response_body(page, pattern):
+    """
+    Captures the response body as a `str` for the given `pattern`.
+
+    This does use `Page.route` to intercept the request, so that the response
+    text can be extracted. Usually this would be done with
+    `Page.expect_response` and `Response.finished` to wait until the body is
+    available. For pages which trigger a redirect from a ``<script>`` block
+    this does lead to errors being logged which are misleading when debugging a
+    failed test.
+
+    In comparison to `Page.expect_response` this implementation is very naive.
+    It does not register any handlers around events of the `Page` being closed.
+    This difference does seem to prevent the logging issue.
+
+    The main use-case so far has been the `LoginPage`.
+    """
+    response_info = ResponseInfo()
+
+    def handle_route(request):
+        response = request.fetch()
+        response_info.text = response.text()
+        request.fulfill(response=response)
+
+    page.route(pattern, handle_route)
+    try:
+        yield response_info
+    finally:
+        page.unroute(pattern, handle_route)
+
+
+class ResponseInfo:
+    text = None
