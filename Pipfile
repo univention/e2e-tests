@@ -3,15 +3,18 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+# Only restrict to specific version ranges if there are incompatibilities.
+# Use `pipenv update ...` to update all or individual dependencies in the
+# lock file instead.
 [packages]
 playwright = "*"
-pytest-html = "==4.0.0"
+pytest-html = "*"
 pytest-playwright = "*"
-requests = "==2.31.0"
-url-normalize = "==1.4.3"
+requests = "*"
+url-normalize = "*"
 pdbpp = "*"
-faker = "==22.1.0"
-uritemplate = "==4.1.1"
+faker = "*"
+uritemplate = "*"
 pytest = "*"
 tenacity = "*"
 udm-rest-api-client = "*"
