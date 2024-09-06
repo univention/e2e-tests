@@ -97,9 +97,10 @@ class HomePageLoggedIn(HomePage):
 
             response_text = response_event.value.text()
             login_page.assert_successful_login(response_text)
-            self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         login()
+
+        self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         @retrying_slow
         def assert_tiles():
