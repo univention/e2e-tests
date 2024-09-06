@@ -37,6 +37,10 @@ from .home_page.logged_out import HomePageLoggedOut
 
 # TODO: Split into UCSLoginPage and KeycloakLoginPage
 class LoginPage(PortalPage):
+
+    authenticate_url_pattern = re.compile(
+        r".*/realms/(?P<realm_name>.*?)/login-actions/authenticate")
+
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         # TODO: Using regular expr to target different langs in SouvAP env. Needs better solution.
@@ -79,6 +83,13 @@ class LoginPage(PortalPage):
 
     def click_login_button(self):
         self.login_button.click()
+
+    def login_and_ensure_success(self, username, password):
+        with self.page.expect_response(self.authenticate_url_pattern) as response_event:
+            self.login(username, password)
+
+        response_text = response_event.value.text()
+        self.assert_successful_login(response_text)
 
     def login(self, username, password):
         self.fill_username(username)
