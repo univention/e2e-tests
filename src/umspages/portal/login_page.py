@@ -88,7 +88,10 @@ class LoginPage(PortalPage):
         with self.page.expect_response(self.authenticate_url_pattern) as response_event:
             self.login(username, password)
 
-        response_text = response_event.value.text()
+        response = response_event.value
+        response.finished()
+        response_text = response.text()
+
         self.assert_successful_login(response_text)
 
     def login(self, username, password):
