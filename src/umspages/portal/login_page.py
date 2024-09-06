@@ -37,9 +37,12 @@ from .home_page.logged_out import HomePageLoggedOut
 
 # TODO: Split into UCSLoginPage and KeycloakLoginPage
 class LoginPage(PortalPage):
-
     authenticate_url_pattern = re.compile(
-        r".*/realms/(?P<realm_name>.*?)/login-actions/authenticate")
+        r".*/realms/"
+        # realm name, typically "nubus" or "opendesk"
+        r".*?"
+        r"/login-actions/authenticate"
+    )
 
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
