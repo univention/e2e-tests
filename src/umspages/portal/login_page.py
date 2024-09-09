@@ -31,8 +31,6 @@
 import re
 from contextlib import contextmanager
 
-from playwright.sync_api import Error
-
 from ..common.base import expect
 from .common.portal_page import PortalPage
 from .home_page.logged_out import HomePageLoggedOut
@@ -91,21 +89,17 @@ class LoginPage(PortalPage):
         self.login_button.click()
 
     def login_and_ensure_success(self, username, password):
-        with capture_response_body(self.page, self.authenticate_url_pattern) as response_info:
+        with capture_response(self.page, self.authenticate_url_pattern) as response_info:
             self.login(username, password)
-        self.assert_successful_login(response_info.text)
+        self.assert_successful_login(response_info.value)
 
     def login(self, username, password):
         self.fill_username(username)
         self.fill_password(password)
-        with self.page.expect_response(self.authenticate_url_pattern, timeout=10000) as response_event:
-            self.click_login_button()
-        self.assert_successful_login(response_event.value)
+        self.click_login_button()
 
-    def assert_successful_login(self, response_value):
+    def assert_successful_login(self, response):
         """
-        Ensure that the response status and text indicate a successful login.
-
         429 indicates that the brute-force detection was triggered
         400 indicates that the LDAP Server request from Keycloak failed.
         These failure scenarios can easily be reproduced
@@ -113,21 +107,19 @@ class LoginPage(PortalPage):
 
         200 could mean success or that the username or password was wrong.
         To differentiate these cases, we check the response text.
-        ``response_text`` is expected to be the full body text of the
-        response to the endpoint ``"login-actions/authenticate"``.
         """
         assert (
-            response_value.status != 429
+            response.status != 429
         ), "Login failed, probably reached the brute-force detection limits of keycloak-extensions"
-        assert response_value.status == 200, "Login failed, probably due to a failed LDAP Connection"
-        text = response_value.text()
+        assert response.status == 200, "Login failed, probably due to a failed LDAP Connection"
+        response_text = response.text()
         assert (
-            "Redirecting, please wait." in text
+            "Redirecting, please wait." in response_text
         ), "Login failed, probably due to a wrong username or password."
 
 
 @contextmanager
-def capture_response_body(page, pattern):
+def capture_response(page, pattern):
     """
     Captures the response body as a `str` for the given `pattern`.
 
@@ -144,19 +136,19 @@ def capture_response_body(page, pattern):
 
     The main use-case so far has been the `LoginPage`.
     """
-    response_info = ResponseInfo()
+    response_value = ResponseInfo()
 
     def handle_route(request):
         response = request.fetch()
-        response_info.text = response.text()
+        response_value.value = response
         request.fulfill(response=response)
 
     page.route(pattern, handle_route)
     try:
-        yield response_info
+        yield response_value
     finally:
         page.unroute(pattern, handle_route)
 
 
 class ResponseInfo:
-    text = None
+    value = None

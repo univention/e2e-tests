@@ -30,7 +30,7 @@
 
 import re
 
-from e2e.decorators import retrying_slow
+from e2e.decorators import retrying_keycloak_login, retrying_slow
 from umspages.common.base import expect
 
 from ..login_page import LoginPage
@@ -79,7 +79,7 @@ class HomePageLoggedIn(HomePage):
         # in. The portal page should have a way to say "login_via_menu.click()"
         # and then the LoginPage.login(username, password) can be called.
 
-        @retrying_slow
+        @retrying_keycloak_login
         def login():
             login_page = LoginPage(self.page)
             login_page.navigate(cookies_accepted=True)

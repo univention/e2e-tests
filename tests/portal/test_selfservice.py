@@ -70,7 +70,7 @@ def dummy_username():
 def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: WaitForPortalSync):
     """
     Prerequisite for all other selfservice tests.
-    If the portal-consumer does not works, nothing else will either.
+    If the portal-consumer does not work, nothing else will either.
     """
     username = user.properties["username"]
     wait_for_portal_sync(username, 4)

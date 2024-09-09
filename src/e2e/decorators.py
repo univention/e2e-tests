@@ -3,7 +3,7 @@
 
 import logging
 
-from tenacity import RetryError, before_sleep_log, retry, stop_after_delay, wait_fixed
+from tenacity import RetryError, before_sleep_log, retry, stop_after_delay, wait_exponential, wait_fixed
 
 log = logging.getLogger(__name__)
 
@@ -75,7 +75,15 @@ See: https://tenacity.readthedocs.io/en/latest/
 
 retrying_slow = retry(
     stop=stop_after_delay(40),
-    wait=wait_fixed(6),
+    wait=wait_fixed(2),
+    before_sleep=before_sleep_log(log, logging.WARNING),
+    retry_error_cls=BetterRetryError,
+)
+
+
+retrying_keycloak_login = retry(
+    stop=stop_after_delay(80),
+    wait=wait_exponential(multiplier=2.1, exp_base=1.7),
     before_sleep=before_sleep_log(log, logging.WARNING),
     retry_error_cls=BetterRetryError,
 )

@@ -30,7 +30,7 @@
 
 import pytest
 
-from e2e.decorators import retrying
+from e2e.decorators import retrying_slow
 from umspages.common.base import expect
 from umspages.portal.announcements.announcements_page import AnnouncementsPage
 from umspages.portal.home_page.base import HomePage
@@ -71,7 +71,7 @@ def stub_announcement(stub_announcement_data, udm_fixtures):
 def test_anonymous_user_sees_announcement(page, stub_announcement):
     home_page = HomePage(page)
 
-    @retrying
+    @retrying_slow
     def assert_announcement_is_visible():
         home_page.navigate()
         expected_title = stub_announcement["properties"]["title"]["en_US"]
