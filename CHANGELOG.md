@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.3...v0.9.0) (2024-09-09)
+
+
+### Features
+
+* Update playwright to version 1.46.0 ([0e6a90f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/0e6a90f3290db912c4214a522a85c89576319cc8))
+
+
+### Bug Fixes
+
+* Replace "page.expect_response" with "page.route" ([48aeac2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/48aeac2d85f3ac0a451acbfe0985d74c9c7d9895))
+* Wait until response is finished before looking into the body ([d6d83fc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d6d83fcb2bc824ff4708527981afc301256102f1))
+* wip - Inspect the response of the login form to ensure it worked ([d5f1cd8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d5f1cd885bea4e04d6898529022d736ba11123ea))
+
 ## [0.8.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.2...v0.8.3) (2024-09-06)
 
 
