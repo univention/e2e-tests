@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "nubus-testing-api"
+version = "0.1.0"
+description = "Nubus testing api to support e2e tests"
+authors = [
+  "Univention GmbH <packages@univention.de>",
+]
+license = "GNU Affero General Public License v3"
+# readme = "README.md"
+packages = [{ include = "testing_api", from = "src" }, ]
+
+[tool.poetry.dependencies]
+fastapi = "^0.103.1"
+fastapi-utils = "^0.7.0"
+ldap3 = "^2.9.1"
+pydantic = "^2.3.0"
+pydantic-settings = "^2.0.3"
+python = "^3.11"
+tenacity = "*"
+uvicorn = "^0.21.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
