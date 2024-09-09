@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.10.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.9.0...v0.10.0) (2024-09-09)
+
+
+### Features
+
+* better failed test summary when tenacity retries are involved ([d6aecc1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d6aecc1a6090dc9f02b9fd5e9d991f8952d5d396)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+* wait for the portal-consumer to catch up by polling navigate.json ([56ed4cc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/56ed4cca897eb813719a10e58f425287f242516c)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+
+
+### Bug Fixes
+
+* decrease click timeout because the menu entry will never appear if an outdated portal.json was loaded ([9e84588](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/9e845886f6c36ced4cd638c91d935c4918e0f613)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+* fix code after rebase ([d2bbc34](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d2bbc3418c54b7bcda5a460911ee548495aed972))
+* make discover env script compatible with openDesk again ([4e9b680](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/4e9b68034bde4407cc400ca53459db76f591f665))
+* make faker seed unique to every test function instead of one for the whole session ([6e0b870](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/6e0b870625dfac0bd2d86e20d925ee782c6cf637)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+* make the login form response inspection compatible with openDesk deployments in addition to plain nubus deployments ([38a5fcc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/38a5fcc41fe116fbb7e3fb4939a8e27c88dd4e87)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+* set log level for failed tests ([968e7f0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/968e7f00a344e5a72570e44e079e4ddc9e09175e)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+* Stabilize selfservice tests when run against opendesk with portal-consumer ([a1b9f1e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a1b9f1e4027d415680689f3d5d7e2d400bda5c1e)), closes [univention/customers/dataport/team-souvap#807](https://git.knut.univention.de/univention/customers/dataport/team-souvap/issues/807)
+
 ## [0.9.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.8.3...v0.9.0) (2024-09-09)
 
 
