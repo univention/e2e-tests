@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.10.0...v0.11.0) (2024-09-10)
+
+
+### Features
+
+* Change Pipefile to use the latest version of all dependencies ([71bda60](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/71bda605738825e105246c7df6b94acba3a7ec6c))
+* Update lock file to latest version for all dependencies ([a50c5c7](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a50c5c76fe2c0cf7800258ae54bbcb34fc8ba056))
+
 ## [0.10.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.9.0...v0.10.0) (2024-09-09)
 
 
