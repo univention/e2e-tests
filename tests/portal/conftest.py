@@ -42,7 +42,6 @@ from e2e.decorators import BetterRetryError
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
-from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
 
 logger = logging.getLogger(__name__)
 
@@ -121,18 +120,6 @@ def navigate_to_saml_login_page(page):
 def navigate_to_home_page_logged_in(page, admin_username, admin_password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(admin_username, admin_password)
-    return page
-
-
-@pytest.fixture()
-def navigate_to_selfservice_portal_logged_in(page, admin_username, admin_password):
-    """
-    The openDesk customization has no portal tile pointing to this UI.
-    The only way to reach this UI on an openDesk deployment
-    is by manually navigating to the url path: `/univention/selfservice/#/`
-    """
-    selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_in.navigate(admin_username, admin_password)
     return page
 
 
