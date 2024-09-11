@@ -197,6 +197,21 @@ def test_admin_sees_correct_tiles_in_selfservice_portal(page, admin_username, ad
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
+def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password, wait_for_portal_sync):
+    username = user.properties["username"]
+    wait_for_portal_sync(username, 4)
+
+    selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
+    selfservice_portal_logged_in.navigate(username, user_password)
+
+    expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
+    expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_anonymous_sees_correct_tiles_in_selfservice_portal(page):
     selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
     selfservice_portal_logged_out.navigate()
