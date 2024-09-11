@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.12.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.11.0...v0.12.0) (2024-09-11)
+
+
+### Features
+
+* Add "login_with_retry" to LoginPage ([891c47d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/891c47de29ce138959be6df19627e9205dcc8722))
+* Check selfservice portal for regular user ([a7b310c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a7b310cd460def415e3d71b1a773d287fba633f6))
+* Remove fixture "navigate_to_selfservice_portal_logged_in" ([15c7c81](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/15c7c813e56191c59e452238a7b30404fcee845d))
+* Remove unused fixture "navigate_to_selfservice_portal_logged_out" ([a86da8b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a86da8bd3f90b39a700eff6342b163662e0b49ab))
+* Simplify the ~navigate~ of the page ~SelfServicePortalLoggedOut~ ([b934026](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b934026bc7532be093d51f2a22aa954b12a7aeac))
+* Split the test regarding the selfservice portal ([f75a600](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f75a6003fd35ca17f6531d404889957ecd3dc6e8))
+* Use "login_with_retry" in SelfservicePortalLoggedIn ([c6713af](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c6713af3b674955386b01e606fe1ab8decace68c))
+
 ## [0.11.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.10.0...v0.11.0) (2024-09-10)
 
 
