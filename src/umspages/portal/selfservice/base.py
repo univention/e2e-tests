@@ -32,3 +32,7 @@ class SelfservicePortal(PortalPage):
         super().set_content(*args, **kwargs)
         self.my_profile_tile = self.page.get_by_label("My Profile Same tab")
         self.protect_account_tile = self.page.get_by_label("Protect your account Same tab")
+
+        # UMC tiles headline - Expected not to be there in default
+        # configurations
+        self.umc_tiles_headline = self.page.get_by_role("heading", name="Univention Management Console")
