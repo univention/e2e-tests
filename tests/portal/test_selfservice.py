@@ -185,7 +185,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
+def test_selfservice_portal_logged_in(navigate_to_selfservice_portal_logged_in):
     """
     Tests the selfservice portal is served and with the correct tiles.
 
@@ -198,12 +198,19 @@ def test_selfservice_portal(navigate_to_selfservice_portal_logged_in):
     """
     page = navigate_to_selfservice_portal_logged_in
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
 
     expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()
 
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_selfservice_portal_logged_out(page):
+    selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
     selfservice_portal_logged_out.navigate()
+
     expect(selfservice_portal_logged_out.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_out.protect_account_tile).to_be_visible()
     expect(selfservice_portal_logged_out.password_forgotten_tile).to_be_visible()
