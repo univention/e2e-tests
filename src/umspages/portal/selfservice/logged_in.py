@@ -49,4 +49,5 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
         self.right_side_menu.login_button.click(timeout=2000)
 
         login_page = LoginPage(self.page)
-        login_page.login(username, password)
+        login_page.login_with_retry(username, password)
+        self.page.wait_for_url("/univention/selfservice/**", timeout=5000)
