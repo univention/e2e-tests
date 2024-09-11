@@ -185,19 +185,9 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_selfservice_portal_logged_in(navigate_to_selfservice_portal_logged_in):
-    """
-    Tests the selfservice portal is served and with the correct tiles.
-
-    1. Logs into the portal as a normal user.
-    2. Navigates into `/univention/selfservice`.
-    3. Checks for the `My profile` and `Protect account` tiles.
-    4. Logs out.
-    5. Check for `My profile`, `Protect account` and `Password forgotten`
-    tiles.
-    """
-    page = navigate_to_selfservice_portal_logged_in
+def test_selfservice_portal_logged_in(page, admin_username, admin_password):
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
+    selfservice_portal_logged_in.navigate(admin_username, admin_password)
 
     expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()
