@@ -28,7 +28,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from ...common.base import expect
 from .base import SelfservicePortal
 
 
@@ -42,10 +41,4 @@ class SelfservicePortalLoggedOut(SelfservicePortal):
         self.password_forgotten_tile = self.page.get_by_label("Password forgotten Same tab")
 
     def navigate(self):
-        self.logout()
-        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-        expect(self.right_side_menu.login_button).to_be_visible()
-        expect(self.right_side_menu.logout_button).to_be_hidden()
-        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
-        # Logout takes the user to the Login page, so we send it to selfservice
         self.page.goto("/univention/selfservice/")
