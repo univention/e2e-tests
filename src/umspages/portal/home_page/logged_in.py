@@ -91,11 +91,8 @@ class HomePageLoggedIn(HomePage):
 
         @retrying_slow
         def assert_tiles():
-            # TODO: We miss a proper way to find the element, a "data-testid"
-            # would be helpful in this case.
-            tiles = self.page.locator("a.portal-tile")
             try:
-                expect(tiles.first).to_be_visible(timeout=2000)
+                expect(self.tiles.first).to_be_visible(timeout=2000)
             except Exception:
                 self.page.reload()
                 raise
