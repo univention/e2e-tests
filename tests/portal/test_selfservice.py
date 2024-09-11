@@ -185,7 +185,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_selfservice_portal_logged_in(page, admin_username, admin_password):
+def test_admin_sees_correct_tiles_in_selfservice_portal(page, admin_username, admin_password):
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
     selfservice_portal_logged_in.navigate(admin_username, admin_password)
 
@@ -197,7 +197,7 @@ def test_selfservice_portal_logged_in(page, admin_username, admin_password):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_selfservice_portal_logged_out(page):
+def test_anonymous_sees_correct_tiles_in_selfservice_portal(page):
     selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
     selfservice_portal_logged_out.navigate()
 
