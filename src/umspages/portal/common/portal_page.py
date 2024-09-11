@@ -67,6 +67,10 @@ class PortalPage(BasePage):
         self.right_side_menu = RightSideMenu(self.page.locator("#portal-sidenavigation"))
         self.cookie_dialog = CookieDialog(self.page.get_by_role("dialog", name="Cookie Settings"))
 
+        # TODO: We miss a proper way to find the element, a "data-testid"
+        # would be helpful in this case.
+        self.tiles = self.page.locator("a.portal-tile")
+
     def remove_all_notifications(self):
         self.reveal_area(self.notification_drawer, self.header.bell_icon)
         count = self.notification_drawer.notifications.count()
