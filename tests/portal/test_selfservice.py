@@ -197,6 +197,18 @@ def test_admin_sees_correct_tiles_in_selfservice_portal(page, admin_username, ad
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
+def test_admin_does_not_see_umc_tiles_in_selfservice_portal(page, admin_username, admin_password):
+    selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
+    selfservice_portal_logged_in.navigate(admin_username, admin_password)
+
+    expect(selfservice_portal_logged_in.tiles.first).to_be_visible()
+    expect(selfservice_portal_logged_in.umc_tiles_headline).not_to_be_visible()
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password, wait_for_portal_sync):
     username = user.properties["username"]
     wait_for_portal_sync(username, 4)
