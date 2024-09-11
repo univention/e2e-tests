@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.12.0...v0.13.0) (2024-09-11)
+
+
+### Features
+
+* Add "tiles" to "PortalPage" ([3d6ee6d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/3d6ee6d6b4b4f5880f50ca2101d831dbeea91b12))
+* Add locator for UMC Tiles headline into the SelfservicePortal ([cc217e7](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/cc217e7876f6fa1b5735248ab0f93a8ff69ff0be))
+* Add test to verify that admin does not see UMC tiles in Selfservice portal ([502554f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/502554f4ae2a48872c81ac3134e4df5db3ef7360))
+* Use PortalPage.tiles in HomePageLoggedIn ([a18d71e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a18d71ecc2b2747263d78f1a598b28be2972b842))
+
 ## [0.12.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.11.0...v0.12.0) (2024-09-11)
 
 
