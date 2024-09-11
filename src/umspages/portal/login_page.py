@@ -31,6 +31,8 @@
 import re
 from contextlib import contextmanager
 
+from e2e.decorators import retrying_keycloak_login
+
 from ..common.base import expect
 from .common.portal_page import PortalPage
 from .home_page.logged_out import HomePageLoggedOut
@@ -92,6 +94,8 @@ class LoginPage(PortalPage):
         with capture_response(self.page, self.authenticate_url_pattern) as response_info:
             self.login(username, password)
         self.assert_successful_login(response_info.value)
+
+    login_with_retry = retrying_keycloak_login(login_and_ensure_success)
 
     def login(self, username, password):
         self.fill_username(username)
