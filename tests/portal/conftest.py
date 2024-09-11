@@ -43,7 +43,6 @@ from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
 from umspages.portal.login_page import LoginPage
 from umspages.portal.selfservice.logged_in import SelfservicePortalLoggedIn
-from umspages.portal.selfservice.logged_out import SelfservicePortalLoggedOut
 
 logger = logging.getLogger(__name__)
 
@@ -101,13 +100,6 @@ def browser_context_args(browser_context_args, portal_base_url, keycloak_base_ur
 def navigate_to_home_page_logged_out(page):
     home_page_logged_out = HomePageLoggedOut(page)
     home_page_logged_out.navigate()
-    return page
-
-
-@pytest.fixture()
-def navigate_to_selfservice_portal_logged_out(page):
-    selfservice_portal_logged_out = SelfservicePortalLoggedOut(page)
-    selfservice_portal_logged_out.navigate()
     return page
 
 
