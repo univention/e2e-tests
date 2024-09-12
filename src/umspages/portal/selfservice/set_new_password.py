@@ -23,13 +23,8 @@ class SetNewPasswordPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.set_new_password_dialog = self.page.get_by_role("dialog", name="Set new password")
-        self.new_password_box = self.set_new_password_dialog.get_by_role("textbox", name="New password")
-        self.retype_password_box = self.set_new_password_dialog.get_by_test_id("retype-password-box")
-
-        # TODO: Switch to "get_by_role" once the frontend fix is released
-        # See: https://git.knut.univention.de/univention/components/univention-portal/-/merge_requests/447
-
-        # self.retype_password_box = self.page.get_by_role("textbox", name="New password (retype)")
+        self.new_password_box = self.set_new_password_dialog.get_by_role("textbox", name="New password").first
+        self.retype_password_box = self.set_new_password_dialog.get_by_role("textbox", name="New password (retype)")
 
         self.submit_button = self.set_new_password_dialog.get_by_role("button", name="Change password")
         self.password_change_successful_dialog = self.page.get_by_role("dialog", name="Password change successful")
