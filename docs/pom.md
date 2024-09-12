@@ -17,6 +17,87 @@ We apply the pattern loosely also in the [email case](./pom-email.md).
 - The implementation is under ongoing simplification.
 
 
+### Page Object pattern
+
+This section describes our - evolving - interpretation of the Page Object
+pattern.
+
+
+#### Keep it simple
+
+Our initial implementation was trying to have us prepared for the most complex
+cases. This did lead to a complex and difficult to maintain implementation.
+
+The main insight is to keep it simple. The following list gives a few specific
+hints about this aspect. Some are explained below in more detail.
+
+- Start with a simple Page Object.
+- Add parts only if it grows too much or if reuse between Page Objects makes
+  sense.
+- Avoid asserts in the Page Object in regular methods.
+  - Providing them as a utility method is fine in some cases, call it `assert_*`
+    or `action_and_ensure_success`.
+- Keep `navigate` simple.
+- Keep the inheritance hierarchy reasonable.
+
+
+#### Simple `navigate`
+
+##### Avoid too much complexity and hidden magic actions
+
+Some of our `navigate` implementations tried to be smart about the state of the
+system. This did lead to a long run-time and nearly unmaintainable
+implementations.
+
+The following example implementation shows an implementation which is too
+complex:
+
+```python
+class HomePageLoggedOut(HomePage):
+
+    def navigate(self, cookies_accepted=False):
+        self.page.goto("/")
+        if not cookies_accepted:
+            try:
+                expect(self.cookie_dialog).to_be_visible()
+            except AssertionError:
+                pass
+            else:
+                self.accept_cookies()
+        self.logout()
+        # Normally, we don't use assertions inside the navigate() methods
+        # Navigation roots are the exception, since they have to assure login state
+        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
+        expect(self.right_side_menu.login_button).to_be_visible()
+        expect(self.right_side_menu.logout_button).to_be_hidden()
+        self.hide_area(self.right_side_menu, self.header.hamburger_icon)
+```
+
+Instead we know that each test case does start off with a fresh `BrowserContext`
+and that it is pre-configured to have the cookies already accepted. This means
+that the test case knows that it starts in the logged out state, so that the
+following implementation is sufficient:
+
+```python
+class HomePage:
+
+    def navigate(self, cookies_accepted=False):
+        self.page.goto("/")
+```
+
+##### Avoid putting knowledge into the wrong Page Object
+
+An additional aspect to consider is the question which Page Object should
+actually know how to navigate to a specific page or state. As an example, there
+are multiple ways to reach the login form. The Page Object `LoginPage` cannot
+know how to navigate to it, simply because it cannot know where it is starting
+from. On the other hand, the `PortalPage` does offer support to click the login
+tile or to click the login menu entry. Only the test case itself does actually
+know which path it wants to test. It should use the `PortalPage` to reach the
+`LoginPage` and then it should use the `LoginPage` to interact with the login
+form.
+
+
 ### Background information regarding the Page Object pattern
 
 Our interpretation of the Page Object pattern is based and influenced by the
