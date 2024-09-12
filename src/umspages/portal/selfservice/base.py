@@ -19,6 +19,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+from urllib.parse import urljoin
+
 from ...common.base import expect
 from ..common.portal_page import PortalPage
 from ..login_page import LoginPage
@@ -32,8 +34,10 @@ class SelfservicePortal(PortalPage):
     management.
     """
 
+    url_path = "/univention/selfservice/"
+
     def navigate(self):
-        self.page.goto("/univention/selfservice/")
+        self.page.goto(self.url_path)
 
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
@@ -55,4 +59,4 @@ class SelfservicePortal(PortalPage):
 
         login_page = LoginPage(self.page)
         login_page.login_with_retry(username, password)
-        self.page.wait_for_url("/univention/selfservice/**", timeout=5000)
+        self.page.wait_for_url(urljoin(self.url_path, "**"), timeout=5000)
