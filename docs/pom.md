@@ -1,17 +1,38 @@
 # Page Object Model
 
+
 ## Overview
 
-We use the Page Object Model (POM) for representing webpages.
-You can find the Page Objects (POs) under `src/umspages` in this
-repository.
+The tests use the *Page Object* pattern as an abstraction layer of the user
+interface.
 
-Here are some useful links for reading about POM basic concepts.
+We apply the pattern loosely also in the [email case](./pom-email.md).
+
+
+### Ongoing refactoring
+
+- We aim to move the code into the `e2e` package in the folder `src/e2e`.
+  Compare [./code-structure.md](./code-structure.md).
+
+- The implementation is under ongoing simplification.
+
+
+### Background information regarding the Page Object pattern
+
+Our interpretation of the Page Object pattern is based and influenced by the
+following sources:
 
 1. [A general introduction to POM](https://martinfowler.com/bliki/PageObject.html)
 2. [POM implementation using Selenium](https://selenium-python.readthedocs.io/page-objects.html)
 3. [POM related notes in Selenium docs](https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/)
 4. [POM implementation using Playwright](https://playwright.dev/python/docs/pom)
+
+
+## Historic overview pre 2024-08
+
+We use the Page Object Model (POM) for representing webpages.
+You can find the Page Objects (POs) under `src/umspages` in this
+repository.
 
 The basic implementations outlined above are inadequate for our use case for two important reasons.
 
