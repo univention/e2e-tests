@@ -28,6 +28,9 @@ class SelfservicePortal(PortalPage):
     logged out state
     """
 
+    def navigate(self):
+        self.page.goto("/univention/selfservice/")
+
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
         self.my_profile_tile = self.page.get_by_label("My Profile Same tab")

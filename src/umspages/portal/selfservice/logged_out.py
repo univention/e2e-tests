@@ -40,5 +40,3 @@ class SelfservicePortalLoggedOut(SelfservicePortal):
         super().set_content(*args, **kwargs)
         self.password_forgotten_tile = self.page.get_by_label("Password forgotten Same tab")
 
-    def navigate(self):
-        self.page.goto("/univention/selfservice/")
