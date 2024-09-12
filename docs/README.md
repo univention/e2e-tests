@@ -11,4 +11,5 @@ available:
 - [Page Object Model - Inheritance](./pom-inheritance.md)
 - [Pytest recommendations](./pytest.md)
 - [Stub data](./stub-data.md)
+- [Test cases](./tests.md)
 - [Technology overview](./technology.md)
