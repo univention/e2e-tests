@@ -79,17 +79,9 @@ def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: 
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_non_admin_can_change_password(
+def test_user_changes_password_via_side_menu(
     navigate_to_login_page: Page, user, user_password: str, wait_for_portal_sync: WaitForPortalSync
 ):
-    """
-    Tests a user can update its password, doing so from the side-menu.
-
-    1. Logs in as the dummy user with its original password.
-    2. Changes the password from the side-menu to a new password.
-    3. Logs out from the dummy user.
-    4. Logs in with the new password.
-    """
     username = user.properties["username"]
     wait_for_portal_sync(username, 4)
 
