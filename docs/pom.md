@@ -10,7 +10,8 @@ Here are some useful links for reading about POM basic concepts.
 
 1. [A general introduction to POM](https://martinfowler.com/bliki/PageObject.html)
 2. [POM implementation using Selenium](https://selenium-python.readthedocs.io/page-objects.html)
-3. [POM implementation using Playwright](https://playwright.dev/python/docs/pom)
+3. [POM related notes in Selenium docs](https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/)
+4. [POM implementation using Playwright](https://playwright.dev/python/docs/pom)
 
 The basic implementations outlined above are inadequate for our use case for two important reasons.
 
