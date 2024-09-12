@@ -51,10 +51,10 @@ class LoginPage(PortalPage):
         super().set_content(*args, **kwargs)
         # TODO: Using regular expr to target different langs in SouvAP env. Needs better solution.
         # In headed mode, default language is English. In headless mode, it is Deutsch.
-        self.username_input = self.page.get_by_label(re.compile("^(Username|Benutzername)"))
-        self.password_input = self.page.get_by_label(re.compile("^Passwor(d|t)"))
+        self.username_input = self.page.get_by_role("textbox", name="Username")
+        self.password_input = self.page.get_by_role("textbox", name="Password")
         # TODO: Using regular expression to target both UCS and SouvAP envs. Needs a better solution.
-        self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In|Anmelden)"))
+        self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In)"))
         # Keycloak login specific
 
         # TODO: Missing role in the sources
