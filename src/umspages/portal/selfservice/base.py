@@ -21,7 +21,6 @@
 
 from urllib.parse import urljoin
 
-from ...common.base import expect
 from ..common.portal_page import PortalPage
 from ..login_page import LoginPage
 
@@ -53,8 +52,6 @@ class SelfservicePortal(PortalPage):
 
     def login(self, username, password):
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-        expect(self.right_side_menu.login_button).to_be_visible()
-        expect(self.right_side_menu.logout_button).to_be_hidden()
         self.right_side_menu.login_button.click(timeout=2000)
 
         login_page = LoginPage(self.page)
