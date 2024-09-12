@@ -327,3 +327,47 @@ def test_user_requests_password_forgotten_link_from_login_page(
 
     with subtests.test(msg="Login with new password is possible"):
         assert_user_can_log_in(page, user.properties["username"], new_password)
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_user_requests_password_forgotten_via_selfservice_portal(
+    page,
+    user,
+    email_test_api,
+    faker,
+    subtests,
+):
+    selfservice_portal = SelfservicePortal(page)
+    selfservice_portal.navigate()
+    selfservice_portal.password_forgotten_tile.click()
+
+    password_forgotten_page = PasswordForgottenPage(page)
+    password_forgotten_page.request_token_via_email(user.properties["username"])
+
+    with subtests.test(msg="Notification popup is visible"):
+        expect(password_forgotten_page.popup_notification_container).to_be_visible()
+
+    with subtests.test(msg="Notification contains success message"):
+        notification = password_forgotten_page.popup_notification_container.notification(0)
+        expect(notification).to_contain_text("Successfully sent Token")
+
+    with subtests.test(msg="Set new password page is displayed"):
+        set_new_password_page = SetNewPasswordPage(page)
+        assert set_new_password_page.is_displayed()
+
+    link_with_token = get_password_reset_link_with_token(email_test_api, user.properties["PasswordRecoveryEmail"])
+    assert link_with_token
+
+    page.goto(link_with_token)
+    new_password = faker.password()
+    set_new_password_page = SetNewPasswordPage(page)
+    set_new_password_page.set_new_password(password=new_password)
+
+    with subtests.test(msg="Password change is confirmed in UI"):
+        expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
+
+    with subtests.test(msg="Login with new password is possible"):
+        assert_user_can_log_in(page, user.properties["username"], new_password)
