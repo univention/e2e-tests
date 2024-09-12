@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+testingApi:
+  baseDn: "foobarbaz"
+  ldap:
+    primaryConnection:
+      host: "foo"
+    secondaryConnection:
+      host: "bar"
+    auth:
+      bindDn: "foobar"
+      credentialSecret:
+        key: "password"
+        name: "baz"

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+kind: "ConfigMap"
+apiVersion: "v1"
+metadata:
+  name: {{ printf "%s-common" (include "common.names.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.additionalLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.additionalLabels "context" . ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.additionalAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.additionalAnnotations "context" . ) | nindent 4 }}
+  {{- end }}
+data:
+  LOG_LEVEL: {{ required ".Values.testingApi.config.logLevel is required." .Values.testingApi.config.logLevel | quote  }}
+
+  LDAP_BASE_DN: {{ required ".Values.testingApi.ldap.baseDn is required." .Values.testingApi.ldap.baseDn }}
+  LDAP_BIND_DN: {{ required ".Values.testingApi.ldap.auth.bindDn is required." .Values.testingApi.ldap.auth.bindDn }}
+
+  LDAP_SERVER_PRIMARY_SERVICE_HOSTNAME: {{ printf "%s.%s.svc.cluster.local" ( required ".Values.testingApi.ldap.primaryConnection.host is required." .Values.testingApi.ldap.primaryConnection.host ) ( include "common.names.namespace" . ) }}
+  LDAP_SERVER_PRIMARY_PORT: {{ required ".Values.testingApi.ldap.primaryConnection.port is required." .Values.testingApi.ldap.primaryConnection.port | quote }}
+  LDAP_SERVER_SECONDARY_SERVICE_HOSTNAME: {{ printf "%s.%s.svc.cluster.local" ( required ".Values.testingApi.ldap.secondaryConnection.host is required." .Values.testingApi.ldap.secondaryConnection.host ) ( include "common.names.namespace" . ) }}
+  LDAP_SERVER_SECONDARY_PORT: {{ required ".Values.testingApi.ldap.secondaryConnection.port is required." .Values.testingApi.ldap.secondaryConnection.port | quote }}
+...

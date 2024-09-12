@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+
+apiVersion: v2
+name: "testing-api"
+description: "Testing api for nubus e2e tests"
+
+type: "application"
+
+version: "0.1.0"
+
+appVersion: "0.0.1"
+
+dependencies:
+  - name: "common"
+    repository: "oci://gitregistry.knut.univention.de/univention/customers/dataport/upx/common-helm/helm"
+    version: "^0.2.0"
+
+...
