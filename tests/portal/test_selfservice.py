@@ -187,7 +187,8 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
 @pytest.mark.acceptance_environment
 def test_admin_sees_correct_tiles_in_selfservice_portal(page, admin_username, admin_password):
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_in.navigate(admin_username, admin_password)
+    selfservice_portal_logged_in.navigate()
+    selfservice_portal_logged_in.login(admin_username, admin_password)
 
     expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()
@@ -199,7 +200,8 @@ def test_admin_sees_correct_tiles_in_selfservice_portal(page, admin_username, ad
 @pytest.mark.acceptance_environment
 def test_admin_does_not_see_umc_tiles_in_selfservice_portal(page, admin_username, admin_password):
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_in.navigate(admin_username, admin_password)
+    selfservice_portal_logged_in.navigate()
+    selfservice_portal_logged_in.login(admin_username, admin_password)
 
     expect(selfservice_portal_logged_in.tiles.first).to_be_visible()
     expect(selfservice_portal_logged_in.umc_tiles_headline).not_to_be_visible()
@@ -214,7 +216,8 @@ def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password
     wait_for_portal_sync(username, 4)
 
     selfservice_portal_logged_in = SelfservicePortalLoggedIn(page)
-    selfservice_portal_logged_in.navigate(username, user_password)
+    selfservice_portal_logged_in.navigate()
+    selfservice_portal_logged_in.login(username, user_password)
 
     expect(selfservice_portal_logged_in.my_profile_tile).to_be_visible()
     expect(selfservice_portal_logged_in.protect_account_tile).to_be_visible()

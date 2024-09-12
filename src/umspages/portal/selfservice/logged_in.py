@@ -27,8 +27,7 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
     This represents the logged out state of the selfservice portal
     """
 
-    def navigate(self, username, password):
-        super().navigate()
+    def login(self, username, password):
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()
         expect(self.right_side_menu.logout_button).to_be_hidden()
