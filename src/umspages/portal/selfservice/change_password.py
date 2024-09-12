@@ -35,9 +35,10 @@ from ..home_page.logged_in import HomePageLoggedIn
 class ChangePasswordDialogPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.old_password_box = self.page.get_by_test_id("password-box")
-        self.new_password_box = self.page.get_by_test_id("new-password-box")
-        self.retype_password_box = self.page.get_by_test_id("retype-password-box")
+        self.change_password_dialog = self.page.get_by_role("dialog", name="Change password")
+        self.old_password_box = self.change_password_dialog.get_by_role("textbox", name="Old password")
+        self.new_password_box = self.change_password_dialog.get_by_role("textbox", name="New password").first
+        self.retype_password_box = self.change_password_dialog.get_by_role("textbox", name="New password (retype)")
         self.submit_button = self.page.get_by_role("button", name="Change password")
 
     def navigate(self, username, password):
