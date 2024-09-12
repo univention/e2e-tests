@@ -29,12 +29,6 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
 
     def navigate(self, username, password):
         super().navigate()
-        try:
-            expect(self.cookie_dialog).to_be_visible()
-        except AssertionError:
-            pass
-        else:
-            self.accept_cookies()
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         try:
             expect(self.right_side_menu.login_button).to_be_visible()
