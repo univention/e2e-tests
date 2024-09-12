@@ -30,14 +30,6 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
     def navigate(self, username, password):
         super().navigate()
         self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
-        try:
-            expect(self.right_side_menu.login_button).to_be_visible()
-        except AssertionError:
-            expect(self.right_side_menu.logout_button).to_be_visible()
-            self.hide_area(self.right_side_menu, self.header.hamburger_icon)
-            return
-
-        self.reveal_area(self.right_side_menu, self.header.hamburger_icon)
         expect(self.right_side_menu.login_button).to_be_visible()
         expect(self.right_side_menu.logout_button).to_be_hidden()
         self.right_side_menu.login_button.click(timeout=2000)
