@@ -121,6 +121,33 @@ user an email to set their password.
 			<td>Log level for the selfservice listener. valid values are: ERROR WARNING, INFO, DEBUG</td>
 		</tr>
 		<tr>
+			<td>testingApi.ingress.host</td>
+			<td>string</td>
+			<td><pre lang="json">
+null
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>testingApi.ingress.tls.enabled</td>
+			<td>bool</td>
+			<td><pre lang="json">
+true
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>testingApi.ingress.tls.secretName</td>
+			<td>string</td>
+			<td><pre lang="json">
+""
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>testingApi.ldap</td>
 			<td>object</td>
 			<td><pre lang="json">

@@ -83,3 +83,9 @@ testingApi:
       credentialSecret:
         key: "password"
         name: ""
+
+  ingress:
+    host: null
+    tls:
+      enabled: true
+      secretName: ""

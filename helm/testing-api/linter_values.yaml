@@ -3,8 +3,8 @@
 
 ---
 testingApi:
-  baseDn: "foobarbaz"
   ldap:
+    baseDn: "foobarbaz"
     primaryConnection:
       host: "foo"
     secondaryConnection:
@@ -14,3 +14,6 @@ testingApi:
       credentialSecret:
         key: "password"
         name: "baz"
+
+  ingress:
+    host: foobarbaz.de

@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" ( include "common.names.fullname" . ) }}
+    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- toYaml $mergedLabels | nindent 4 }}
+spec:
+  ports:
+    - name: "http"
+      port: 80
+      protocol: "TCP"
+      targetPort: 4434
+  selector:
+    {{- $commonLabels := include "common.labels.matchLabels" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" ( include "common.names.fullname" . ) }}
+    {{- merge $uiLabels $commonLabels | toYaml | nindent 4}}
+...

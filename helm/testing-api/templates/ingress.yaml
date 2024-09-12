@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" ( include "common.names.fullname" . ) }}
+    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- toYaml $mergedLabels | nindent 4 }}
+  {{- with .Values.testingApi.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: "nginx"
+  {{- if .Values.testingApi.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ required "The \"ingress host\" is required." .Values.testingApi.ingress.host | quote }}
+      secretName: "{{ .Values.testingApi.ingress.tls.secretName }}"
+  {{- end }}
+  rules:
+    - host: {{ required "The \"ingress host\" is required." .Values.testingApi.ingress.host | quote }}
+      http:
+        paths:
+          - pathType: "Prefix"
+            path: "/testing-api"
+            backend:
+              service:
+                name: testing-api
+                port:
+                  number: 80
+...

@@ -71,6 +71,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.testingApi.ldap.auth.credentialSecret.name | quote }}
                   key: {{ .Values.testingApi.ldap.auth.credentialSecret.key | quote }}
+          ports:
+            - name: "http"
+              containerPort: 4434
+              protocol: "TCP"
           livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.livenessProbe "context" .) | nindent 12 }}
           readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.readinessProbe "context" .) | nindent 12 }}
           startupProbe: {{- include "common.tplvalues.render" (dict "value" .Values.startupProbe "context" .) | nindent 12 }}
