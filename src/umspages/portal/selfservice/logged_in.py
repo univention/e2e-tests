@@ -28,7 +28,7 @@ class SelfservicePortalLoggedIn(SelfservicePortal):
     """
 
     def navigate(self, username, password):
-        self.page.goto("/univention/selfservice/")
+        super().navigate()
         try:
             expect(self.cookie_dialog).to_be_visible()
         except AssertionError:
