@@ -7,6 +7,7 @@ import time
 
 import uvicorn
 from fastapi import APIRouter, FastAPI, HTTPException
+from ldap3.core.exceptions import LDAPSocketOpenError, LDAPSocketReceiveError
 
 from testing_api.config import get_testing_api_settings
 from testing_api.ldap_replication import BetterRetryError, check_replication_status
@@ -22,6 +23,11 @@ def resolve_pod_ips_from_headless_service(service_hostname: str) -> list[str]:
     return pod_ips
 
 
+def exception_logger(exc: Exception) -> None:
+    logger.debug("Exception occurred", exc_info=exc)
+    logger.info("Exception: %s", str(exc))
+
+
 app = FastAPI()
 
 
@@ -29,9 +35,9 @@ testing_api_v1_router = APIRouter(prefix="/testing-api/v1")
 
 
 @testing_api_v1_router.get("/ldap-replication-waiter", status_code=200)
-async def ldap_replication_waiter(timeout: float | int = 10):
+async def ldap_replication_waiter(retry_timeout: float | int = 10):
     start = time.perf_counter()
-    logger.debug("request query parameters: timeout=%s", timeout)
+    logger.debug("request query parameters: timeout=%s", retry_timeout)
     logger.debug("Ensuring that the replication is in sync between the ldap primary and secondary")
 
     settings = get_testing_api_settings()
@@ -39,11 +45,18 @@ async def ldap_replication_waiter(timeout: float | int = 10):
     ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
     assert ldap_secondary_ips
     try:
-        check_replication_status(timeout, ldap_secondary_ips, settings)
-    except BetterRetryError:
+        check_replication_status(retry_timeout, ldap_secondary_ips, settings)
+    except BetterRetryError as exc:
+        exception_logger(exc)
         raise HTTPException(
-            status_code=409, detail=f"Not all secondaries have caught up within the timeout of {timeout}s"
+            status_code=409, detail=f"Not all secondaries have caught up within the timeout of {retry_timeout}s"
         )
+    except (LDAPSocketOpenError, LDAPSocketReceiveError) as exc:
+        exception_logger(exc)
+        raise HTTPException(status_code=503, detail="Failed to establish a connection to one of the ldap servers")
+    except socket.gaierror as exc:
+        exception_logger(exc)
+        raise HTTPException(status_code=503, detail="Failed to resolve ldap server secondary IP's")
 
     logger.info(
         "All LDAP Secondarys have caught up with the Primary at the start of this request. request time: %.3f seconds",
