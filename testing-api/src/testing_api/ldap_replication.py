@@ -4,7 +4,7 @@
 import logging
 
 from ldap3 import ALL, Connection, Server
-from tenacity import RetryError, before_sleep_log, retry, stop_after_delay, wait_fixed
+from tenacity import RetryError, Retrying, before_sleep_log, stop_after_delay, wait_fixed
 
 from testing_api.config import TestingApiSettings
 
@@ -35,11 +35,13 @@ def compare_context_csn(primary_server_csn: str, secondary_server_csn) -> bool:
         return False
     if old_timestamp < new_timestamp:
         return True
-    if all((
-        new_count == old_count,
-        new_sid == old_sid,
-        new_mod == old_mod,
-    )):
+    if all(
+        (
+            new_count == old_count,
+            new_sid == old_sid,
+            new_mod == old_mod,
+        )
+    ):
         return True
     return False
 
@@ -54,7 +56,9 @@ def get_context_csn(connection: Connection, settings: TestingApiSettings):
 
 
 def get_primary_csn(settings: TestingApiSettings) -> str:
-    connection = create_connection(settings.ldap_server_primary_service_hostname, settings.ldap_server_primary_port, settings)
+    connection = create_connection(
+        settings.ldap_server_primary_service_hostname, settings.ldap_server_primary_port, settings
+    )
     try:
         return get_context_csn(connection, settings)
     finally:
@@ -78,17 +82,24 @@ def check_replication_status(timeout: float | int, ldap_secondary_ips: list[str]
     primary_csn = get_primary_csn(settings)
     assert primary_csn
 
-    secondary_connections = [create_connection(ip, settings.ldap_server_secondary_port, settings) for ip in ldap_secondary_ips]
-
-    @retry(
+    retrying = Retrying(
         stop=stop_after_delay(timeout),
         before_sleep=before_sleep_log(logger, logging.DEBUG),
         wait=wait_fixed(0.25),
         retry_error_cls=BetterRetryError,
     )
-    def wait():
-        for connection in secondary_connections:
-            secondary_csn = get_context_csn(connection, settings)
 
-            assert compare_context_csn(primary_csn, secondary_csn), "Replication is out of sync!"
-    wait()
+    secondary_connections = []
+    try:
+        for ip in ldap_secondary_ips:
+            secondary_connections.append(create_connection(ip, settings.ldap_server_secondary_port, settings))
+
+        def wait():
+            for connection in secondary_connections:
+                secondary_csn = get_context_csn(connection, settings)
+                assert compare_context_csn(primary_csn, secondary_csn), "Replication is out of sync!"
+
+        retrying(wait)
+    finally:
+        for connection in secondary_connections:
+            connection.unbind()

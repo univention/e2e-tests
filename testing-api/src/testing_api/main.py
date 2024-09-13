@@ -28,8 +28,8 @@ app = FastAPI()
 testing_api_v1_router = APIRouter(prefix="/testing-api/v1")
 
 
-@testing_api_v1_router.get("/ldap-replication-status")
-async def ldap_replication_status(timeout: float | int = 10):
+@testing_api_v1_router.get("/ldap-replication-waiter")
+async def ldap_replication_waiter(timeout: float | int = 10):
     start = time.perf_counter()
     logger.debug("Ensuring that the replication is in sync between the ldap primary and secondary")
 
@@ -40,7 +40,7 @@ async def ldap_replication_status(timeout: float | int = 10):
     check_replication_status(timeout, ldap_secondary_ips, settings)
 
     logger.info(
-        "LDAP Primary and Secondary are certain to be in sync after: %.3f seconds",
+        "All LDAP Secondarys have caught up with the Primary at the start of this request. request time: %.3f seconds",
         time.perf_counter() - start,
     )
 
