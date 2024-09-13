@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.13.0...v0.13.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* Remove code which tries to login only if needed from navigate ([f4e7124](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f4e71241b0e1929debc90310f691c50f2286e460))
+
 ## [0.13.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.12.0...v0.13.0) (2024-09-11)
 
 
