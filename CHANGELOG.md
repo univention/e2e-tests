@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.0...v0.14.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* Select form inputs via role in ChangePasswordDialogPage ([df6df29](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/df6df29083f7f56487e7283c0a6ebf9c3b2c926b))
+* Select password retype box via role ([584b97c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/584b97c8faad8221482ba95fa7758a6d12448235))
+
 ## [0.14.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.13.1...v0.14.0) (2024-09-13)
 
 
