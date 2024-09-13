@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.13.1...v0.14.0) (2024-09-13)
+
+
+### Features
+
+* Cover password forgotten via selfservice portal ([ee3552c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/ee3552c946f76f5d285004c4ef464bd8d6499eb7))
+
 ## [0.13.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.13.0...v0.13.1) (2024-09-13)
 
 
