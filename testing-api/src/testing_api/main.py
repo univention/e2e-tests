@@ -6,10 +6,10 @@ import socket
 import time
 
 import uvicorn
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, HTTPException
 
 from testing_api.config import get_testing_api_settings
-from testing_api.ldap_replication import check_replication_status
+from testing_api.ldap_replication import BetterRetryError, check_replication_status
 from testing_api.log import setup_logging
 
 logger = logging.getLogger(__name__)
@@ -28,16 +28,22 @@ app = FastAPI()
 testing_api_v1_router = APIRouter(prefix="/testing-api/v1")
 
 
-@testing_api_v1_router.get("/ldap-replication-waiter")
+@testing_api_v1_router.get("/ldap-replication-waiter", status_code=200)
 async def ldap_replication_waiter(timeout: float | int = 10):
     start = time.perf_counter()
+    logger.debug("request query parameters: timeout=%s", timeout)
     logger.debug("Ensuring that the replication is in sync between the ldap primary and secondary")
 
     settings = get_testing_api_settings()
 
     ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
     assert ldap_secondary_ips
-    check_replication_status(timeout, ldap_secondary_ips, settings)
+    try:
+        check_replication_status(timeout, ldap_secondary_ips, settings)
+    except BetterRetryError:
+        raise HTTPException(
+            status_code=409, detail=f"Not all secondaries have caught up within the timeout of {timeout}s"
+        )
 
     logger.info(
         "All LDAP Secondarys have caught up with the Primary at the start of this request. request time: %.3f seconds",
@@ -62,7 +68,11 @@ async def startup_task():
     ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
     assert ldap_secondary_ips
 
-    check_replication_status(1, ldap_secondary_ips, settings)
+    try:
+        check_replication_status(1, ldap_secondary_ips, settings)
+        pass
+    except BetterRetryError:
+        logger.debug("Ldap replication is out of sync but the startup task still verified that it can be monitored")
     logger.info("LDAP Connections are workind and replication status can be monitored.")
 
 
@@ -71,7 +81,12 @@ def main():
     assert settings
     setup_logging(settings.log_level)
 
-    uvicorn.run(app, host="0.0.0.0", port=4434, log_config=None)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=4434,
+        log_config=None,
+    )
 
 
 if __name__ == "__main__":

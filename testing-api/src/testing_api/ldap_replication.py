@@ -13,10 +13,16 @@ logger = logging.getLogger(__name__)
 
 def create_connection(hostname: str, port: int, settings: TestingApiSettings) -> Connection:
     return Connection(
-        Server(f"ldap://{hostname}:{port}", get_info=ALL),
+        Server(
+            host=f"ldap://{hostname}",
+            port=port,
+            get_info=ALL,
+            connect_timeout=1,
+        ),
         user=settings.ldap_bind_dn,
         password=settings.ldap_bind_password,
         auto_bind=True,
+        client_strategy="SAFE_SYNC",
     )
 
 
@@ -47,8 +53,10 @@ def compare_context_csn(primary_server_csn: str, secondary_server_csn) -> bool:
 
 
 def get_context_csn(connection: Connection, settings: TestingApiSettings):
-    connection.search(settings.ldap_base_dn, "(objectClass=*)", attributes=["contextCSN"])
-    result = connection.entries[0].contextCSN.value
+    response = connection.search(
+        settings.ldap_base_dn, "(objectClass=*)", search_scope="BASE", attributes=["contextCSN"]
+    )
+    result = response[2][0]["attributes"]["contextCSN"][0]
     if not result:
         raise ValueError("No contextCSN in ldap search result")
     logger.debug("contextCSN for ldap server %s is: %s", connection.server.host, result)

@@ -41,7 +41,7 @@ COPY testing-api/poetry.lock \
      ${WORKDIR}/
 
 # install dependencies
-RUN poetry install
+RUN poetry install --only main
 
 # Stage 2: final image
 FROM build as final
