@@ -12,21 +12,40 @@ include:
       - "jobs/lint-commit-messages.yaml"
       - "jobs/semantic-release-env.yaml"
       - "jobs/container-build.yaml"
+      - "jobs/container-build-external.yaml"
+      - "jobs/package-and-publish-helm-charts-external.yaml"
 
 variables:
   TEST_PORTAL_BASE_URL:
     description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
 
 .build-matrix: &build-matrix
-  - IMAGE_NAME:
-      - "e2e-tests-runner"
+  - IMAGE_NAME: "e2e-tests-runner"
     KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "Dockerfile"
+  - IMAGE_NAME: "testing-api"
+    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    DOCKERFILE_PATH: "docker/testing-api/Dockerfile"
+
+.publish-matrix: &publish-matrix
+  - IMAGE_NAME:
+    - "testing-api"
 
 container-build:
   parallel:
     matrix: *build-matrix
 
+push-image-external:
+  parallel:
+    matrix: *publish-matrix
+
+container-sign-external:
+  parallel:
+    matrix: *publish-matrix
+
+container-generate-sbom:
+  rules:
+    - when: never
 
 test-container:
   stage: "test"
@@ -37,7 +56,6 @@ test-container:
   image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
   script:
     - pytest --fixtures
-
 
 e2e-tests:
   stage: "test"
