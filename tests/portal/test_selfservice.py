@@ -80,7 +80,11 @@ def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: 
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_user_changes_password_via_side_menu(
-    navigate_to_login_page: Page, user, user_password: str, wait_for_portal_sync: WaitForPortalSync
+    navigate_to_login_page: Page,
+    user,
+    user_password: str,
+    wait_for_portal_sync: WaitForPortalSync,
+    wait_for_ldap_secondaries_to_catch_up,
 ):
     username = user.properties["username"]
     wait_for_portal_sync(username, 4)
@@ -89,19 +93,7 @@ def test_user_changes_password_via_side_menu(
     change_password_page = ChangePasswordDialogPage(page)
     change_password_page.navigate(username, user_password)
     change_password_page.change_password(user_password, DUMMY_USER_PASSWORD_2)
-
-    # TODO: This is discouraged, use a different approach
-    #
-    # Wait for the password change to occur. An improved version has to do the
-    # following things:
-    #
-    # 1. Retry the login. Sometimes it takes a few seconds until the login
-    #    works.
-    #
-    # 2. Reload the home page until the portal shows some content (tiles). This
-    #    happens because the consumers have to process the change events so
-    #    that the user is added into the portal data.
-    page.wait_for_timeout(5000)
+    wait_for_ldap_secondaries_to_catch_up()
 
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
@@ -236,6 +228,7 @@ def test_admin_invites_new_user_via_email(
     dummy_username,
     user_password,
     email_test_api,
+    wait_for_ldap_secondaries_to_catch_up,
 ):
     page = navigate_to_home_page_logged_in_as_admin
     set_new_password_page = SetNewPasswordPage(page)
@@ -246,6 +239,7 @@ def test_admin_invites_new_user_via_email(
     set_new_password_page.navigate(url=password_reset_link)
     set_new_password_page.set_new_password(password=user_password)
     expect(set_new_password_page.password_change_successful_dialog).to_be_visible()
+    wait_for_ldap_secondaries_to_catch_up()
 
     assert_user_can_log_in(page, dummy_username, user_password)
 
@@ -287,6 +281,7 @@ def test_user_requests_password_forgotten_link_from_login_page(
     email_test_api,
     faker,
     subtests,
+    wait_for_ldap_secondaries_to_catch_up,
 ):
     login_page = LoginPage(page)
     login_page.navigate(cookies_accepted=True)
@@ -300,6 +295,7 @@ def test_user_requests_password_forgotten_link_from_login_page(
 
     new_password = faker.password()
     set_new_password(page, new_password, link_with_token)
+    wait_for_ldap_secondaries_to_catch_up()
     assert_password_change_is_successful(page, subtests, user, new_password)
 
 
@@ -313,6 +309,7 @@ def test_user_requests_password_forgotten_via_selfservice_portal(
     email_test_api,
     faker,
     subtests,
+    wait_for_ldap_secondaries_to_catch_up,
 ):
     selfservice_portal = SelfservicePortal(page)
     selfservice_portal.navigate()
@@ -326,6 +323,7 @@ def test_user_requests_password_forgotten_via_selfservice_portal(
 
     new_password = faker.password()
     set_new_password(page, new_password, link_with_token)
+    wait_for_ldap_secondaries_to_catch_up()
     assert_password_change_is_successful(page, subtests, user, new_password)
 
 

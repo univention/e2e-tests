@@ -203,7 +203,7 @@ def user_password(faker):
 
 
 @pytest.fixture
-def user(udm, faker, email_domain, external_email_domain, user_password):
+def user(udm, faker, email_domain, external_email_domain, user_password, wait_for_ldap_secondaries_to_catch_up):
     """
     A regular user.
 
@@ -228,6 +228,7 @@ def user(udm, faker, email_domain, external_email_domain, user_password):
     )
     test_user.save()
 
+    wait_for_ldap_secondaries_to_catch_up()
     yield test_user
 
     test_user.reload()
@@ -244,10 +245,10 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
     Allows to wait until the portal data for a user is complete.
     """
 
-    def _wait_for_portal_json(username: str, minimum_categories: int, timeout: int | float = 0.25) -> None:
+    def _wait_for_portal_json(username: str, minimum_categories: int, timeout: int | float = 120) -> None:
         @retry(
-            stop=stop_after_delay(120),
-            wait=wait_fixed(timeout),
+            stop=stop_after_delay(timeout),
+            wait=wait_fixed(0.25),
             before_sleep=before_sleep_log(logger, logging.INFO),
             retry_error_cls=BetterRetryError,
         )
@@ -259,3 +260,20 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
         poll_central_navigation()
 
     return _wait_for_portal_json
+
+
+@pytest.fixture
+def wait_for_ldap_secondaries_to_catch_up(portal_base_url) -> Callable[[], None]:
+    """
+    Allows to wait until all ldap server secondaries have caught up
+    to the primary at the point of calling this function
+    """
+
+    def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
+        response = requests.get(
+            f"{portal_base_url}/testing-api/v1/ldap-replication-waiter",
+            {"retry_timeout": retry_timeout},
+        )
+        response.raise_for_status()
+
+    return _wait_for_ldap_replication
