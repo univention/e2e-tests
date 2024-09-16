@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.1...v0.14.2) (2024-09-16)
+
+
+### Bug Fixes
+
+* Remove matching for German translation in login_page ([d4df213](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d4df2137ccc16036c5d73d62994a8b09e131beeb))
+
 ## [0.14.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.0...v0.14.1) (2024-09-13)
 
 
