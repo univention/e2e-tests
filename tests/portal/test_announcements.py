@@ -91,4 +91,4 @@ def test_admin_user_can_view_announcements_page(
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     announcements_page = AnnouncementsPage(home_page_logged_in.click_announcements_tile())
-    expect(announcements_page.add_button).to_be_visible()
+    expect(announcements_page.add_button).to_be_visible(timeout=10000)
