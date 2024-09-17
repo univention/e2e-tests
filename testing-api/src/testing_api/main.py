@@ -24,10 +24,14 @@ def resolve_pod_ips_from_headless_service(service_hostname: str) -> list[str]:
 
 
 def ldap_secondaries_deployed(settings: TestingApiSettings) -> bool:
+    logger.debug("Checking if ldap server hostnames can be resolved")
     socket.getaddrinfo(settings.ldap_server_primary_service_hostname, None)
     try:
         socket.getaddrinfo(settings.ldap_server_secondary_service_hostname, None)
     except socket.gaierror:
+        logger.debug(
+            "LDAP server primary hostname can be resolved but not the secondary hostnames, concluding that the deployment has so secondaries"
+        )
         return False
     return True
 
