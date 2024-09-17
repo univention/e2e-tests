@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.2...v0.14.3) (2024-09-17)
+
+
+### Bug Fixes
+
+* Increase timeout when waiting for announcements page to be visible ([c88c842](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c88c842254be072c39f8a910a34440850e2aa8b2))
+
 ## [0.14.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.1...v0.14.2) (2024-09-16)
 
 
