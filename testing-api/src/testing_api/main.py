@@ -9,7 +9,7 @@ import uvicorn
 from fastapi import APIRouter, FastAPI, HTTPException
 from ldap3.core.exceptions import LDAPSocketOpenError, LDAPSocketReceiveError
 
-from testing_api.config import get_testing_api_settings
+from testing_api.config import TestingApiSettings, get_testing_api_settings
 from testing_api.ldap_replication import BetterRetryError, check_replication_status
 from testing_api.log import setup_logging
 
@@ -21,6 +21,15 @@ def resolve_pod_ips_from_headless_service(service_hostname: str) -> list[str]:
     pod_ips = list(set((info[4][0] for info in address_info)))
     logger.debug("Resolved pod ips: %s from headless service hostname: %s.", pod_ips, service_hostname)
     return pod_ips
+
+
+def ldap_secondaries_deployed(settings: TestingApiSettings) -> bool:
+    socket.getaddrinfo(settings.ldap_server_primary_service_hostname, None)
+    try:
+        socket.getaddrinfo(settings.ldap_server_secondary_service_hostname, None)
+    except socket.gaierror:
+        return False
+    return True
 
 
 def exception_logger(exc: Exception) -> None:
@@ -42,7 +51,19 @@ async def ldap_replication_waiter(retry_timeout: float | int = 10):
 
     settings = get_testing_api_settings()
 
-    ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
+    ldap_primary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_primary_service_hostname)
+    try:
+        ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
+    except socket.gaierror as exc:
+        if ldap_primary_ips:
+            logger.info(
+                "Inferred that no LDAP Server secondaries are deployed. Skipping the replication check. request time: %.3f seconds",
+                time.perf_counter() - start,
+            )
+            return True
+        exception_logger(exc)
+        raise HTTPException(status_code=503, detail="Failed to resolve ldap server secondary IP's")
+
     assert ldap_secondary_ips
     try:
         check_replication_status(retry_timeout, ldap_secondary_ips, settings)
@@ -54,10 +75,6 @@ async def ldap_replication_waiter(retry_timeout: float | int = 10):
     except (LDAPSocketOpenError, LDAPSocketReceiveError) as exc:
         exception_logger(exc)
         raise HTTPException(status_code=503, detail="Failed to establish a connection to one of the ldap servers")
-    except socket.gaierror as exc:
-        exception_logger(exc)
-        raise HTTPException(status_code=503, detail="Failed to resolve ldap server secondary IP's")
-
     logger.info(
         "All LDAP Secondarys have caught up with the Primary at the start of this request. request time: %.3f seconds",
         time.perf_counter() - start,
@@ -72,15 +89,22 @@ app.include_router(testing_api_v1_router)
 @app.on_event("startup")
 async def startup_task():
     logger.info("Started %s.", app.title)
-
     for route in app.routes:
         logger.debug("API route: %s", route)
 
     settings = get_testing_api_settings()
 
+    ldap_primary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_primary_service_hostname)
+    try:
+        ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
+    except socket.gaierror:
+        if ldap_primary_ips:
+            logger.info("Inferred that no LDAP Server secondaries are deployed. Skipping the replication check")
+            return
+        raise
+
     ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
     assert ldap_secondary_ips
-
     try:
         check_replication_status(1, ldap_secondary_ips, settings)
         pass
