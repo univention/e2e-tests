@@ -244,7 +244,7 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
     Allows to wait until the portal data for a user is complete.
     """
 
-    def _wait_for_portal_json(username: str, minimum_categories: int, timeout: int | float = 0.25) -> None:
+    def _wait_for_portal_json(username: str, minimum_categories: int, timeout: int | float = 1) -> None:
         @retry(
             stop=stop_after_delay(120),
             wait=wait_fixed(timeout),
