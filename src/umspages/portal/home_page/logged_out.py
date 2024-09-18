@@ -49,7 +49,7 @@ class HomePageLoggedOut(HomePage):
         # It is perfectly fine that the portal is configured to have multiple
         # login tiles. By default we should use the first one. If a specific
         # one is needed, then attributes like `saml_login_tile` should be used.
-        self.login_widget = self.page.get_by_role("link", name="Login Same tab").first
+        self.login_widget = self.page.get_by_role("link", name="Login").first
         self.saml_login_tile = self.page.locator('xpath=//a[contains(@href, "univention/saml")]')
 
     def navigate(self, cookies_accepted=False):
