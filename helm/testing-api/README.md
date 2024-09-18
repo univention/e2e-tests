@@ -106,7 +106,7 @@ user an email to set their password.
 			<td>image.tag</td>
 			<td>string</td>
 			<td><pre lang="json">
-"latest"
+"0.14.0-pre-jlohmer-testing-api"
 </pre>
 </td>
 			<td>The tag of the container image. (This is replaced with an appropriate value during the build process of the Helm chart.)</td>
