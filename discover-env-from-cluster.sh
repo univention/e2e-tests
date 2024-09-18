@@ -43,8 +43,10 @@ echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context
 # These commands depend on the Nubus deployment and will have to be kept in sync
 # with the progressing Nubus chart.
 default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-nubus-credentials" -o jsonpath="{.data.administrator_password}" | base64 -d)
-portal_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
+portal_hostname=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
+portal_base_url=https://$portal_hostname
 keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-extensions-proxy" -o jsonpath="{.spec.rules[0].host}")
+ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps ums-ldap-server-primary -o jsonpath="{.data.LDAP_BASEDN}")
 
 email_test_api_base_url=$(kubectl get --ignore-not-found ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
 if [ -n "$email_test_api_base_url" ]
@@ -64,6 +66,32 @@ then
 else
     portal_central_navigation_secret="${the_usual_portal_central_navigation_secret}"
 fi
+
+if ! helm list -n $DEPLOY_NAMESPACE | grep -q testing-api; then
+echo Installing the testing-api into the namespace
+cat <<EOF > values-testing-api.yaml
+---
+testingApi:
+  ldap:
+    baseDn: ${ldap_base_dn}
+    primaryConnection:
+      host: ${RELEASE_NAME}-ldap-server-primary
+    secondaryConnection:
+      host: ${RELEASE_NAME}-ldap-server-secondary
+    auth:
+      bindDn:  cn=admin,${ldap_base_dn}
+      credentialSecret:
+        key: "adminPassword"
+        name: ${RELEASE_NAME}-ldap-server-credentials
+
+  ingress:
+    host: ${portal_hostname}
+...
+EOF
+
+helm -n "$DEPLOY_NAMESPACE" upgrade --install testing-api ./helm/testing-api --values values-testing-api.yaml
+fi
+
 
 export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --keycloak-base-url=${keycloak_base_url} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
 
