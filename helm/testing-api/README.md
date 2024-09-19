@@ -9,16 +9,14 @@ Testing api for nubus e2e tests
 
 ## Introduction
 
-This chart does install a the selfservice listener container.
-
-It is intended to listen for newly created users, starting the flow to send the
-user an email to set their password.
+This chart installs the testing-api container.
+It supports the nubus e2e tests by exposing functionality otherwise not reachable from outside the cluster.
 
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://gitregistry.knut.univention.de/univention/customers/dataport/upx/common-helm/helm | common | ^0.2.0 |
+| oci://registry-1.docker.io/bitnamicharts | common | ^2.x.x |
 
 ## Values
 

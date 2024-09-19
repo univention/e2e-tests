@@ -59,7 +59,6 @@ spec:
       {{- end }}
       containers:
         - name: "testing-api"
-          {{/* command: ["/bin/bash", "-c", "tail -f /dev/null"] */}}
           image: "{{ coalesce .Values.image.registry .Values.global.imageRegistry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ coalesce .Values.image.imagePullPolicy .Values.global.imagePullPolicy | quote }}
           envFrom:

@@ -9,7 +9,7 @@ import uvicorn
 from fastapi import APIRouter, FastAPI, HTTPException
 from ldap3.core.exceptions import LDAPSocketOpenError, LDAPSocketReceiveError
 
-from testing_api.config import TestingApiSettings, get_testing_api_settings
+from testing_api.config import get_testing_api_settings
 from testing_api.ldap_replication import BetterRetryError, check_replication_status
 from testing_api.log import setup_logging
 
@@ -21,19 +21,6 @@ def resolve_pod_ips_from_headless_service(service_hostname: str) -> list[str]:
     pod_ips = list(set((info[4][0] for info in address_info)))
     logger.debug("Resolved pod ips: %s from headless service hostname: %s.", pod_ips, service_hostname)
     return pod_ips
-
-
-def ldap_secondaries_deployed(settings: TestingApiSettings) -> bool:
-    logger.debug("Checking if ldap server hostnames can be resolved")
-    socket.getaddrinfo(settings.ldap_server_primary_service_hostname, None)
-    try:
-        socket.getaddrinfo(settings.ldap_server_secondary_service_hostname, None)
-    except socket.gaierror:
-        logger.debug(
-            "LDAP server primary hostname can be resolved but not the secondary hostnames, concluding that the deployment has so secondaries"
-        )
-        return False
-    return True
 
 
 def exception_logger(exc: Exception) -> None:

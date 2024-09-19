@@ -11,7 +11,6 @@ Loglevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 class TestingApiSettings(BaseSettings):
     log_level: Loglevel
-    # testing_api_base_url: str
 
     ldap_base_dn: str
     ldap_bind_dn: str

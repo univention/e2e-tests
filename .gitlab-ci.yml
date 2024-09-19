@@ -15,6 +15,10 @@ include:
       - "jobs/container-build-external.yaml"
       - "jobs/package-and-publish-helm-charts-external.yaml"
 
+lint-pre-commit:
+  before_script:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+
 variables:
   TEST_PORTAL_BASE_URL:
     description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
