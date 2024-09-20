@@ -67,7 +67,7 @@ else
     portal_central_navigation_secret="${the_usual_portal_central_navigation_secret}"
 fi
 
-if ! helm list -n $DEPLOY_NAMESPACE | grep -q testing-api; then
+if ! helm list -n "${DEPLOY_NAMESPACE}" | grep -q testing-api; then
 echo Installing the testing-api into the namespace
 cat <<EOF > values-testing-api.yaml
 ---
