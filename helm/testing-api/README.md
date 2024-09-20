@@ -104,7 +104,7 @@ It supports the nubus e2e tests by exposing functionality otherwise not reachabl
 			<td>image.tag</td>
 			<td>string</td>
 			<td><pre lang="json">
-"0.14.0-pre-jlohmer-testing-api"
+"0.15.0"
 </pre>
 </td>
 			<td>The tag of the container image. (This is replaced with an appropriate value during the build process of the Helm chart.)</td>
