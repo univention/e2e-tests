@@ -90,6 +90,8 @@ testingApi:
 EOF
 
 helm -n "$DEPLOY_NAMESPACE" upgrade --install --dependency-update testing-api ./helm/testing-api --values values-testing-api.yaml
+else
+  echo Found a testing-api deployment, skipping install or update.
 fi
 
 
