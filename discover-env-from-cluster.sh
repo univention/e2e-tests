@@ -89,7 +89,7 @@ testingApi:
 ...
 EOF
 
-helm -n "$DEPLOY_NAMESPACE" upgrade --install testing-api ./helm/testing-api --values values-testing-api.yaml
+helm -n "$DEPLOY_NAMESPACE" upgrade --install --dependency-update testing-api ./helm/testing-api --values values-testing-api.yaml
 fi
 
 
