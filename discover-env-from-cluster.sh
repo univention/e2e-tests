@@ -46,7 +46,7 @@ default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_
 portal_hostname=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
 portal_base_url=https://$portal_hostname
 keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-extensions-proxy" -o jsonpath="{.spec.rules[0].host}")
-ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps ums-ldap-server-primary -o jsonpath="{.data.LDAP_BASEDN}")
+ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
 
 email_test_api_base_url=$(kubectl get --ignore-not-found ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
 if [ -n "$email_test_api_base_url" ]
