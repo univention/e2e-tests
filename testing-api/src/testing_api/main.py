@@ -4,13 +4,15 @@
 import logging
 import socket
 import time
+from typing import Annotated
 
 import uvicorn
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Path
 from ldap3.core.exceptions import LDAPSocketOpenError, LDAPSocketReceiveError
 
+from testing_api import ldap_replication, message_queue
 from testing_api.config import get_testing_api_settings
-from testing_api.ldap_replication import BetterRetryError, check_replication_status
+from testing_api.helpers import BetterRetryError
 from testing_api.log import setup_logging
 
 logger = logging.getLogger(__name__)
@@ -57,7 +59,7 @@ async def ldap_replication_waiter(retry_timeout: float | int = 10):
 
     assert ldap_secondary_ips
     try:
-        check_replication_status(retry_timeout, ldap_secondary_ips, settings)
+        ldap_replication.check_replication_status(retry_timeout, ldap_secondary_ips, settings)
     except BetterRetryError as exc:
         exception_logger(exc)
         raise HTTPException(
@@ -71,6 +73,32 @@ async def ldap_replication_waiter(retry_timeout: float | int = 10):
         time.perf_counter() - start,
     )
 
+    return True
+
+
+@testing_api_v1_router.get("/subscriptions/{name}/status", status_code=200)
+async def subscriptions_status(name: Annotated[str, Path(title="Provisioning subscription name")]):
+    """
+    returns a dictionary with the keys `pending_messages` and `last_sequence_number`
+    for the specified subscription
+    """
+    settings = get_testing_api_settings()
+    result = await message_queue.subscription_status(settings, name)
+    return result
+
+
+@testing_api_v1_router.get("/subscriptions/{name}/wait/{sequence_number}", status_code=200)
+async def subscriptions_status_waiter(
+    name: Annotated[str, Path(title="Provisioning subscription name")],
+    sequence_number: Annotated[int, Path(title="minimum sequence number that will be awaited.")],
+    debounce: int | float = 0,
+):
+    """
+    Returns after the subscription is at least at the specified sequence number
+    and no new messages came in within the debounce timeout.
+    """
+    settings = get_testing_api_settings()
+    await message_queue.check_subscription_status(settings, name, sequence_number, debounce)
     return True
 
 
@@ -97,11 +125,16 @@ async def startup_task():
     ldap_secondary_ips = resolve_pod_ips_from_headless_service(settings.ldap_server_secondary_service_hostname)
     assert ldap_secondary_ips
     try:
-        check_replication_status(1, ldap_secondary_ips, settings)
+        ldap_replication.check_replication_status(1, ldap_secondary_ips, settings)
         pass
     except BetterRetryError:
         logger.debug("Ldap replication is out of sync but the startup task still verified that it can be monitored")
     logger.info("LDAP Connections are workind and replication status can be monitored.")
+
+    try:
+        await message_queue.subscription_status(settings, "incoming")
+    except Exception as exc:
+        exception_logger(exc)
 
 
 def main():

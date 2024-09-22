@@ -276,6 +276,36 @@ true
 </td>
 			<td>LDAP port.</td>
 		</tr>
+		<tr>
+			<td>testingApi.nats.auth.credentialSecret</td>
+			<td>object</td>
+			<td><pre lang="json">
+{
+  "key": "admin_password",
+  "name": null
+}
+</pre>
+</td>
+			<td>NATS admin password reference.</td>
+		</tr>
+		<tr>
+			<td>testingApi.nats.auth.username</td>
+			<td>string</td>
+			<td><pre lang="json">
+"admin"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>testingApi.nats.connection.host</td>
+			<td>string</td>
+			<td><pre lang="json">
+null
+</pre>
+</td>
+			<td></td>
+		</tr>
 	</tbody>
 </table>
 

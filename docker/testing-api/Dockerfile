@@ -33,14 +33,14 @@ ENV \
 # install Poetry
 RUN pip3 install --break-system-packages --no-cache-dir poetry==1.6.1
 
-# copy source code
-COPY ./testing-api/src ${WORKDIR}/src
-
 COPY testing-api/poetry.lock \
      testing-api/pyproject.toml \
      ${WORKDIR}/
 
 # install dependencies
+RUN poetry install --only main --no-root
+
+COPY ./testing-api/src ${WORKDIR}/src
 RUN poetry install --only main
 
 # Stage 2: final image

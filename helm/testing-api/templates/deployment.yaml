@@ -70,6 +70,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.testingApi.ldap.auth.credentialSecret.name | quote }}
                   key: {{ .Values.testingApi.ldap.auth.credentialSecret.key | quote }}
+            - name: NATS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.testingApi.nats.auth.credentialSecret.name | quote }}
+                  key: {{ .Values.testingApi.nats.auth.credentialSecret.key | quote }}
           ports:
             - name: "http"
               containerPort: 4434

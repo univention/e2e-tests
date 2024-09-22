@@ -82,6 +82,15 @@ testingApi:
       credentialSecret:
         key: "password"
         name: ""
+  nats:
+    connection:
+      host: null
+    auth:
+      username: admin
+      # -- NATS admin password reference.
+      credentialSecret:
+        key: "admin_password"
+        name: null
 
   ingress:
     host: null

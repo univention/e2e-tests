@@ -4,9 +4,10 @@
 import logging
 
 from ldap3 import ALL, Connection, Server
-from tenacity import RetryError, Retrying, before_sleep_log, stop_after_delay, wait_fixed
+from tenacity import Retrying, before_sleep_log, stop_after_delay, wait_fixed
 
 from testing_api.config import TestingApiSettings
+from testing_api.helpers import BetterRetryError
 
 logger = logging.getLogger(__name__)
 
@@ -71,19 +72,6 @@ def get_primary_csn(settings: TestingApiSettings) -> str:
         return get_context_csn(connection, settings)
     finally:
         connection.unbind()
-
-
-class BetterRetryError(RetryError):
-    def __str__(self) -> str:
-        start = f"attempt_number={self.last_attempt.attempt_number}, "
-        end = f"failed={self.last_attempt.failed}, done={self.last_attempt.done()}, cancelled={self.last_attempt.cancelled()}"
-
-        if (exception := self.last_attempt.exception()) is not None:
-            result = f"{start}exception={exception}, exception_type={type(exception)}"
-        else:
-            result = f"{start}result={self.last_attempt.result()}"
-
-        return (result + end).replace("\n", "; ")
 
 
 def check_replication_status(timeout: float | int, ldap_secondary_ips: list[str], settings: TestingApiSettings):

@@ -20,6 +20,15 @@ class TestingApiSettings(BaseSettings):
     ldap_server_secondary_service_hostname: str
     ldap_server_secondary_port: int
 
+    nats_user: str
+    nats_password: str
+    nats_host: str
+    nats_port: int
+
+    @property
+    def nats_server(self) -> str:
+        return f"nats://{self.nats_host}:{self.nats_port}"
+
 
 @lru_cache
 def get_testing_api_settings() -> TestingApiSettings:

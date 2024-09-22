@@ -25,4 +25,7 @@ data:
   LDAP_SERVER_PRIMARY_PORT: {{ required ".Values.testingApi.ldap.primaryConnection.port is required." .Values.testingApi.ldap.primaryConnection.port | quote }}
   LDAP_SERVER_SECONDARY_SERVICE_HOSTNAME: {{ printf "%s.%s.svc.cluster.local" ( required ".Values.testingApi.ldap.secondaryConnection.host is required." .Values.testingApi.ldap.secondaryConnection.host ) ( include "common.names.namespace" . ) }}
   LDAP_SERVER_SECONDARY_PORT: {{ required ".Values.testingApi.ldap.secondaryConnection.port is required." .Values.testingApi.ldap.secondaryConnection.port | quote }}
+  NATS_HOST: {{ required ".Values.testingApi.nats.connection.host" .Values.testingApi.nats.connection.host | quote}}
+  NATS_PORT: "4222"
+  NATS_USER: {{ required ".Values.testingApi.nats.auth.username" .Values.testingApi.nats.auth.username | quote}}
 ...
