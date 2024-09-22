@@ -40,7 +40,7 @@ async def check_subscription_status(
         while True:
             stream_info = await js.stream_info(stream_name(name))
             current_sequence_number = stream_info.state.last_seq
-            if current_sequence_number != last_sequence_number:
+            if current_sequence_number != last_sequence_number or stream_info.state.messages > 0:
                 last_sequence_number = current_sequence_number
                 stable_time_start = None
             elif stable_time_start is None:
