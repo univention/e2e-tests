@@ -263,7 +263,12 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
 
 
 @pytest.fixture
-def wait_for_ldap_secondaries_to_catch_up(portal_base_url) -> Callable[[], None]:
+def testing_api_base_url(portal_base_url):
+    return f"{portal_base_url}/testing-api/v1"
+
+
+@pytest.fixture
+def wait_for_ldap_secondaries_to_catch_up(testing_api_base_url) -> Callable[[], None]:
     """
     Allows to wait until all ldap server secondaries have caught up
     to the primary at the point of calling this function
@@ -271,7 +276,7 @@ def wait_for_ldap_secondaries_to_catch_up(portal_base_url) -> Callable[[], None]
 
     def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
         response = requests.get(
-            f"{portal_base_url}/testing-api/v1/ldap-replication-waiter",
+            f"{testing_api_base_url}/ldap-replication-waiter",
             {"retry_timeout": retry_timeout},
         )
         response.raise_for_status()

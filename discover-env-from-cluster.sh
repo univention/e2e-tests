@@ -21,7 +21,6 @@
 #
 # 4. Check the output.
 
-
 # If no namespace is provided, then try to discover the namespace via "kubectl".
 # The parameter "--minify" is important, it ensures that we only get the
 # configuration related to the currently selected context.
@@ -94,9 +93,13 @@ else
   echo Found a testing-api deployment, skipping install or update.
 fi
 
-
 export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --keycloak-base-url=${keycloak_base_url} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
 
+
+echo "Waiting for the creation of the provisioning subscriptions"
+kubectl -n "$DEPLOY_NAMESPACE" wait --for=condition=complete jobs.batch "$RELEASE_NAME-provisioning-register-consumers" --timeout 10m
+echo "Checking that the portal consumer has caught up"
+time python3 tests/preparation/test_wait_for_portal_consumer.py
 
 echo
 echo "Discovered pytest options: ${PYTEST_ADDOPTS}"
