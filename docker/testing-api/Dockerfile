@@ -7,7 +7,7 @@ ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/components/ucs-base
 
 ARG WORKDIR="/app"
 
-FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} as build
+FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
 ARG WORKDIR
 WORKDIR ${WORKDIR}
 
@@ -16,8 +16,6 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV \
-    PATH="/home/${USER}/.local/bin:${PATH}" \
-    PYTHONPATH="." \
     WEB_CONCURRENCY=1 \
     # Do not buffer `stdout`
     PYTHONUNBUFFERED=1 \
@@ -44,7 +42,7 @@ COPY testing-api/poetry.lock \
 RUN poetry install --only main
 
 # Stage 2: final image
-FROM build as final
+FROM build AS final
 ARG WORKDIR
 WORKDIR ${WORKDIR}
 
