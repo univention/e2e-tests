@@ -15,13 +15,18 @@ include:
       - "jobs/container-build-external.yaml"
       - "jobs/package-and-publish-helm-charts-external.yaml"
 
-lint-pre-commit:
-  before_script:
-    - helm repo add bitnami https://charts.bitnami.com/bitnami
-
 variables:
   TEST_PORTAL_BASE_URL:
     description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
+  TESTRUNNER_VERSION:
+    value: "0.15.0-pre-jlohmer-wait-for-consumers"
+    description: "foobar"
+  RELEASE_NAME:
+    value: "nubus"
+    description: "bar"
+  DEPLOY_NAMESPACE:
+    value: "nubus-jlohmer-main"
+    description: "foo"
 
 .build-matrix: &build-matrix
   - IMAGE_NAME: "e2e-tests-runner"
@@ -35,50 +40,119 @@ variables:
   - IMAGE_NAME:
     - "testing-api"
 
+lint-pre-commit:
+  before_script:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+  rules: &rules-common
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "parent_pipeline"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
 container-build:
   parallel:
     matrix: *build-matrix
+  rules: *rules-common
 
 push-image-external:
   parallel:
     matrix: *publish-matrix
+  rules: *rules-common
 
 container-sign-external:
   parallel:
     matrix: *publish-matrix
+  rules:
+    - when: never
 
 container-generate-sbom:
   rules:
     - when: never
 
+package-helm-charts:
+  rules: *rules-common
+
+publish-chart-external:
+  rules: *rules-common
+
 test-container:
   stage: "test"
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: "never"
-    - when: "on_success"
+  rules: *rules-common
   image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
   script:
     - pytest --fixtures
 
+# e2e-tests-old:
+#   stage: "test"
+#   image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:${RELEASE_VERSION}"
+#   artifacts:
+#     expose_as: "report"
+#     paths:
+#       - "${CI_PROJECT_DIR}/report.html"
+#       - "${CI_PROJECT_DIR}/test-results/"
+#     when: "always"
+#     reports:
+#       junit: "test_results.xml"
+#     expire_in: "14 days"
+#   variables:
+#     PORTAL_BASE_URL: "${TEST_PORTAL_BASE_URL}"
+#   script: |
+#     ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
+#   tags:
+#     - "docker"
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE == "web"'
+#     - if: '$CI_PIPELINE_SOURCE == "api"'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule"'
+#     - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+#     - if: '$CI_PIPELINE_SOURCE == "trigger"'
+
 e2e-tests:
-  stage: "test"
-  image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:${RELEASE_VERSION}"
+  stage: test
+  image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
+  # image: "gitregistry.knut.univention.de/univention/customers/dataport/upx/\
+  #         e2e-tests/e2e-tests-runner:${TESTRUNNER_VERSION}"
+  tags:
+    - "dm-l"
+  script:
+    - pushd /e2e
+    - source discover-env-from-cluster.sh
+    - >
+      pytest
+      -m acceptance_environment
+      --showlocals
+      --junitxml=test_results.xml
+      --html=report.html
+      --self-contained-html
+      --verbose
+      --video=retain-on-failure
+      --tracing=retain-on-failure
+      --screenshot=only-on-failure
+      || exit_code=$?
+    - popd
+    # NOTE: This is a workaround. Our testrunner image does not yet support to
+    # run the tests in a different directory than "/e2e". So we copy the reports
+    # back into the CI_PROJECT_DIR for Gitlab to accept them as artifacts.
+    - mkdir -p /e2e/test-results
+    - cp -a /e2e/test-results .
+    - cp -a /e2e/report.html .
+    - cp -a /e2e/test_results.xml .
+    - exit $exit_code
   artifacts:
     expose_as: "report"
     paths:
       - "${CI_PROJECT_DIR}/report.html"
+      - "${CI_PROJECT_DIR}/test_results.xml"
       - "${CI_PROJECT_DIR}/test-results/"
     when: "always"
     reports:
       junit: "test_results.xml"
-    expire_in: "14 days"
+    expire_in: "1 week"
+  # tags:
+  #   - "docker"
   variables:
-    PORTAL_BASE_URL: "${TEST_PORTAL_BASE_URL}"
-  script: |
-    ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
-  tags:
-    - "docker"
+    TESTRUNNER_VERSION: "0.16.0-pre-jlohmer-wait-for-consumers"
+    RELEASE_NAME: "nubus"
+    DEPLOY_NAMESPACE: "nubus-jlohmer-main"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_PIPELINE_SOURCE == "api"'
