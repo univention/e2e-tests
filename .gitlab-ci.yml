@@ -14,19 +14,13 @@ include:
       - "jobs/container-build.yaml"
       - "jobs/container-build-external.yaml"
       - "jobs/package-and-publish-helm-charts-external.yaml"
+  - local: "/jobs/e2e-tests.yaml"
 
 variables:
-  TEST_PORTAL_BASE_URL:
-    description: "The base URL of the portal to test. Example: https://portal.uv-username.gaia.open-desk.cloud/univention/portal/"
-  TESTRUNNER_VERSION:
-    value: "0.15.0-pre-jlohmer-wait-for-consumers"
-    description: "foobar"
   RELEASE_NAME:
-    value: "nubus"
-    description: "bar"
+    description: "The helm deployment release name, valid values are: `nubus` and `ums`."
   DEPLOY_NAMESPACE:
-    value: "nubus-jlohmer-main"
-    description: "foo"
+    description: "The nubus deployment namespace in the Gaia cluster (other cluster are currently not supported.)"
 
 .build-matrix: &build-matrix
   - IMAGE_NAME: "e2e-tests-runner"
@@ -81,78 +75,10 @@ test-container:
   script:
     - pytest --fixtures
 
-# e2e-tests-old:
-#   stage: "test"
-#   image: "$CI_REGISTRY_IMAGE/e2e-tests-runner:${RELEASE_VERSION}"
-#   artifacts:
-#     expose_as: "report"
-#     paths:
-#       - "${CI_PROJECT_DIR}/report.html"
-#       - "${CI_PROJECT_DIR}/test-results/"
-#     when: "always"
-#     reports:
-#       junit: "test_results.xml"
-#     expire_in: "14 days"
-#   variables:
-#     PORTAL_BASE_URL: "${TEST_PORTAL_BASE_URL}"
-#   script: |
-#     ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
-#   tags:
-#     - "docker"
-#   rules:
-#     - if: '$CI_PIPELINE_SOURCE == "web"'
-#     - if: '$CI_PIPELINE_SOURCE == "api"'
-#     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-#     - if: '$CI_PIPELINE_SOURCE == "pipeline"'
-#     - if: '$CI_PIPELINE_SOURCE == "trigger"'
-
 e2e-tests:
-  stage: test
   image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
-  # image: "gitregistry.knut.univention.de/univention/customers/dataport/upx/\
-  #         e2e-tests/e2e-tests-runner:${TESTRUNNER_VERSION}"
-  tags:
-    - "dm-l"
-  script:
-    - pushd /e2e
-    - source discover-env-from-cluster.sh
-    - >
-      pytest
-      -m acceptance_environment
-      --showlocals
-      --junitxml=test_results.xml
-      --html=report.html
-      --self-contained-html
-      --verbose
-      --video=retain-on-failure
-      --tracing=retain-on-failure
-      --screenshot=only-on-failure
-      || exit_code=$?
-    - popd
-    # NOTE: This is a workaround. Our testrunner image does not yet support to
-    # run the tests in a different directory than "/e2e". So we copy the reports
-    # back into the CI_PROJECT_DIR for Gitlab to accept them as artifacts.
-    - mkdir -p /e2e/test-results
-    - cp -a /e2e/test-results .
-    - cp -a /e2e/report.html .
-    - cp -a /e2e/test_results.xml .
-    - exit $exit_code
-  artifacts:
-    expose_as: "report"
-    paths:
-      - "${CI_PROJECT_DIR}/report.html"
-      - "${CI_PROJECT_DIR}/test_results.xml"
-      - "${CI_PROJECT_DIR}/test-results/"
-    when: "always"
-    reports:
-      junit: "test_results.xml"
-    expire_in: "1 week"
-  # tags:
-  #   - "docker"
   variables:
-    TESTRUNNER_VERSION: "0.16.0-pre-jlohmer-wait-for-consumers"
-    RELEASE_NAME: "nubus"
-    DEPLOY_NAMESPACE: "nubus-jlohmer-main"
+    TESTRUNNER_VERSION: ${RELEASE_VERSION}
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_PIPELINE_SOURCE == "api"'
