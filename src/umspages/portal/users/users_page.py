@@ -140,16 +140,12 @@ class AddUserDialog(BasePagePart):
         self.password_box = self.page_part_locator.get_by_role("textbox", name="Password *")
         self.retype_box = self.page_part_locator.get_by_role("textbox", name="Password (retype) *")
         self.submit_password_button = self.page_part_locator.get_by_role("button", name="Create user")
-        self.advanced_button = self.page_part_locator.get_by_role("button", name="Advanced", exact=True)
-        self.account_tab = self.page_part_locator.get_by_role("tab", name="Account")
-        self.pwd_change_next_login = self.page_part_locator.get_by_label("User has to change password on next login")
 
     def add_user(
         self,
         username: str,
         password: Optional[str] = None,
         invite_email: Optional[str] = None,
-        pwd_change_next_login: Optional[bool] = None,
     ):
         _assert_exactly_one_value_is_set(password, invite_email)
 
@@ -170,19 +166,9 @@ class AddUserDialog(BasePagePart):
         else:
             self.invite_email.fill(invite_email)
 
-        if pwd_change_next_login is not None:
-            self.advanced_button.click()
-            self.account_tab.click()
-            if pwd_change_next_login:
-                self.pwd_change_next_login.check()
-            else:
-                self.pwd_change_next_login.uncheck()
-
         self.submit_password_button.click()
-
-        if pwd_change_next_login is None:
-            expect(self.page_part_locator.get_by_text(f'The user "{username}" has been created.')).to_be_visible()
-            self.page_part_locator.press("Escape")
+        expect(self.page_part_locator.get_by_text(f'The user "{username}" has been created.')).to_be_visible()
+        self.page_part_locator.press("Escape")
 
 
 def _assert_exactly_one_value_is_set(*values):
