@@ -28,8 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import logging
 import random
+import time
 
 import pytest
 from playwright.sync_api import Page
@@ -53,9 +53,6 @@ from tests.portal.conftest import WaitForPortalSync
 DUMMY_USER_PASSWORD_2 = "secondpass"
 DUMMY_EMAIL = "mail@example.org"
 DUMMY_DESCRIPTION = "some description"
-
-
-logger = logging.getLogger(__name__)
 
 
 @pytest.fixture()
@@ -359,3 +356,58 @@ def assert_password_change_is_successful(page, subtests, user, new_password):
 
     with subtests.test(msg="Login with new password is possible"):
         assert_user_can_log_in(page, user.properties["username"], new_password)
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_user_forced_to_change_password_on_next_login(
+    user_password,
+    user,
+    faker,
+    page,
+    wait_for_ldap_secondaries_to_catch_up,
+    wait_for_portal_sync: WaitForPortalSync,
+):
+    username = user.properties["username"]
+
+    user.properties["pwdChangeNextLogin"] = True
+    user.save()
+    wait_for_ldap_secondaries_to_catch_up()
+    wait_for_portal_sync(username, 4)
+
+    home_page_logged_out = HomePageLoggedOut(page)
+
+    # Log out admin
+    home_page_logged_out.navigate()
+
+    # Log in as the new user
+    login_page = LoginPage(page)
+    login_page.navigate()
+    login_page.login(username, user_password)
+
+    # Change password
+    new_password = faker.password()
+    page.get_by_label("Password", exact=True).fill(user_password)
+    page.get_by_label("New Password").fill(new_password)
+    page.get_by_label("Confirm password").fill(new_password)
+    page.get_by_role("button", name="Submit").click()
+    wait_for_ldap_secondaries_to_catch_up()
+
+    # Expect to be redirected to the portal home page
+    home_page_logged_in = HomePageLoggedIn(page)
+    expect(home_page_logged_in.header.hamburger_icon).to_be_visible()
+
+    # Log out
+    home_page_logged_in.logout()
+    time.sleep(0.1)
+
+    # Try to log in with old password (should fail)
+    login_page.navigate()
+    login_page.login(username, user_password)
+    expect(home_page_logged_in.header.hamburger_icon).not_to_be_visible()
+
+    # Log in with new password (should succeed)
+    login_page.login(username, new_password)
+    expect(home_page_logged_in.header.hamburger_icon).to_be_visible()
