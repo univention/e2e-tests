@@ -45,7 +45,7 @@ echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context
 default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-nubus-credentials" -o jsonpath="{.data.administrator_password}" | base64 -d)
 portal_hostname=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
 portal_base_url=https://$portal_hostname
-keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-extensions-proxy" -o jsonpath="{.spec.rules[0].host}")
+keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak" -o jsonpath="{.spec.rules[0].host}")
 ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
 
 email_test_api_base_url=$(kubectl get --ignore-not-found ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
