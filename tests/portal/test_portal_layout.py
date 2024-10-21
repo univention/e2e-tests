@@ -125,8 +125,11 @@ def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_passw
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_regular_user_portal_layout(navigate_to_login_page, user, user_password, subtests, navigation_api_url):
+def test_regular_user_portal_layout(
+    navigate_to_login_page, user, user_password, subtests, navigation_api_url, wait_for_portal_sync
+):
     page = navigate_to_login_page
+    wait_for_portal_sync(user, 2)
     user_layout = get_portal_layout(page, user.properties["username"], user_password, navigation_api_url)
 
     expected_tiles = []
