@@ -48,7 +48,7 @@ def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_passw
 
     expected_tiles = [
         "Keycloak",
-        "Welcome!",
+        # "Welcome!",
         "Users",
         "Groups",
         "Computers",
@@ -66,7 +66,7 @@ def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_passw
         "Policies",
         "Shares",
         "Portal",
-        "Welcome!",
+        # "Welcome!",
     ]
 
     for tile in expected_tiles:
@@ -141,6 +141,7 @@ def test_regular_user_portal_layout(navigate_to_login_page, user, user_password,
         assert extra_tiles == set()
 
     expected_sidebar = {
+        "User settings": ["Change your password"],
         "Certificates": ["Root certificate", "Certificate revocation list"],
         "Change Language": ["Deutsch", "English"],
         "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
