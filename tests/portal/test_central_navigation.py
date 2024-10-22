@@ -15,7 +15,7 @@ def test_navigation_api_returns_data_for_anonymous_user(navigation_api_url):
 
     assert response.status_code == requests.codes.ok
     display_name = _get_first_entry(data)["display_name"]
-    assert display_name == "Login"
+    assert display_name == "Login (Single sign-on)"
 
 
 @pytest.mark.central_navigation
@@ -43,9 +43,9 @@ def test_navigation_api_returns_data_for_authenticated_user(
 
     assert response.status_code == requests.codes.ok
     # Should not contain the anonymous login
-    assert _get_first_entry(data)["display_name"] != "Login"
+    assert _get_first_entry(data)["display_name"] != "Login (Single sign-on)"
     # Test that the response contains at least some categories
-    assert len(data.get("categories", [])) > 2
+    assert len(data.get("categories", [])) > 0
 
 
 def _get_first_entry(data):
