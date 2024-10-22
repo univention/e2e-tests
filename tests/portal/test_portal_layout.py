@@ -82,7 +82,7 @@ def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_passw
         "Certificates": ["Root certificate", "Certificate revocation list"],
         "Change Language": ["Deutsch", "English"],
         "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
-        "User settings": ["Change your password"],
+        "User settings": ["Change your password", "Protect your account", "My Profile"],
     }
 
     for section, items in expected_sidebar.items():
@@ -144,7 +144,7 @@ def test_regular_user_portal_layout(
         assert extra_tiles == set()
 
     expected_sidebar = {
-        "User settings": ["Change your password"],
+        "User settings": ["Change your password", "Protect your account", "My Profile"],
         "Certificates": ["Root certificate", "Certificate revocation list"],
         "Change Language": ["Deutsch", "English"],
         "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
