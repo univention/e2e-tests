@@ -54,7 +54,7 @@ class SetRecoveryEmailDialogPage(BasePage):
             home_page_logged_in.header.hamburger_icon,
         )
         home_page_logged_in.right_side_menu.menu_entry("User settings").click(timeout=5000)
-        home_page_logged_in.right_side_menu.click_sub_entry(re.compile("My password recovery options"))
+        home_page_logged_in.right_side_menu.click_sub_entry(re.compile("Protect your account"))
 
         self.username_box.fill(username)
         self.password_box.fill(password)

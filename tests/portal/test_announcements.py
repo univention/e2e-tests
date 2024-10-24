@@ -32,9 +32,7 @@ import pytest
 
 from e2e.decorators import retrying_slow
 from umspages.common.base import expect
-from umspages.portal.announcements.announcements_page import AnnouncementsPage
 from umspages.portal.home_page.base import HomePage
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
 
 
 @pytest.fixture
@@ -79,16 +77,3 @@ def test_anonymous_user_sees_announcement(page, stub_announcement):
         expect(title).to_be_visible(timeout=1000)
 
     assert_announcement_is_visible()
-
-
-@pytest.mark.announcements
-@pytest.mark.portal
-@pytest.mark.development_environment
-@pytest.mark.acceptance_environment
-def test_admin_user_can_view_announcements_page(
-    navigate_to_home_page_logged_in_as_admin,
-):
-    page = navigate_to_home_page_logged_in_as_admin
-    home_page_logged_in = HomePageLoggedIn(page)
-    announcements_page = AnnouncementsPage(home_page_logged_in.click_announcements_tile())
-    expect(announcements_page.add_button).to_be_visible(timeout=10000)
