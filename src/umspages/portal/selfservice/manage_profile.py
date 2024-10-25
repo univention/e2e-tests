@@ -59,7 +59,7 @@ class ManageProfileDialogPage(BasePage):
             home_page_logged_in.header.hamburger_icon,
         )
         home_page_logged_in.right_side_menu.menu_entry("User settings").click(timeout=5000)
-        home_page_logged_in.right_side_menu.click_sub_entry("Manage my profile")
+        home_page_logged_in.right_side_menu.click_sub_entry("My Profile")
 
     def change_description(self, description):
         self.description_box.fill(description)

@@ -30,8 +30,7 @@
 
 import re
 
-from e2e.decorators import retrying_keycloak_login, retrying_slow
-from umspages.common.base import expect
+from e2e.decorators import retrying_keycloak_login
 
 from ..login_page import LoginPage
 from .base import HomePage
@@ -89,15 +88,7 @@ class HomePageLoggedIn(HomePage):
         login()
         self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
-        @retrying_slow
-        def assert_tiles():
-            try:
-                expect(self.tiles.first).to_be_visible(timeout=2000)
-            except Exception:
-                self.page.reload()
-                raise
-
-        assert_tiles()
+        self.assert_logged_in()
 
     def is_displayed(self):
         # TODO: There seems to be nothing that's necessarily common between the UCS and SouvAP envs
@@ -105,7 +96,7 @@ class HomePageLoggedIn(HomePage):
         pass
 
     def click_users_tile(self):
-        return self.get_new_tab(self.users_tile)
+        return self.users_tile.click()
 
     def click_announcements_tile(self):
         return self.get_new_tab(self.announcements_tile)

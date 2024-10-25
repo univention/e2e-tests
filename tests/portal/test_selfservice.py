@@ -46,7 +46,7 @@ from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
 from umspages.portal.selfservice.password_forgotten import PasswordForgottenPage
 from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
-from umspages.portal.users.users_page import UsersPage
+from umspages.portal.users.users_page import UCSUsersPage
 
 from tests.portal.conftest import WaitForPortalSync
 
@@ -69,7 +69,7 @@ def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: 
     If the portal-consumer does not work, nothing else will either.
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
 
 @pytest.mark.selfservice
@@ -84,7 +84,7 @@ def test_user_changes_password_via_side_menu(
     wait_for_ldap_secondaries_to_catch_up,
 ):
     username = user.properties["username"]
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
     page = navigate_to_login_page
     change_password_page = ChangePasswordDialogPage(page)
@@ -114,7 +114,7 @@ def test_set_recovery_email(user, user_password, wait_for_portal_sync: WaitForPo
     same.
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
     set_recovery_email_page.navigate(username, user_password)
@@ -145,7 +145,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
     5. Checks the description remains the same.
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
     manage_profile_page = ManageProfileDialogPage(page)
     manage_profile_page.navigate(username, user_password)
@@ -193,7 +193,7 @@ def test_admin_does_not_see_umc_tiles_in_selfservice_portal(page, admin_username
 @pytest.mark.acceptance_environment
 def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password, wait_for_portal_sync):
     username = user.properties["username"]
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
     selfservice_portal = SelfservicePortal(page)
     selfservice_portal.navigate()
@@ -251,7 +251,8 @@ def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_emai
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
-    users_page = UsersPage(home_page_logged_in.click_users_tile())
+    home_page_logged_in.click_users_tile()
+    users_page = UCSUsersPage(home_page_logged_in.page)
     users_page.add_user_button.click()
     users_page.add_user_dialog.add_user(username=dummy_username, invite_email=recovery_email)
     users_page.close()
@@ -375,7 +376,7 @@ def test_user_forced_to_change_password_on_next_login(
     user.properties["pwdChangeNextLogin"] = True
     user.save()
     wait_for_ldap_secondaries_to_catch_up()
-    wait_for_portal_sync(username, 4)
+    wait_for_portal_sync(username, 0)
 
     home_page_logged_out = HomePageLoggedOut(page)
 
