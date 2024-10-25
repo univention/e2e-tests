@@ -36,7 +36,7 @@ from ..home_page.logged_in import HomePageLoggedIn
 class ManageProfileDialogPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.description_box = self.page.get_by_role("textbox", name="Description")
+        self.telephone_box = self.page.get_by_role("textbox", name="Telephone number 1:", exact=True)
         self.title_box = self.page.get_by_role("textbox", name="Title")
         self.first_name_box = self.page.get_by_role("textbox", name="First name *")
         self.last_name_box = self.page.get_by_role("textbox", name="Last name *")
@@ -62,6 +62,6 @@ class ManageProfileDialogPage(BasePage):
         home_page_logged_in.right_side_menu.click_sub_entry("My Profile")
 
     def change_description(self, description):
-        self.description_box.fill(description)
+        self.telephone_box.fill(description)
         self.save_button.click()
-        expect(self.description_box).to_be_hidden(timeout=10000)
+        expect(self.telephone_box).to_be_hidden(timeout=10000)

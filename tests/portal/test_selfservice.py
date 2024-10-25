@@ -52,7 +52,7 @@ from tests.portal.conftest import WaitForPortalSync
 
 DUMMY_USER_PASSWORD_2 = "secondpass"
 DUMMY_EMAIL = "mail@example.org"
-DUMMY_DESCRIPTION = "some description"
+DUMMY_TELEPHONE = "123456789"
 
 
 @pytest.fixture()
@@ -139,10 +139,10 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
     """
     Tests a user can manage their profile.
     1. Logs in as the dummy user.
-    2. Sets a description on his profile.
+    2. Sets a telephone number on his profile.
     3. Logs out from the dummy user.
     4. Logs in again to the dummy user.
-    5. Checks the description remains the same.
+    5. Checks the telephone number remains the same.
     """
     username = user.properties["username"]
     wait_for_portal_sync(username, 0)
@@ -150,7 +150,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
     manage_profile_page = ManageProfileDialogPage(page)
     manage_profile_page.navigate(username, user_password)
     expect(manage_profile_page.save_button).to_be_visible()
-    manage_profile_page.change_description(DUMMY_DESCRIPTION)
+    manage_profile_page.change_description(DUMMY_TELEPHONE)
 
     dummy_user_home_logged_out = HomePageLoggedOut(page)
     dummy_user_home_logged_out.navigate()
@@ -158,7 +158,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
     set_recovery_email_page = ManageProfileDialogPage(page)
     set_recovery_email_page.navigate(username, user_password)
     expect(set_recovery_email_page.save_button).to_be_visible(timeout=10000)
-    expect(set_recovery_email_page.description_box).to_have_value(DUMMY_DESCRIPTION)
+    expect(set_recovery_email_page.telephone_box).to_have_value(DUMMY_TELEPHONE)
 
 
 @pytest.mark.selfservice
@@ -255,7 +255,6 @@ def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_emai
     users_page = UCSUsersPage(home_page_logged_in.page)
     users_page.add_user_button.click()
     users_page.add_user_dialog.add_user(username=dummy_username, invite_email=recovery_email)
-    users_page.close()
     home_page_logged_out.navigate()
 
 
