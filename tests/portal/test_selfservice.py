@@ -46,7 +46,7 @@ from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
 from umspages.portal.selfservice.password_forgotten import PasswordForgottenPage
 from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
-from umspages.portal.users.users_page import UsersPage
+from umspages.portal.users.users_page import UCSUsersPage
 
 from tests.portal.conftest import WaitForPortalSync
 
@@ -251,7 +251,8 @@ def create_user_via_ui_with_email_invitation(page, dummy_username, recovery_emai
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_out = HomePageLoggedOut(page)
 
-    users_page = UsersPage(home_page_logged_in.click_users_tile())
+    home_page_logged_in.click_users_tile()
+    users_page = UCSUsersPage(home_page_logged_in.page)
     users_page.add_user_button.click()
     users_page.add_user_dialog.add_user(username=dummy_username, invite_email=recovery_email)
     users_page.close()
