@@ -48,6 +48,7 @@ class ManageProfileDialogPage(BasePage):
         self.city_box = self.page.get_by_role("textbox", name="City")
         self.save_button = self.page.get_by_role("button", name="Save")
         self.close_button = self.page.get_by_role("button", name="Close")
+        self.upload_image = self.page.get_by_role("button", name="Upload")
 
     def navigate(self, username, password):
         home_page_logged_in = HomePageLoggedIn(self.page)
@@ -61,7 +62,15 @@ class ManageProfileDialogPage(BasePage):
         home_page_logged_in.right_side_menu.menu_entry("User settings").click(timeout=5000)
         home_page_logged_in.right_side_menu.click_sub_entry("My Profile")
 
-    def change_description(self, description):
+    def change_telephone(self, description):
         self.telephone_box.fill(description)
         self.save_button.click()
-        expect(self.telephone_box).to_be_hidden(timeout=10000)
+        expect(self.save_button).to_be_hidden(timeout=10000)
+
+    def change_profile_picture(self):
+        with self.page.expect_file_chooser() as fc_info:
+            self.upload_image.click()
+        file_chooser = fc_info.value
+        file_chooser.set_files("./src/umspages/portal/selfservice/resources/NUBUS_ICON.png")
+        self.save_button.click()
+        expect(self.save_button).to_be_hidden(timeout=10000)
