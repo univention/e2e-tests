@@ -43,6 +43,7 @@ class HomePageLoggedIn(HomePage):
         super().set_content(*args, **kwargs)
         self.umc_heading = self.page.get_by_text("Univention Management Console", exact=True)
         self.users_tile = self.page.get_by_role("link", name=re.compile("Users New Tab|Users iFrame")).first
+        self.groups_tile = self.page.get_by_role("link", name=re.compile("Groups New Tab|Groups iFrame")).first
         self.announcements_tile = self.page.get_by_role("link", name=re.compile("Announcements New Tab"))
 
         self.mail_tile = self.page.get_by_role("link", name="E-Mail New Tab")
@@ -97,6 +98,9 @@ class HomePageLoggedIn(HomePage):
 
     def click_users_tile(self):
         return self.users_tile.click()
+
+    def click_groups_tile(self):
+        return self.groups_tile.click()
 
     def click_announcements_tile(self):
         return self.get_new_tab(self.announcements_tile)

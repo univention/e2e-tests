@@ -98,10 +98,6 @@ class UCSUsersPage(BasePage):
         # and will likely break test_users_page.
         self.iframe = self.page.frame_locator('iframe[title="Users"]')
         self.add_user_dialog = AddUserDialog(self.iframe.locator(":scope"))
-        # TODO: These should be separated into a user list page part once the page part
-        # gets an appropriate `data-testid` attribute or identifier.
-        # Currently, it is something generic like `id="umc_widgets_ContainerWidget_10"`
-
         self.add_user_button = self.iframe.get_by_role("button", name="Add")
         self.column_header_name = self.iframe.get_by_role("columnheader", name="Name")
         self.column_header_type = self.iframe.get_by_role("columnheader", name="Type")
