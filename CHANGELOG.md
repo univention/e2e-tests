@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.16.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.15.0...v0.16.0) (2024-11-06)
+
+
+### Features
+
+* adapting test for Nubus selfservice ([de3f5e2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/de3f5e27cd09fe161540023e73cf19d997780887))
+* add E2E test for pwdChangeNextLogin ([bba08bc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bba08bc1878f83fe6212d8846265d936875cd2e3))
+* add test for UMC tiles ([61e2e8c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/61e2e8c614ab135175bd22637e3efc8e33223ef4))
+* add tests for portal tiles, sidebar and central navigation ([35fa877](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/35fa87735ec3bff5e8639b3359f41ebecb3173d1))
+* change default discovery of keycloak url ([f0262ed](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f0262ed40628ff28d7fa19bd76ac8507fda81766))
+* Change language coverage for Tiles and UMC ([2c4dfb2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2c4dfb28d037cdb3768a178074c00812120b9171))
+* test upload profile picture  in manage profile ([bbd2b74](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bbd2b74ad03595eb72e06e02b0f4f891d4420908))
+* UMC groups ([7892272](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/789227243ce0529796078f170309496c6a8a166d))
+
+
+### Bug Fixes
+
+* adapt tests to nubus plain ([61f5f00](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/61f5f00ce0414a09675b11b6be20e59406dd458b))
+
 ## [0.14.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.14.2...v0.14.3) (2024-09-17)
 
 
