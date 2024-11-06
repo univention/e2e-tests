@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.32.0"
+    ref: "v1.33.1"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -46,10 +46,6 @@ push-image-external:
 container-sign-external:
   parallel:
     matrix: *publish-matrix
-
-container-generate-sbom:
-  rules:
-    - when: never
 
 test-container:
   stage: "test"
