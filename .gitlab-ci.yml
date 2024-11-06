@@ -47,6 +47,10 @@ container-sign-external:
   parallel:
     matrix: *publish-matrix
 
+container-malware-scan:
+  parallel:
+    matrix: *publish-matrix
+
 test-container:
   stage: "test"
   rules:
