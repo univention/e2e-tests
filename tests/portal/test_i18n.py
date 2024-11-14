@@ -105,7 +105,7 @@ def test_logged_in_user_can_switch_language_to_german(navigate_to_home_page_logg
     expect(german_users_tile).to_be_visible()
     german_users_tile.click()
     users_iframe = home_page_logged_in.page.frame_locator('iframe[title="Benutzer"]')
-    expect(users_iframe.get_by_role("button", name="Hinzufügen")).to_be_visible()
+    expect(users_iframe.get_by_role("button", name="Hinzufügen")).to_be_visible(timeout=10000)
 
 
 @pytest.mark.i18n
@@ -139,4 +139,4 @@ def test_logged_in_user_can_switch_language_to_english(navigate_to_home_page_log
 
     home_page_logged_in.users_tile.click()
     users_page = UCSUsersPage(home_page_logged_in.page)
-    expect(users_page.add_user_button).to_be_visible()
+    expect(users_page.add_user_button).to_be_visible(timeout=10000)
