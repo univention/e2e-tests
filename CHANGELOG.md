@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.16.0...v0.16.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* **test-stability:** increase language assertion locator timeout for 5 seconds to 10 seconds ([437fda8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/437fda89f3aa6096094beba889362edac71e83cc))
+
 ## [0.16.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.15.0...v0.16.0) (2024-11-06)
 
 
