@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.16.1...v0.17.0) (2024-11-27)
+
+
+### Features
+
+* Add a generated script "testing-api" to run the API ([88696bc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/88696bc8a53853ba3d6fcbe81f04c4c3ae60a090))
+* Smarter layer caching in testing-api container ([9326232](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/9326232cf967fa0f5723c590a65c6ec0cf6faf42))
+
 ## [0.16.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.16.0...v0.16.1) (2024-11-14)
 
 
