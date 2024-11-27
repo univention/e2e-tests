@@ -166,31 +166,6 @@ def navigation_api_url(portal_base_url):
     return urljoin(portal_base_url, "/univention/portal/navigation.json")
 
 
-@pytest.fixture(scope="session")
-def email_domain(udm):
-    """
-    Returns a valid email domain.
-
-    The email domain is valid in the context of the system under test and
-    discovered out of the configuration automatically.
-    """
-    mail_domains_module = udm.get("mail/domain")
-    mail_domain = next(mail_domains_module.search()).open()
-    return mail_domain.properties["name"]
-
-
-@pytest.fixture
-def external_email_domain(faker):
-    """
-    Returns an external email domain.
-
-    External means that this domain is not managed by the system under test. It
-    is intended for cases when a password recovery email shall be configured.
-    """
-    domain = f"{faker.domain_word()}.test"
-    return domain
-
-
 @pytest.fixture
 def user_password(faker):
     """
