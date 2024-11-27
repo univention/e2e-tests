@@ -33,14 +33,20 @@ ENV \
 # install Poetry
 RUN pip3 install --break-system-packages --no-cache-dir poetry==1.6.1
 
+COPY testing-api/poetry.lock \
+    testing-api/pyproject.toml \
+    ${WORKDIR}/
+
+# Install dependencies only for smart layer caching
+#
+# See: https://python-poetry.org/docs/faq/#poetry-busts-my-docker-cache-because-it-requires-me-to-copy-my-source-files-in-before-installing-3rd-party-dependencies
+
+RUN poetry install --only main --no-root --no-directory
+
 # copy source code
 COPY ./testing-api/src ${WORKDIR}/src
 
-COPY testing-api/poetry.lock \
-     testing-api/pyproject.toml \
-     ${WORKDIR}/
-
-# install dependencies
+# Install the application itself
 RUN poetry install --only main
 
 # Stage 2: final image
