@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.18.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.17.0...v0.18.0) (2024-11-28)
+
+
+### Features
+
+* adapt testing-api for ldap server primary service ([c32daf4](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c32daf4e24707dcf56ce0760f9a4b8c5d0b496b2))
+* upgrade testing-api tag ([d1f9eb6](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d1f9eb684b63767462b9021d38fe576c794c8dde))
+
 ## [0.17.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.16.1...v0.17.0) (2024-11-27)
 
 
