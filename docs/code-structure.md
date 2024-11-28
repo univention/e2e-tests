@@ -16,6 +16,8 @@
 
 - `/src/e2e/api` - (former `/src/api`) Utilities for API interaction.
 
+- `/src/e2e/chaos` - Supporting failure injection inspired by Chaos Testing.
+
 - `/src/e2e/email` - Contains email related models.
 
 - `/src/e2e/pages` - (former `/src/umspages`) Contains the Page Object Model

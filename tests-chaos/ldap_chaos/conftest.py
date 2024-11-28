@@ -5,6 +5,10 @@ import os
 
 import pytest
 from kubernetes import config
+from kubernetes.client import ApiClient
+from kubernetes.dynamic import DynamicClient
+
+from e2e.chaos import ChaosMeshFixture
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -30,3 +34,17 @@ def k8s_namespace():
     namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
     print("namespace:", namespace)
     return namespace
+
+
+@pytest.fixture
+def k8s_chaos(k8s_namespace):
+    """
+    Returns a configured `ChaosMeshFixture` instance.
+
+    This allows to deploy various chaos experiment types from Chaos Mesh. It will
+    clean up the Kubernetes resources at the end of the test case.
+    """
+    client = DynamicClient(ApiClient())
+    chaos_mesh = ChaosMeshFixture(client, k8s_namespace)
+    yield chaos_mesh
+    chaos_mesh.cleanup()
