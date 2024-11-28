@@ -45,7 +45,7 @@ image:
   # -- The pull policy of the container image.  This setting has higher precedence than global.imagePullPolicy.
   imagePullPolicy: "IfNotPresent"
   # -- The tag of the container image. (This is replaced with an appropriate value during the build process of the Helm chart.)
-  tag: 0.15.0
+  tag: 0.18.0
 # -- Optionally specify a secret to create (primarily intended to be used in development environments to provide custom certificates)
 extraEnvVars: []
 
