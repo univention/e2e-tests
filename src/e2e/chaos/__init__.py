@@ -4,6 +4,7 @@
 import secrets
 from typing import Optional
 
+from kubernetes import watch
 from kubernetes.dynamic import DynamicClient
 from kubernetes.dynamic.resource import ResourceInstance
 
@@ -51,7 +52,7 @@ class ChaosMeshFixture:
         if label_selectors:
             pod_chaos["spec"]["selector"]["labelSelectors"] = label_selectors
 
-        pod_chaos_resource = self._get_resource_from_instance(pod_chaos)
+        pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
         result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
         self._add_to_cleanup(result)
         return Experiment(result)
@@ -64,20 +65,11 @@ class ChaosMeshFixture:
         self._to_cleanup.append(item)
 
     def _delete_resource_instance(self, instance):
-        resource = self._get_resource_from_instance(instance)
+        resource = _get_resource_from_instance(self.client, instance)
         resource.delete(
             name=instance["metadata"]["name"],
             namespace=instance["metadata"]["namespace"],
         )
-
-    def _get_resource_from_instance(self, instance: dict | ResourceInstance):
-        # Using only dict based access to ensure that this works both for a
-        # ResourceInstance and a dict.
-        resource = self.client.resources.get(
-            api_version=instance["apiVersion"],
-            kind=instance["kind"],
-        )
-        return resource
 
 
 class Experiment:
@@ -89,3 +81,38 @@ class Experiment:
 
     def __init__(self, instance: ResourceInstance):
         self.instance = instance
+
+    def wait_until_running(self):
+        resource = _get_resource_from_instance(self.instance.client, self.instance)
+        watcher = watch.Watch()
+        events = resource.watch(
+            resource_version=0,
+            namespace=self.instance.metadata.namespace,
+            name=self.instance.metadata.name,
+            timeout=10,
+            watcher=watcher,
+        )
+        for event in events:
+            if _is_experiment_running(event["object"]):
+                watcher.stop()
+
+
+def _get_resource_from_instance(client, instance: dict | ResourceInstance):
+    # Using only dict based access to ensure that this works both for a
+    # ResourceInstance and a dict.
+    resource = client.resources.get(
+        api_version=instance["apiVersion"],
+        kind=instance["kind"],
+    )
+    return resource
+
+
+def _is_experiment_running(instance):
+    conditions = _map_status_conditions(instance)
+    all_injected = conditions.get("AllInjected", None)
+    return all_injected == "True"
+
+
+def _map_status_conditions(instance):
+    conditions = {i["type"]: i["status"] for i in instance.status.get("conditions", ())}
+    return conditions
