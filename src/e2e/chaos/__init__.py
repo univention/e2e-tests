@@ -34,7 +34,23 @@ class ChaosMeshFixture:
         self.namespace = namespace
         self._to_cleanup = []
 
+    def pod_failure(self, label_selectors: Optional[dict]):
+        pod_chaos = self._pod_chaos(label_selectors=label_selectors)
+        pod_chaos["spec"]["duration"] = "10s"
+
+        pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
+        result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
+        self._add_to_cleanup(result)
+        return Experiment(result)
+
     def pod_kill(self, label_selectors: Optional[dict]):
+        pod_chaos = self._pod_chaos(label_selectors=label_selectors)
+        pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
+        result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
+        self._add_to_cleanup(result)
+        return Experiment(result)
+
+    def _pod_chaos(self, label_selectors: Optional[dict]):
         pod_chaos = {
             "apiVersion": "chaos-mesh.org/v1alpha1",
             "kind": "PodChaos",
@@ -52,10 +68,7 @@ class ChaosMeshFixture:
         if label_selectors:
             pod_chaos["spec"]["selector"]["labelSelectors"] = label_selectors
 
-        pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
-        result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
-        self._add_to_cleanup(result)
-        return Experiment(result)
+        return pod_chaos
 
     def cleanup(self):
         for item in self._to_cleanup:
