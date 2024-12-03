@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.18.0...v0.19.0) (2024-12-03)
+
+
+### Features
+
+* adapt test to new users module defaults ([bc8d918](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bc8d9186fe1de73a0a2db27a399bbeded89b97fb))
+
 ## [0.18.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.17.0...v0.18.0) (2024-11-28)
 
 
