@@ -21,7 +21,10 @@
 - `/src/e2e/pages` - (former `/src/umspages`) Contains the Page Object Model
   implementations.
 
-- `/tests` - All test cases are within this top level folder.
+- `/tests` - All regular e2e test cases are within this top level folder.
+
+- `/tests-chaos` - Specific test cases which simulate failure scenarios and
+  typically need an adjusted deployment as a starting point.
 
 
 ## Page Objects
