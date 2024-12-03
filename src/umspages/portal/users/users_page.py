@@ -156,10 +156,10 @@ class AddUserDialog(BasePagePart):
         self.username.fill(username)
         self.next_button.click()
         if password:
-            self.set_password_button.click()
             self.password_box.fill(password)
             self.retype_box.fill(password)
         else:
+            self.set_password_button.click()
             self.invite_email.fill(invite_email)
 
         self.submit_password_button.click()
