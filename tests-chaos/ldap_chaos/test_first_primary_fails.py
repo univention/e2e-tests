@@ -102,23 +102,14 @@ def test_killed_pod_triggers_transition(ldap, k8s_chaos, cleanup):
     ldap.inject_changes()
     expected_context_csn = ldap.get_context_csn()
 
-    print("Start experiment")
     experiment = k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
 
-    print("Waiting")
     # TODO: Wait until the other Pod became the active one
     experiment.wait_until_running()
     import time
-
     time.sleep(60)
 
-    print("Asserting")
     # TODO: Move retrying into the ldap fixture
     # The call to the UDM Rest API might fail a few times during the transition
     # to the hot-standby.
     assert retrying(ldap.get_context_csn)() == expected_context_csn
-
-    print("Waiting before cleanup may start")
-    time.sleep(40)
-
-    print("done")
