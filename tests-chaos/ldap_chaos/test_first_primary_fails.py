@@ -58,38 +58,10 @@ def user(udm, faker, email_domain, external_email_domain, user_password, cleanup
     test_user.delete()
 
 
-# TODO: Think we only need a cleanup in development scenarios to be able to
-# repeat the run and have a well known starting point.
-@pytest.fixture
-def cleanup():
-    import subprocess
-
-    yield
-
-    print("Cleaning up Kubernetes state")
-
-    import time
-
-    time.sleep(4)
-
-    # TODO: Restore clean state
-    result = subprocess.run(
-        [
-            "kubectl",
-            "delete",
-            "pod/nubus-ldap-server-primary-1",
-        ]
-    )
-    result.check_returncode()
-    result = subprocess.run(["kubectl", "delete", "pod/nubus-ldap-server-primary-0", "--force"])
-    result.check_returncode()
-
-
 LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
     "app.kubernetes.io/name": "ldap-server",
     "ldap-server-type": "primary",
-    # TODO: Change once leader election has been implemented
-    "apps.kubernetes.io/pod-index": "0",
+    "ldap-leader": "true",
 }
 
 
@@ -98,7 +70,8 @@ def ldap(user):
     return LDAPFixture(user)
 
 
-def test_killed_pod_triggers_transition(ldap, k8s_chaos, cleanup):
+def test_killed_pod_triggers_transition(ldap, k8s_chaos):
+    assert False, "remove me"
     ldap.inject_changes()
     expected_context_csn = ldap.get_context_csn()
 
@@ -107,7 +80,7 @@ def test_killed_pod_triggers_transition(ldap, k8s_chaos, cleanup):
     # TODO: Wait until the other Pod became the active one
     experiment.wait_until_running()
     import time
-    time.sleep(60)
+    time.sleep(30)
 
     # TODO: Move retrying into the ldap fixture
     # The call to the UDM Rest API might fail a few times during the transition
