@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
+import os
+
 import pytest
 from kubernetes import config
 from kubernetes.client import ApiClient
@@ -28,7 +30,9 @@ def k8s_namespace():
     prepare via ``kubens``.
     """
     _, active_context = config.list_kube_config_contexts()
-    namespace = active_context["context"]["namespace"]
+    namespace_from_context = active_context["context"]["namespace"]
+    namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
+    print("namespace:", namespace)
     return namespace
 
 
