@@ -31,6 +31,7 @@ markers = [
     "brute_force_protection: test standalone keycloak-extensions (no univention-portal)",
     "login: all tests related to login on univention-portal",
     "logout: all tests related to logout on univention-portal",
+    "groups: Tests for the group management console for admin users",
     "users: tests for user management console for admin users",
     "notifications: tests related to univention-portal notifications",
     "announcements: tests related to univention-portal announcements",
