@@ -51,7 +51,6 @@ class UCSGroupsPage(BasePage):
 
         # Table
         self.column_header_name = self.iframe.get_by_role("columnheader", name="Name")
-        self.column_header_type = self.iframe.get_by_role("columnheader", name="Type")
         self.column_header_path = self.iframe.get_by_role("columnheader", name="Path")
 
     def add_group(self, name: str, description: Optional[str] = None):
