@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.19.0...v0.20.0) (2024-12-09)
+
+
+### Features
+
+* Remove "column_header_type" from UCSGroupsPage ([696c985](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/696c9854ff4cf8c0f6f04c5f3b7d3373115ec20a))
+* Remove "column_header_type" from UCSUsersPage ([bd0916a](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bd0916a86646ec2273fba0d9f180eebbdecc8571))
+* Remove unused class "UsersPage" ([a4e2bfb](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/a4e2bfb415a56c737b1844a141fe608ac4708664))
+
 ## [0.19.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.18.0...v0.19.0) (2024-12-03)
 
 
