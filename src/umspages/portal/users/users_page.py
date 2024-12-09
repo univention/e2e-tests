@@ -33,63 +33,6 @@ from typing import Optional
 
 from ...common.base import BasePage, BasePagePart, expect
 
-# TODO: The two classes in here should be handled in a better way,
-# once there is a concept for handling the two different testing environments
-# SouvAP and local UCS
-
-
-class UsersPage(BasePage):
-    """
-    The users page in the dev-env and openDesk project.
-
-    It consists of an entire new page, not an iFrame as the UCSUsersPage.
-    """
-
-    def set_content(self, *args, **kwargs):
-        super().set_content(*args, **kwargs)
-        # TODO: These should be separated into a user list page part once the page part
-        # gets an appropriate `data-testid` attribute or identifier.
-        # Currently, it is something generic like `id="umc_widgets_ContainerWidget_10"`
-
-        self.search_button = self.page.locator("#umc_widgets_SubmitButton_0")
-        self.add_user_button = self.page.get_by_role("button", name="Add")
-        self.column_header_name = self.page.get_by_role("columnheader", name="Name")
-        self.column_header_type = self.page.get_by_role("columnheader", name="Type")
-        self.column_header_path = self.page.get_by_role("columnheader", name="Path")
-        self.add_user_dialog = AddUserDialog(self.page.locator(":scope"))
-        self.delete_button = self.page.get_by_role("button", name="Delete")
-        self.delete_confirm_button = (
-            self.page.get_by_role("dialog").filter(has_text="Delete objects").get_by_role("button", name="Delete")
-        )
-
-    def add_user(self, username: str, password: str):
-        expect(self.add_user_button).to_be_visible(timeout=10000)
-        self.add_user_button.click()
-        self.add_user_dialog.add_user(username, password)
-        self.search_button.click()
-        expect(self.page.get_by_role("gridcell", name=username)).to_be_visible()
-
-    def remove_user(self, username: str):
-        expect(self.add_user_button).to_be_visible(timeout=10000)
-        # FIXME: If you click too fast the search button to reveal all users,
-        # it will show an error. This is a workaround for that.
-        # objectProperty: Value is too short, it has to be at least of length 1
-        self.search_button.click()
-        try:
-            expect(self.page.get_by_role("heading", name="Validation error")).to_be_visible()
-            self.page.get_by_role("button", name="Ok").click()
-            self.search_button.click()
-        except AssertionError:
-            pass
-        expect(self.page.get_by_role("gridcell", name=username)).to_be_visible()
-        self.page.get_by_role("gridcell", name=username).click()
-        self.delete_button.click()
-        self.delete_confirm_button.click()
-        self.page.get_by_role("gridcell", name=username).wait_for(state="hidden")
-
-    def close(self):
-        self.page.close()
-
 
 class UCSUsersPage(BasePage):
     def set_content(self, *args, **kwargs):
@@ -100,7 +43,6 @@ class UCSUsersPage(BasePage):
         self.add_user_dialog = AddUserDialog(self.iframe.locator(":scope"))
         self.add_user_button = self.iframe.get_by_role("button", name="Add")
         self.column_header_name = self.iframe.get_by_role("columnheader", name="Name")
-        self.column_header_type = self.iframe.get_by_role("columnheader", name="Type")
         self.column_header_path = self.iframe.get_by_role("columnheader", name="Path")
         self.delete_button = self.iframe.get_by_role("button", name="Delete")
         self.delete_confirm_button = (
