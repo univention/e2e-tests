@@ -40,7 +40,6 @@ from umspages.portal.users.users_page import UCSUsersPage
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin):
-    """This test should be run using an admin user. Otherwise, it will fail."""
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.click_users_tile()
