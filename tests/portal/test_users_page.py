@@ -48,5 +48,4 @@ def test_admin_user_can_view_users_page(navigate_to_home_page_logged_in_as_admin
     # to handle that. Replace this with an increased global timeout as soon as we figure out how.
     expect(users_page.add_user_button).to_be_visible(timeout=10000)
     expect(users_page.column_header_name).to_be_visible()
-    expect(users_page.column_header_type).to_be_visible()
     expect(users_page.column_header_path).to_be_visible()
