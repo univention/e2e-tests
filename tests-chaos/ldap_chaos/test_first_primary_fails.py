@@ -25,7 +25,7 @@ def user_password(faker):
 
 
 @pytest.fixture
-def user(udm, faker, email_domain, external_email_domain, user_password, cleanup):
+def user(udm, faker, email_domain, external_email_domain, user_password):
     """
     A regular user.
 
