@@ -20,5 +20,6 @@ tenacity = "*"
 udm-rest-api-client = "*"
 pytest-subtests = "*"
 kubernetes = "*"
+ldap3 = "*"
 
 [dev-packages]
