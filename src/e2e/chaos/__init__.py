@@ -59,6 +59,7 @@ class ChaosMeshFixture:
             },
             "spec": {
                 "action": "pod-kill",
+                "gracePeriod": 1,
                 "mode": "one",
                 "selector": {},
             },
