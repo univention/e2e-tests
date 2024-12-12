@@ -3,6 +3,7 @@
 
 import logging
 import time
+from e2e.ldap import LDAPFixture
 
 import pytest
 
@@ -16,7 +17,7 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 }
 
 
-def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
+def test_new_leader_has_correct_context_csn(faker, ldap: LDAPFixture, k8s_chaos):
     context_csn = ldap.get_context_csn()
     log.debug("contextCSN initial state: %s", context_csn)
 
@@ -30,15 +31,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
     create_and_delete_a_ldap_entry(faker, conn)
 
-    context_csn_after_change = ldap.get_context_csn()
-    log.debug("cotextCSN after change: %s", context_csn_after_change)
-
-    for expected_context_csn in context_csn_after_change.values():
-        if expected_context_csn:
-            break
-    else:
-        raise Exception("Retrieving the expected contextCSN failed.")
-
+    expected_context_csn = primary.get_context_csn()
 
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
     log.info("Both ldap primary servers are reachable again.")
