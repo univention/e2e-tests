@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
+import time
 
 from ldap3 import Connection, Server
 
@@ -84,6 +85,9 @@ class LDAPFixture:
                 log.debug("Server %s not reachable", server.name)
                 return False
         return True
+
+    def all_primaries_reachable(self):
+        return self.all_servers_reachable()
 
     def get_context_csn(self) -> dict[str, list[str]]:
         return {
