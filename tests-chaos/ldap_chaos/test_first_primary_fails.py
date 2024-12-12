@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
+import time
+
 import pytest
 
 from e2e.decorators import retrying
@@ -66,8 +68,71 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 
 
 @pytest.fixture
-def ldap(user):
-    return LDAPFixture(user)
+def ldap():
+    return LDAPFixture()
+
+
+def test_ldap_connection():
+    from ldap3 import ALL, Connection, Server
+
+    server = Server(
+        host=f"ldap://localhost",
+        port=8389,
+        get_info="ALL",
+        connect_timeout=1,
+    )
+    connection = Connection(
+        server,
+        user="cn=admin,dc=univention-organization,dc=intranet",
+        password="univention",
+        client_strategy="SYNC",
+    )
+
+    with connection:
+        connection.search(
+            "dc=univention-organization,dc=intranet",
+            "(objectClass=*)",
+            search_scope="BASE",
+            attributes=["contextCSN"],
+        )
+        context_csn = connection.entries[0].contextCSN.value
+        print(context_csn)
+
+    # import pdb; pdb.set_trace()
+    assert False, "finish me!"
+
+
+def test_new_leader_has_correct_context_csn(ldap, k8s_chaos):
+    context_csn = ldap.get_context_csn()
+    print(context_csn)
+
+    k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
+
+    # TODO: Wait until the pod is not reachable anymore
+    time.sleep(3)
+
+    # TODO: Trigger a change
+    primary = ldap.get_connection(role="primary")
+    conn = primary.conn
+
+    try:
+        with conn:
+            pass
+    except:
+        time.sleep(3)
+
+    with conn:
+        pass
+
+    assert False, "continue"
+
+    # TODO: Expect both servers to eventually be reachable
+    # TODO: Expect the contextCSN to eventually converge
+    for x in range(400):
+        print(x, ldap.get_context_csn())
+        time.sleep(1)
+
+    assert False, "finish me!"
 
 
 def test_killed_pod_triggers_transition(ldap, k8s_chaos):
@@ -79,7 +144,6 @@ def test_killed_pod_triggers_transition(ldap, k8s_chaos):
 
     # TODO: Wait until the other Pod became the active one
     experiment.wait_until_running()
-    import time
     time.sleep(30)
 
     # TODO: Move retrying into the ldap fixture
