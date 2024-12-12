@@ -9,6 +9,7 @@ from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
 
 from e2e.chaos import ChaosMeshFixture
+from e2e.ldap import LDAPFixture
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -48,3 +49,11 @@ def k8s_chaos(k8s_namespace):
     chaos_mesh = ChaosMeshFixture(client, k8s_namespace)
     yield chaos_mesh
     chaos_mesh.cleanup()
+
+
+@pytest.fixture
+def ldap():
+    """
+    Returns an instance of `LDAPFixture`.
+    """
+    return LDAPFixture()
