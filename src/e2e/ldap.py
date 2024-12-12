@@ -72,6 +72,19 @@ class LDAPFixture:
         ]
         self.servers = {server.name: server for server in servers}
 
+    def all_servers_reachable(self, role="primary"):
+        if not role == "primary":
+            raise NotImplementedError("Only the role \"primary\" has been implemented")
+        for server in self.servers.values():
+            log.debug("Checking reachability of server %s", server.name)
+            try:
+                with server.conn:
+                    pass
+            except Exception:
+                log.debug("Server %s not reachable", server.name)
+                return False
+        return True
+
     def get_context_csn(self) -> dict[str, list[str]]:
         return {
             name: server.get_context_csn() for name, server in self.servers.items()
