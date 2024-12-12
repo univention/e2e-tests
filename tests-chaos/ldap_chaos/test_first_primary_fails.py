@@ -28,19 +28,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
     primary = ldap.get_server(role="primary")
     conn = primary.conn
 
-    base_dn = "dc=univention-organization,dc=intranet"
-    users_container_dn = f"cn=users,{base_dn}"
-
-    user_uid = faker.user_name()
-    user_dn = f"uid={user_uid},{users_container_dn}"
-    user_attributes = {
-        "cn": faker.name(),
-        "sn": faker.last_name(),
-    }
-
-    with conn:
-        conn.add(user_dn, "inetOrgPerson", user_attributes)
-        conn.delete(user_dn)
+    create_and_delete_a_ldap_entry(faker, conn)
 
     context_csn_after_change = ldap.get_context_csn()
     log.debug("cotextCSN after change: %s", context_csn_after_change)
@@ -64,6 +52,22 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
 
     assert False, "finish me!"
+
+
+def create_and_delete_a_ldap_entry(faker, conn):
+    base_dn = "dc=univention-organization,dc=intranet"
+    users_container_dn = f"cn=users,{base_dn}"
+
+    user_uid = faker.user_name()
+    user_dn = f"uid={user_uid},{users_container_dn}"
+    user_attributes = {
+        "cn": faker.name(),
+        "sn": faker.last_name(),
+    }
+
+    with conn:
+        conn.add(user_dn, "inetOrgPerson", user_attributes)
+        conn.delete(user_dn)
 
 
 def wait_until(func, expected, timeout=10):
