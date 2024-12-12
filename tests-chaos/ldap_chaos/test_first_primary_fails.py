@@ -18,33 +18,17 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 
 
 def test_new_leader_has_correct_context_csn(faker, ldap: LDAPFixture, k8s_chaos):
-    context_csn = ldap.get_context_csn()
-    log.debug("contextCSN initial state: %s", context_csn)
-
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
-
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
-    log.info("One ldap primary became unreachable.")
 
     primary = ldap.get_server(role="primary")
     conn = primary.conn
-
     create_and_delete_a_ldap_entry(faker, conn)
-
-    expected_context_csn = primary.get_context_csn()
+    expected_context_csn = [primary.get_context_csn()] * 2
 
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
-    log.info("Both ldap primary servers are reachable again.")
-
-    # TODO: Expect the contextCSN to eventually converge
-    # TODO: Expect the resulting contextCSN to be the one from after the write
-    print(expected_context_csn)
-    found_context_csn = ldap.get_context_csn()
-
-    assert [expected_context_csn, expected_context_csn] == list(found_context_csn.values())
-
-
-    assert False, "finish me!"
+    found_context_csn = list(ldap.get_context_csn().values())
+    assert expected_context_csn == found_context_csn
 
 
 def create_and_delete_a_ldap_entry(faker, conn):
