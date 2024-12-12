@@ -21,7 +21,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap: LDAPFixture, k8s_chaos)
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
 
-    primary = ldap.get_server(role="primary")
+    primary = ldap.get_server_for_primary_service()
     conn = primary.conn
     create_and_delete_a_ldap_entry(faker, conn)
     expected_context_csn = [primary.get_context_csn()] * 2
