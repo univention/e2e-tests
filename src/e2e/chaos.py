@@ -45,6 +45,7 @@ class ChaosMeshFixture:
 
     def pod_kill(self, label_selectors: Optional[dict]):
         pod_chaos = self._pod_chaos(label_selectors=label_selectors)
+        pod_chaos["spec"]["gracePeriod"] = 1
         pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
         result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
         self._add_to_cleanup(result)
@@ -59,7 +60,6 @@ class ChaosMeshFixture:
             },
             "spec": {
                 "action": "pod-kill",
-                "gracePeriod": 1,
                 "mode": "one",
                 "selector": {},
             },
