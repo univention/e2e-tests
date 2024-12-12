@@ -34,18 +34,18 @@ class ChaosMeshFixture:
         self.namespace = namespace
         self._to_cleanup = []
 
-    def pod_failure(self, label_selectors: Optional[dict]):
+    def pod_failure(self, duration="10s", label_selectors: Optional[dict] = None):
         pod_chaos = self._pod_chaos(label_selectors=label_selectors)
-        pod_chaos["spec"]["duration"] = "10s"
+        pod_chaos["spec"]["duration"] = duration
 
         pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
         result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
         self._add_to_cleanup(result)
         return Experiment(result)
 
-    def pod_kill(self, label_selectors: Optional[dict]):
+    def pod_kill(self, grace_period=1, label_selectors: Optional[dict] = None):
         pod_chaos = self._pod_chaos(label_selectors=label_selectors)
-        pod_chaos["spec"]["gracePeriod"] = 1
+        pod_chaos["spec"]["gracePeriod"] = grace_period
         pod_chaos_resource = _get_resource_from_instance(self.client, pod_chaos)
         result = pod_chaos_resource.create(body=pod_chaos, namespace=self.namespace)
         self._add_to_cleanup(result)
