@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
-import time
 
 from ldap3 import Connection, Server
 
@@ -89,7 +88,8 @@ class LDAPFixture:
             name: server.get_context_csn() for name, server in self.servers.items()
         }
 
-    def get_server(self, role: str, auto_reconnect=True) -> LDAPServer:
+    def get_server_for_primary_service(self, auto_reconnect=True) -> LDAPServer:
+        role = "primary_service"
         if auto_reconnect:
             client_strategy = "RESTARTABLE"
         else:
