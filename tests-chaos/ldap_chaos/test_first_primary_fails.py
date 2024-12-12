@@ -22,13 +22,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
 
-    for x in range(5):
-        log.debug("Awaiting ldap primary server to become unreachable %s", x)
-        if not ldap.all_servers_reachable(role="primary"):
-            break
-        time.sleep(1)
-    else:
-        raise Exception("No LDAP server became unreachable.")
+    wait_until(ldap.all_primaries_reachable, False, timeout=5)
     log.info("One ldap primary became unreachable.")
 
     primary = ldap.get_server(role="primary")
@@ -58,13 +52,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
         raise Exception("Retrieving the expected contextCSN failed.")
 
 
-    for x in range(40):
-        log.debug("Awaiting ldap primary servers to become reachable again %s", x)
-        if ldap.all_servers_reachable(role="primary"):
-            break
-        time.sleep(1)
-    else:
-        raise Exception("Timeout, ldap primary servers did not become reachable again.")
+    wait_until(ldap.all_primaries_reachable, True, timeout=40)
     log.info("Both ldap primary servers are reachable again.")
 
     # TODO: Expect the contextCSN to eventually converge
@@ -76,3 +64,13 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
 
     assert False, "finish me!"
+
+
+def wait_until(func, expected, timeout=10):
+    for _ in range(timeout):
+        if func() == expected:
+            break
+        log.debug("Waiting until %s is %s", func, expected)
+        time.sleep(1)
+    else:
+        raise Exception("Timed out in wait_until.")
