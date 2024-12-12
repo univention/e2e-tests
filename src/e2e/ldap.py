@@ -1,30 +1,81 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
+import logging
+
+from ldap3 import Connection, Server
+
+
+log = logging.getLogger(__name__)
+
+
+class LDAPServer:
+    """
+    Represents one LDAP server process / Pod in our deployment.
+    """
+
+    conn: Connection
+
+    def __init__(self, name: str, host: str, port: int):
+        self.name = name
+        self.host = host
+        self.port = port
+
+        self._connect()
+
+    def _connect(self):
+        server = Server(
+            host=self.host,
+            port=self.port,
+            get_info="ALL",
+            connect_timeout=1,
+        )
+        self.conn = Connection(
+            server,
+            user="cn=admin,dc=univention-organization,dc=intranet",
+            password="univention",
+            client_strategy="SYNC",
+        )
+
+    def get_context_csn(self) -> list[str]:
+        context_csn = []
+        try:
+            with self.conn:
+                self.conn.search(
+                    "dc=univention-organization,dc=intranet",
+                    "(objectClass=*)",
+                    search_scope="BASE",
+                    attributes=["contextCSN"],
+                )
+                context_csn = self.conn.entries[0].contextCSN.values
+        except Exception:
+            log.debug("Reading contextCSN from server %s failed.", self.name)
+        return context_csn
+
 
 class LDAPFixture:
-    # TODO: Remove!
-    _stub_context_csn = None
+    """
+    Represents the openldap deployment.
 
-    def __init__(self, user):
-        self.user = user
+    It does map servers by "role" and a running number, so that the whole
+    deployment could be represented, including the roles "primary", "secondary"
+    and "proxy".
+    """
 
-    def get_context_csn(self):
-        # TODO: Implement me properly!
-        if self._stub_context_csn:
-            result = self._stub_context_csn
-            self._stub_context_csn = None
-            return result
+    servers: dict[str, LDAPServer]
 
-        self.user.reload()
-        return self.user.properties["displayName"]
+    def __init__(self):
+        servers = [
+            LDAPServer(name="primary_1", host="ldap://localhost", port=8389),
+            LDAPServer(name="primary_0", host="ldap://localhost", port=9389),
+        ]
+        self.servers = {server.name: server for server in servers}
 
-    def inject_changes(self):
-        user = self.user
-        display_name = user.properties["displayName"]
-        for x in range(1, 21):
-            user.properties["displayName"] = f"{display_name} - changed {x}"
-            user.save()
-        latest_display_name = user.properties["displayName"]
-        # TODO: Remove!
-        self._stub_context_csn = latest_display_name
+    def get_context_csn(self) -> dict[str, list[str]]:
+        return {
+            name: server.get_context_csn() for name, server in self.servers.items()
+        }
+
+    def get_connection(self, role: str) -> LDAPServer:
+        server = LDAPServer(name=role, host="ldap://localhost", port=7389)
+        return server
