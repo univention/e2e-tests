@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.20.0...v0.20.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* Add configuration for the marker "pytest.mark.groups" ([05d9ac3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/05d9ac30fe6e49f6ece8aece7f9a47201df3f99a))
+
 ## [0.20.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.19.0...v0.20.0) (2024-12-09)
 
 
