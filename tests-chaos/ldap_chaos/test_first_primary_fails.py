@@ -40,6 +40,20 @@ def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_c
     assert expected_context_csn == found_context_csn
 
 
+def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
+    primary = ldap.get_server_for_primary_service()
+    conn = primary.conn
+
+    create_and_delete_a_ldap_entry(faker, conn)
+    expected_context_csn = primary.get_context_csn()
+    k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
+    wait_until(ldap.all_primaries_reachable, False, timeout=5)
+
+    found_context_csn = list(filter(None, ldap.get_context_csn().values()))
+    assert len(found_context_csn) == 1, "Expected that only one ldap server is reachable"
+    assert expected_context_csn == found_context_csn[0]
+
+
 def create_and_delete_a_ldap_entry(faker, conn):
     base_dn = "dc=univention-organization,dc=intranet"
     users_container_dn = f"cn=users,{base_dn}"
