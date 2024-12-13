@@ -17,6 +17,15 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 }
 
 
+@pytest.fixture(autouse=True)
+def wait_until_ready(ldap):
+    """
+    Ensures that the openldap servers are ready before running the tests.
+    """
+    wait_until(ldap.all_primaries_reachable, True, timeout=60)
+    log.info("All ldap servers are reachable.")
+
+
 def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_chaos):
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
