@@ -21,5 +21,6 @@ udm-rest-api-client = "*"
 pytest-subtests = "*"
 kubernetes = "*"
 ldap3 = "*"
+nubus-provisioning-consumer = {ref = "main", git = "https://git.knut.univention.de/univention/customers/dataport/upx/provisioning.git", subdirectory = "src"}
 
 [dev-packages]
