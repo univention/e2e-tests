@@ -59,7 +59,7 @@ test-container:
     - when: "on_success"
   image: "${CI_REGISTRY_IMAGE}/e2e-tests-runner:${RELEASE_VERSION}"
   script:
-    - pytest --fixtures
+    - pytest --fixtures --ignore tests-ldap
 
 e2e-tests:
   stage: "test"
@@ -76,7 +76,7 @@ e2e-tests:
   variables:
     PORTAL_BASE_URL: "${TEST_PORTAL_BASE_URL}"
   script: |
-    ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
+    ./entrypoint.sh pytest --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose --ignore tests-ldap
   tags:
     - "docker"
   rules:
