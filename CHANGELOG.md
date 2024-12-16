@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.20.1...v0.21.0) (2024-12-16)
+
+
+### Features
+
+* test LDAP robustness with 2 primaries ([c162e0c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c162e0ce9eac3381fa4c6151d5066d325d09301a))
+
 ## [0.20.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.20.0...v0.20.1) (2024-12-13)
 
 
