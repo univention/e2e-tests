@@ -128,7 +128,7 @@ def test_provisioning(faker, k8s_chaos, ldap, consumer):
 
     primary = ldap.get_server_for_primary_service()
     conn = primary.conn
-    user_dn, new_description = create_and_delete_a_ldap_entry(faker, conn)
+    user_dn, new_description = change_administrator_description(faker, conn)
 
     messages = []
     expected_number_of_messages = 1
@@ -149,8 +149,7 @@ def test_provisioning(faker, k8s_chaos, ldap, consumer):
     assert msg_changed.body.new["properties"]["description"] == new_description
 
 
-# TODO: Duplicated
-def create_and_delete_a_ldap_entry(faker, conn):
+def change_administrator_description(faker, conn):
     base_dn = "dc=univention-organization,dc=intranet"
     users_container_dn = f"cn=users,{base_dn}"
     user_dn = f"uid=Administrator,{users_container_dn}"
