@@ -2,8 +2,8 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
-import time
 from e2e.ldap import LDAPFixture
+from e2e.util import wait_until
 
 import pytest
 
@@ -85,13 +85,3 @@ def create_and_delete_a_ldap_entry(faker, conn):
     with conn:
         conn.add(user_dn, "inetOrgPerson", user_attributes)
         conn.delete(user_dn)
-
-
-def wait_until(func, expected, timeout=10):
-    for _ in range(timeout):
-        if func() == expected:
-            break
-        log.debug("Waiting until %s is %s", func, expected)
-        time.sleep(1)
-    else:
-        raise Exception("Timed out in wait_until.")
