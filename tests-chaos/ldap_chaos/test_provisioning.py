@@ -23,7 +23,7 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 }
 
 
-async def stub_consumer(messages: queue.Queue):
+async def users_consumer(messages: queue.Queue):
     realms_topics = [RealmTopic(realm="udm", topic="users/user")]
     subscription_name = "test-suite-client"
 
@@ -109,7 +109,7 @@ class StoppableAsyncThread(threading.Thread):
 @pytest.fixture
 def consumer():
     messages = queue.Queue()
-    consumer_thread = StoppableAsyncThread(atarget=stub_consumer(messages))
+    consumer_thread = StoppableAsyncThread(atarget=users_consumer(messages))
     consumer_thread.start()
 
     # Wait until consumer is set up
