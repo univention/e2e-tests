@@ -78,7 +78,7 @@ def consumer():
     consumer_thread.join()
 
 
-def test_provisioning(faker, k8s_chaos, ldap, consumer):
+def test_provisioning_messages_are_consumed(faker, k8s_chaos, ldap, consumer):
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
