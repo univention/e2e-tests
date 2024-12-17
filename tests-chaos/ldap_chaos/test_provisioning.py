@@ -4,6 +4,7 @@ import queue
 import time
 
 from ldap3 import MODIFY_REPLACE
+from kubernetes import client, watch
 from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
 from univention.provisioning.models import RealmTopic, MessageProcessingStatus
 import pytest
@@ -78,7 +79,7 @@ def consumer():
     consumer_thread.join()
 
 
-def test_provisioning_messages_are_consumed(faker, k8s_chaos, ldap, consumer):
+def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s_namespace, ldap, consumer):
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
@@ -86,6 +87,8 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, ldap, consumer):
     primary = ldap.get_server_for_primary_service()
     conn = primary.conn
     user_dn, new_description = change_administrator_description(faker, conn)
+
+    wait_until_udm_listener_processed_change(user_dn, k8s_namespace)
 
     messages = []
     expected_number_of_messages = 1
@@ -116,3 +119,33 @@ def change_administrator_description(faker, conn):
         conn.modify(user_dn, {"description": [MODIFY_REPLACE, [new_description]]})
 
     return user_dn, new_description
+
+
+def wait_until_udm_listener_processed_change(user_dn, k8s_namespace):
+    # The udm-listener will sometimes crash and need time to start again.
+    # Checking the container status is not good enough, because it may start in
+    # a state where the ldap-server and/or ldap-notifier are not yet reachable.
+    # In this case it will try to re-connect with an internal back-off time.
+    log.info("Waiting until the udm-listener got the ldap update.")
+    wait_until_pod_log(
+        pod_name="provisioning-udm-listener-0",
+        namespace=k8s_namespace,
+        expected_fragment=f"ldap_listener: [ modify ] dn: '{user_dn}'",
+    )
+
+
+def wait_until_pod_log(pod_name, namespace, expected_fragment, timeout=60):
+    v1 = client.CoreV1Api()
+    w = watch.Watch()
+    stream = w.stream(
+        v1.read_namespaced_pod_log,
+        name=pod_name,
+        namespace=namespace,
+        follow=True,
+        since_seconds=10,
+        _request_timeout=timeout,
+    )
+    for line in stream:
+        log.debug("%s output: %s", pod_name, line)
+        if expected_fragment in line:
+            break
