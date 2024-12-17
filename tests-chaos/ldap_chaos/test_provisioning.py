@@ -2,16 +2,15 @@ import asyncio
 import contextlib
 import logging
 import queue
-import random
 import threading
 import time
 
 from ldap3 import MODIFY_REPLACE
-
 from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
 from univention.provisioning.models import RealmTopic, MessageProcessingStatus
-
 import pytest
+
+from e2e.util import wait_until
 
 
 log = logging.getLogger(__name__)
@@ -159,14 +158,3 @@ def change_administrator_description(faker, conn):
         conn.modify(user_dn, {"description": [MODIFY_REPLACE, [new_description]]})
 
     return user_dn, new_description
-
-
-# TODO: Fix duplication
-def wait_until(func, expected, timeout=10):
-    for _ in range(timeout):
-        if func() == expected:
-            break
-        log.debug("Waiting until %s is %s", func, expected)
-        time.sleep(1)
-    else:
-        raise Exception("Timed out in wait_until.")
