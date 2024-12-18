@@ -8,7 +8,7 @@ from typing import Dict
 
 import ldap
 import pytest
-from env_vars import env
+from env_vars import EnvConfig
 from kubernetes import client, config
 from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
@@ -30,6 +30,12 @@ def k8s_configure_client():
 
 
 @pytest.fixture(scope="session")
+def env():
+    """Provide an instance of EnvConfig."""
+    return EnvConfig()
+
+
+@pytest.fixture(scope="session")
 def k8s_namespace():
     """
     The Kubernetes Namespace to use when interacting with the cluster.
@@ -45,7 +51,7 @@ def k8s_namespace():
 
 
 @pytest.fixture(scope="session")
-def k8s_api():
+def k8s_api(env):
     """Initialize and return Kubernetes API client."""
     return env.k8s_api
 
@@ -72,7 +78,7 @@ def k8s_chaos(k8s_namespace):
 
 
 @pytest.fixture(scope="session")
-def port_forwarder():
+def port_forwarder(env):
     """Manage kubectl port-forward processes."""
     processes: Dict[str, subprocess.Popen] = {}
 
@@ -89,7 +95,7 @@ def port_forwarder():
         process.terminate()
 
 
-def create_ldap_connection(pod_name: str, local_port: int, port_forwarder):
+def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
     """Create a new LDAP connection with port forwarding."""
     try:
         port_forwarder(pod_name, local_port)
@@ -103,33 +109,33 @@ def create_ldap_connection(pod_name: str, local_port: int, port_forwarder):
 
 
 @pytest.fixture
-def ldap_primary_0(k8s_api, port_forwarder):
+def ldap_primary_0(k8s_api, port_forwarder, env):
     """Return a factory function for getting connections to first LDAP primary."""
     pod_name = f"{env.HELM_RELEASE_NAME}-ldap-server-primary-0"
     local_port = 3890
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
-        return create_ldap_connection(pod_name, local_port, port_forwarder)
+        return create_ldap_connection(pod_name, local_port, port_forwarder, env)
 
     return get_connection
 
 
 @pytest.fixture
-def ldap_primary_1(k8s_api, port_forwarder):
+def ldap_primary_1(k8s_api, port_forwarder, env):
     """Return a factory function for getting connections to second LDAP primary."""
     pod_name = f"{env.HELM_RELEASE_NAME}-ldap-server-primary-1"
     local_port = 3891
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
-        return create_ldap_connection(pod_name, local_port, port_forwarder)
+        return create_ldap_connection(pod_name, local_port, port_forwarder, env)
 
     return get_connection
 
 
 @pytest.fixture
-def cleanup_ldap(ldap_primary_0):
+def cleanup_ldap(ldap_primary_0, env):
     """Cleanup LDAP data after tests."""
     yield
     base_dn = env.LDAP_BASE_DN

@@ -4,7 +4,6 @@
 import time
 
 import pytest
-from env_vars import env
 from utils.data_generators import (
     assign_random_users_to_groups,
     create_initial_groups,
@@ -22,7 +21,7 @@ from utils.ldap_helpers import (
 
 @pytest.mark.usefixtures("cleanup_ldap")
 class TestLDAPHighAvailability:
-    def test_ldap_mirror_mode_robustness(self, k8s_api, port_forwarder, ldap_primary_0, ldap_primary_1):
+    def test_ldap_mirror_mode_robustness(self, k8s_api, port_forwarder, ldap_primary_0, ldap_primary_1, env):
         """Test LDAP mirror mode robustness under pod failure."""
         print("\n=== Starting LDAP Mirror Mode Robustness Test ===")
 
@@ -32,11 +31,11 @@ class TestLDAPHighAvailability:
         print("Successfully connected to both LDAP servers")
 
         print(f"\nCreating initial state with {env.NUM_GROUPS} groups...")
-        groups = create_initial_groups(conn_primary_0, env.NUM_GROUPS)
+        groups = create_initial_groups(env, conn_primary_0, env.NUM_GROUPS)
         print(f"Successfully created {len(groups)} groups")
 
         print(f"\nCreating {env.NUM_USERS} users...")
-        users = create_initial_users(conn_primary_0, env.NUM_USERS)
+        users = create_initial_users(env, conn_primary_0, env.NUM_USERS)
         print(f"Successfully created {len(users)} users")
 
         print("\nAssigning random users to groups...")
@@ -51,7 +50,7 @@ class TestLDAPHighAvailability:
         initial_memberships = get_all_group_memberships(conn_primary_0, groups)
 
         print(f"\nMoving first batch of {env.NUM_USERS_TO_MOVE} users between groups...")
-        first_batch_changes = move_random_users_between_groups(conn_primary_0, users, groups, env.NUM_USERS_TO_MOVE)
+        first_batch_changes = move_random_users_between_groups(env, conn_primary_0, users, groups, env.NUM_USERS_TO_MOVE)
 
         # Verify first batch changes were applied
         first_batch_memberships = get_all_group_memberships(conn_primary_0, groups)
@@ -62,7 +61,7 @@ class TestLDAPHighAvailability:
         delete_pod_pvc(k8s_api, pod_name, env.k8s_namespace)
 
         print(f"\nMoving second batch of {env.NUM_USERS_TO_MOVE} users between groups...")
-        second_batch_changes = move_random_users_between_groups(conn_primary_1, users, groups, env.NUM_USERS_TO_MOVE)
+        second_batch_changes = move_random_users_between_groups(env, conn_primary_1, users, groups, env.NUM_USERS_TO_MOVE)
 
         # Verify second batch changes were applied to primary-1
         intermediate_memberships = get_all_group_memberships(conn_primary_1, groups)
