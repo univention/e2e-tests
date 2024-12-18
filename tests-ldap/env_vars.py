@@ -14,6 +14,12 @@ class EnvConfig:
         if not self.k8s_namespace:
             raise ValueError("K8S_NAMESPACE environment variable must be set")
 
+        self.release_name = os.getenv("RELEASE_NAME", "nubus")
+        if self.release_name:
+            self.release_prefix = f"{self.release_name}-"
+        else:
+            self.release_prefix = ""
+
         # Initialize Kubernetes client
         config.load_kube_config()
         self.k8s_api = client.CoreV1Api()
@@ -29,11 +35,15 @@ class EnvConfig:
     def _load_configs(self):
         try:
             # Get ConfigMap
-            config_map = self.k8s_api.read_namespaced_config_map(name="nubus-ldap-server", namespace=self.k8s_namespace)
+            config_map = self.k8s_api.read_namespaced_config_map(
+                name=f"{self.release_prefix}ldap-server",
+                namespace=self.k8s_namespace,
+            )
 
             # Get Secret
             secret = self.k8s_api.read_namespaced_secret(
-                name="nubus-ldap-server-credentials", namespace=self.k8s_namespace
+                name=f"{self.release_prefix}ldap-server-credentials",
+                namespace=self.k8s_namespace,
             )
 
             # Set LDAP configurations
@@ -49,9 +59,6 @@ class EnvConfig:
             self.DOMAIN_NAME = config_map.data["DOMAIN_NAME"]
             self.LOG_LEVEL = config_map.data["LOG_LEVEL"]
             self.TLS_MODE = config_map.data["TLS_MODE"]
-
-            # Helm-related configurations
-            self.HELM_RELEASE_NAME = "nubus"  # Assuming this matches your release name
 
         except client.rest.ApiException as e:
             raise RuntimeError(f"Failed to load Kubernetes configurations: {e}")

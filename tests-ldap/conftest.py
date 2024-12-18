@@ -111,7 +111,7 @@ def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
 @pytest.fixture
 def ldap_primary_0(k8s_api, port_forwarder, env):
     """Return a factory function for getting connections to first LDAP primary."""
-    pod_name = f"{env.HELM_RELEASE_NAME}-ldap-server-primary-0"
+    pod_name = f"{env.release_prefix}ldap-server-primary-0"
     local_port = 3890
 
     def get_connection():
@@ -124,7 +124,7 @@ def ldap_primary_0(k8s_api, port_forwarder, env):
 @pytest.fixture
 def ldap_primary_1(k8s_api, port_forwarder, env):
     """Return a factory function for getting connections to second LDAP primary."""
-    pod_name = f"{env.HELM_RELEASE_NAME}-ldap-server-primary-1"
+    pod_name = f"{env.release_prefix}ldap-server-primary-1"
     local_port = 3891
 
     def get_connection():
