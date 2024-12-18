@@ -42,6 +42,15 @@ def wait_for_pod_ready(api: client.CoreV1Api, pod_name: str, namespace: str, tim
         print(".", end="", flush=True)
 
 
+def delete_pod(api: client.CoreV1Api, pod_name: str, namespace: str):
+    print(f"Deleting pod {pod_name}...")
+    api.delete_namespaced_pod(
+        name=pod_name,
+        namespace=namespace,
+        body=client.V1DeleteOptions(grace_period_seconds=0, propagation_policy="Foreground"),
+    )
+
+
 def delete_pod_pvc(api: client.CoreV1Api, pod_name: str, namespace: str):
     print(f"Deleting pod {pod_name} and its PVCs...")
     try:
@@ -59,12 +68,7 @@ def delete_pod_pvc(api: client.CoreV1Api, pod_name: str, namespace: str):
                 name=pvc_name, namespace=namespace, body=client.V1DeleteOptions(propagation_policy="Foreground")
             )
 
-        print(f"Deleting pod {pod_name}...")
-        api.delete_namespaced_pod(
-            name=pod_name,
-            namespace=namespace,
-            body=client.V1DeleteOptions(grace_period_seconds=0, propagation_policy="Foreground"),
-        )
+        delete_pod(api, pod_name, namespace)
         print("Pod and PVCs deleted successfully")
     except ApiException as e:
         print(f"Error deleting pod or PVC: {e}")

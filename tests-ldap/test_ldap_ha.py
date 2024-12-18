@@ -10,7 +10,7 @@ from utils.data_generators import (
     create_initial_users,
     move_random_users_between_groups,
 )
-from utils.k8s_helpers import delete_pod_pvc, wait_for_pod_ready
+from utils.k8s_helpers import delete_pod, delete_pod_pvc, wait_for_pod_ready
 from utils.ldap_helpers import (
     compare_ldap_servers,
     get_all_group_memberships,
@@ -59,6 +59,8 @@ class TestLDAPHighAvailability:
         print(f"\nDeleting PVC and killing pod: {env.release_prefix}ldap-server-primary-0")
         pod_name = f"{env.release_prefix}ldap-server-primary-0"
         delete_pod_pvc(k8s_api, pod_name, env.k8s_namespace)
+        notifier_pod_name = f"{env.release_prefix}ldap-notifier-0"
+        delete_pod(k8s_api, notifier_pod_name, env.k8s_namespace)
 
         print(f"\nMoving second batch of {env.NUM_USERS_TO_MOVE} users between groups...")
         second_batch_changes = move_random_users_between_groups(env, conn_primary_1, users, groups, env.NUM_USERS_TO_MOVE)
