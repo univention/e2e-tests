@@ -3,32 +3,8 @@
 
 import time
 
-import ldap
-
-
-def get_ldap_connection(sock, admin_dn, admin_password, max_retries=3):
-    """Create and return an LDAP connection with retries."""
-    print("Attempting to connect to LDAP server using socket")
-
-    for attempt in range(max_retries):
-        try:
-            conn = ldap.initialize("ldap://localhost")
-            conn._sock = sock  # Set the socket directly
-            conn.set_option(ldap.OPT_NETWORK_TIMEOUT, 5.0)
-            conn.set_option(ldap.OPT_TIMEOUT, 5.0)
-            print(f"Attempting to bind as {admin_dn} (attempt {attempt + 1}/{max_retries})")
-            conn.simple_bind_s(admin_dn, admin_password)
-            print("Successfully connected to LDAP server")
-            return conn
-        except ldap.SERVER_DOWN as e:
-            print(f"Failed to connect (attempt {attempt + 1}): {e}")
-            if attempt < max_retries - 1:
-                time.sleep(2)
-            else:
-                raise
-        except Exception as e:
-            print(f"Unexpected error connecting to LDAP: {e}")
-            raise
+import ldap3
+import ldap3.core.exceptions
 
 
 def compare_ldap_servers(conn1, conn2, base_dn):
@@ -50,19 +26,19 @@ def compare_ldap_servers(conn1, conn2, base_dn):
 
         # Fetch entries from first server
         entries1 = {}
-        results1 = conn1.search_s(base_dn, ldap.SCOPE_SUBTREE, search_filter, attrs)
-        for dn, attrs1 in results1:
+        conn1.search(base_dn, search_filter, ldap3.SUBTREE, attributes=attrs)
+        for item in conn1.response:
             # Convert attribute values to sets for comparison
-            normalized_attrs1 = {k: set(v) if isinstance(v, list) else v for k, v in attrs1.items()}
-            entries1[dn] = normalized_attrs1
+            normalized_attrs1 = {k: set(v) if isinstance(v, list) else v for k, v in item["attributes"].items()}
+            entries1[item["dn"]] = normalized_attrs1
 
         # Fetch entries from second server
         entries2 = {}
-        results2 = conn2.search_s(base_dn, ldap.SCOPE_SUBTREE, search_filter, attrs)
-        for dn, attrs2 in results2:
+        conn2.search(base_dn, search_filter, ldap3.SUBTREE, attributes=attrs)
+        for item in conn2.response:
             # Convert attribute values to sets for comparison
-            normalized_attrs2 = {k: set(v) if isinstance(v, list) else v for k, v in attrs2.items()}
-            entries2[dn] = normalized_attrs2
+            normalized_attrs2 = {k: set(v) if isinstance(v, list) else v for k, v in item["attributes"].items()}
+            entries2[item["dn"]] = normalized_attrs2
 
         # Compare DNs
         if set(entries1.keys()) != set(entries2.keys()):
@@ -87,7 +63,7 @@ def compare_ldap_servers(conn1, conn2, base_dn):
 
         return True
 
-    except ldap.LDAPError as e:
+    except ldap3.core.exceptions.LDAPException as e:
         raise RuntimeError(f"Failed to compare LDAP servers: {e}")
 
 
@@ -106,7 +82,7 @@ def verify_group_memberships(conn, users, groups):
     try:
         for group_dn in groups:
             # Get group members
-            result = conn.search_s(group_dn, ldap.SCOPE_BASE, "(objectClass=*)", ["member"])
+            result = conn.search(group_dn, "(objectClass=*)", ldap3.BASE, attributes=["member"])
 
             if not result:
                 print(f"Group not found: {group_dn}")
@@ -119,14 +95,14 @@ def verify_group_memberships(conn, users, groups):
                 if member_dn.decode("utf-8") not in users:
                     try:
                         # Check if it's the dummy user
-                        conn.search_s(member_dn.decode("utf-8"), ldap.SCOPE_BASE, "(objectClass=*)")
-                    except ldap.LDAPError:
+                        conn.search(member_dn, "(objectClass=*)", ldap3.BASE)
+                    except ldap3.core.exceptions.LDAPException:
                         print(f"Invalid member in group {group_dn}: {member_dn}")
                         return False
 
         return True
 
-    except ldap.LDAPError as e:
+    except ldap3.core.exceptions.LDAPException as e:
         raise RuntimeError(f"Failed to verify group memberships: {e}")
 
 
@@ -134,9 +110,10 @@ def get_all_group_memberships(conn, groups):
     """Get current membership state of all groups."""
     memberships = {}
     for group_dn in groups:
-        result = conn.search_s(group_dn, ldap.SCOPE_BASE, "(objectClass=*)", ["member"])
-        if result:
-            members = set(m.decode("utf-8") for m in result[0][1].get("member", []))
+        conn.search(group_dn, "(objectClass=*)", ldap3.BASE, attributes=["member"])
+        if conn.entries:
+            entry = conn.entries[0]
+            members = set(entry.member.values)
             memberships[group_dn] = members
     return memberships
 
