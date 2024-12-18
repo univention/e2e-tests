@@ -21,7 +21,7 @@ from utils.ldap_helpers import (
 
 @pytest.mark.usefixtures("cleanup_ldap")
 class TestLDAPHighAvailability:
-    def test_ldap_mirror_mode_robustness(self, k8s_api, port_forwarder, ldap_primary_0, ldap_primary_1, env):
+    def test_ldap_mirror_mode_robustness(self, k8s_api, ldap_primary_0, ldap_primary_1, env):
         """Test LDAP mirror mode robustness under pod failure."""
         print("\n=== Starting LDAP Mirror Mode Robustness Test ===")
 
