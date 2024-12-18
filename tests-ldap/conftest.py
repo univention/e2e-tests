@@ -6,7 +6,7 @@ import subprocess
 import os
 from typing import Dict
 
-import ldap
+import ldap as pyldap
 import pytest
 from env_vars import EnvConfig
 from kubernetes import client, config
@@ -100,7 +100,7 @@ def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
     try:
         port_forwarder(pod_name, local_port)
         uri = f"ldap://localhost:{local_port}"
-        conn = ldap.initialize(uri)
+        conn = pyldap.initialize(uri)
         conn.simple_bind_s(env.LDAP_ADMIN_DN, env.LDAP_ADMIN_PASSWORD)
         return conn
     except Exception as e:
@@ -144,28 +144,28 @@ def cleanup_ldap(ldap_primary_0, env):
     # Delete test users
     print("Deleting test users")
     user_filter = "(uid=test-user-*)"
-    results = conn_primary_0.search_s(f"cn=users,{base_dn}", ldap.SCOPE_ONELEVEL, user_filter)
+    results = conn_primary_0.search_s(f"cn=users,{base_dn}", pyldap.SCOPE_ONELEVEL, user_filter)
     for dn, _ in results:
         try:
             conn_primary_0.delete_s(dn)
-        except ldap.LDAPError:
+        except pyldap.LDAPError:
             pass
 
     # Delete test groups
     print("Deleting test groups")
     group_filter = "(cn=test-group-*)"
-    results = conn_primary_0.search_s(f"cn=groups,{base_dn}", ldap.SCOPE_ONELEVEL, group_filter)
+    results = conn_primary_0.search_s(f"cn=groups,{base_dn}", pyldap.SCOPE_ONELEVEL, group_filter)
     for dn, _ in results:
         try:
             conn_primary_0.delete_s(dn)
-        except ldap.LDAPError:
+        except pyldap.LDAPError:
             pass
 
     # Delete dummy user if it exists
     try:
         print("Deleting dummy user")
         conn_primary_0.delete_s(f"cn=dummy,cn=users,{base_dn}")
-    except ldap.LDAPError:
+    except pyldap.LDAPError:
         pass
 
     print("Finished cleanup")
