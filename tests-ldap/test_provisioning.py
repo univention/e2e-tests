@@ -134,7 +134,7 @@ def wait_until_udm_listener_processed_change(user_dn, k8s_namespace):
     )
 
 
-def wait_until_pod_log(pod_name, namespace, expected_fragment, timeout=60):
+def wait_until_pod_log(pod_name, namespace, expected_fragment, timeout=120):
     v1 = client.CoreV1Api()
     w = watch.Watch()
     stream = w.stream(
@@ -149,3 +149,5 @@ def wait_until_pod_log(pod_name, namespace, expected_fragment, timeout=60):
         log.debug("%s output: %s", pod_name, line)
         if expected_fragment in line:
             break
+    else:
+        raise Exception("Waiting for listener timed out.")
