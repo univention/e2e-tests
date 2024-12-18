@@ -6,7 +6,8 @@ import subprocess
 import os
 from typing import Dict
 
-import ldap as pyldap
+import ldap3
+import ldap3.core.exceptions
 import pytest
 from env_vars import EnvConfig
 from kubernetes import client, config
@@ -100,8 +101,14 @@ def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
     try:
         port_forwarder(pod_name, local_port)
         uri = f"ldap://localhost:{local_port}"
-        conn = pyldap.initialize(uri)
-        conn.simple_bind_s(env.LDAP_ADMIN_DN, env.LDAP_ADMIN_PASSWORD)
+        server = ldap3.Server(host=uri, connect_timeout=5)
+        conn = ldap3.Connection(
+            server,
+            user=env.LDAP_ADMIN_DN,
+            password=env.LDAP_ADMIN_PASSWORD,
+            raise_exceptions=True,
+        )
+        conn.bind()
         return conn
     except Exception as e:
         print(f"Failed to set up LDAP connection: {e}")
@@ -144,28 +151,28 @@ def cleanup_ldap(ldap_primary_0, env):
     # Delete test users
     print("Deleting test users")
     user_filter = "(uid=test-user-*)"
-    results = conn_primary_0.search_s(f"cn=users,{base_dn}", pyldap.SCOPE_ONELEVEL, user_filter)
-    for dn, _ in results:
+    conn_primary_0.search(f"cn=users,{base_dn}", user_filter, ldap3.LEVEL)
+    for item in conn_primary_0.response:
         try:
-            conn_primary_0.delete_s(dn)
-        except pyldap.LDAPError:
+            conn_primary_0.delete(item["dn"])
+        except ldap3.core.exceptions.LDAPException:
             pass
 
     # Delete test groups
     print("Deleting test groups")
     group_filter = "(cn=test-group-*)"
-    results = conn_primary_0.search_s(f"cn=groups,{base_dn}", pyldap.SCOPE_ONELEVEL, group_filter)
-    for dn, _ in results:
+    conn_primary_0.search(f"cn=groups,{base_dn}", group_filter, ldap3.LEVEL)
+    for item in conn_primary_0.response:
         try:
-            conn_primary_0.delete_s(dn)
-        except pyldap.LDAPError:
+            conn_primary_0.delete(item["dn"])
+        except ldap3.core.exceptions.LDAPException:
             pass
 
     # Delete dummy user if it exists
     try:
         print("Deleting dummy user")
-        conn_primary_0.delete_s(f"cn=dummy,cn=users,{base_dn}")
-    except pyldap.LDAPError:
+        conn_primary_0.delete(f"cn=dummy,cn=users,{base_dn}")
+    except ldap3.core.exceptions.LDAPException:
         pass
 
     print("Finished cleanup")

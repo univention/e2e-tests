@@ -4,8 +4,8 @@ import random
 import string
 from typing import List
 
-import ldap
-from ldap.modlist import addModlist
+import ldap3
+import ldap3.core.exceptions
 
 
 def generate_random_string(length: int = 8) -> str:
@@ -20,17 +20,17 @@ def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
     # Create dummy user
     print("Creating dummy user for initial group membership...")
     dummy_user_attrs = {
-        "objectClass": [b"top", b"inetOrgPerson"],
-        "cn": [b"dummy"],
-        "sn": [b"user"],
-        "mail": [b"dummy@example.com"],
-        "userPassword": [b"password"],
+        "objectClass": ["top", "inetOrgPerson"],
+        "cn": ["dummy"],
+        "sn": ["user"],
+        "mail": ["dummy@example.com"],
+        "userPassword": ["password"],
     }
     dummy_user_dn = "cn=dummy,cn=users," + env.LDAP_BASE_DN
     try:
-        ldap_conn.add_s(dummy_user_dn, addModlist(dummy_user_attrs))
+        ldap_conn.add(dummy_user_dn, "inetOrgPerson", dummy_user_attrs)
         print("Dummy user created successfully")
-    except ldap.LDAPError as e:
+    except ldap3.core.exceptions.LDAPException as e:
         print(f"Error creating dummy user: {e}")
         raise
 
@@ -40,16 +40,16 @@ def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
         group_name = f"test-group-{i}"
         group_dn = f"cn={group_name},cn=groups,{env.LDAP_BASE_DN}"
         group_attrs = {
-            "objectClass": [b"top", b"groupOfNames"],
-            "cn": [group_name.encode("utf-8")],
-            "member": [b"cn=dummy,cn=users," + env.LDAP_BASE_DN.encode("utf-8")],
+            "objectClass": ["top", "groupOfNames"],
+            "cn": [group_name],
+            "member": ["cn=dummy,cn=users," + env.LDAP_BASE_DN],
         }
         try:
-            ldap_conn.add_s(group_dn, addModlist(group_attrs))
+            ldap_conn.add(group_dn, "groupOfNames", group_attrs)
             groups.append(group_dn)
             if (i + 1) % 10 == 0:  # Progress indicator every 10 groups
                 print(f"Created {i + 1}/{num_groups} groups")
-        except ldap.LDAPError as e:
+        except ldap3.core.exceptions.LDAPException as e:
             print(f"Error creating group {group_name}: {e}")
             raise RuntimeError(f"Failed to create group {group_name}: {e}")
 
@@ -65,18 +65,18 @@ def create_initial_users(env, ldap_conn, num_users: int) -> List[str]:
         username = f"test-user-{i}"
         user_dn = f"uid={username},cn=users,{env.LDAP_BASE_DN}"
         user_attrs = {
-            "objectClass": [b"top", b"person", b"organizationalPerson", b"inetOrgPerson"],
-            "uid": [username.encode("utf-8")],
-            "cn": [username.encode("utf-8")],
-            "sn": [f"User{i}".encode("utf-8")],
-            "userPassword": [generate_random_string().encode("utf-8")],
+            "objectClass": ["top", "person", "organizationalPerson", "inetOrgPerson"],
+            "uid": [username],
+            "cn": [username],
+            "sn": [f"User{i}"],
+            "userPassword": [generate_random_string()],
         }
         try:
-            ldap_conn.add_s(user_dn, addModlist(user_attrs))
+            ldap_conn.add(user_dn, "inetOrgPerson", user_attrs)
             users.append(user_dn)
             if (i + 1) % 10 == 0:  # Progress indicator every 10 users
                 print(f"Created {i + 1}/{num_users} users")
-        except ldap.LDAPError as e:
+        except ldap3.core.exceptions.LDAPException as e:
             print(f"Error creating user {username}: {e}")
             raise RuntimeError(f"Failed to create user {username}: {e}")
 
@@ -97,10 +97,9 @@ def assign_random_users_to_groups(
 
         for group_dn in selected_groups:
             try:
-                mod_attrs = [(ldap.MOD_ADD, "member", [user_dn.encode("utf-8")])]
-                ldap_conn.modify_s(group_dn, mod_attrs)
+                ldap_conn.modify(group_dn, {"member": [ldap3.MODIFY_ADD, [user_dn]]})
                 total_assignments += 1
-            except ldap.LDAPError as e:
+            except ldap3.core.exceptions.LDAPException as e:
                 if e.args[0]["desc"] != "Type or value exists":
                     print(f"Error adding user {user_dn} to group {group_dn}: {e}")
                     raise RuntimeError(f"Failed to add user {user_dn} to group {group_dn}: {e}")
@@ -150,8 +149,7 @@ def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: L
 
             for group_dn in groups_to_remove:
                 try:
-                    mod_attrs = [(ldap.MOD_DELETE, "member", [user_dn.encode("utf-8")])]
-                    ldap_conn.modify_s(group_dn, mod_attrs)
+                    ldap_conn.modify(group_dn, {"member": [ldap3.MODIFY_DELETE, [user_dn]]})
                     total_moves += 1
 
                     # Track removal
@@ -159,7 +157,7 @@ def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: L
                         changes[group_dn] = {"removed": set(), "added": set()}
                     changes[group_dn]["removed"].add(user_dn)
 
-                except ldap.LDAPError as e:
+                except ldap3.core.exceptions.LDAPException as e:
                     print(f"Error removing user from group {group_dn}: {e}")
                     raise RuntimeError(f"Failed to remove user {user_dn} from group {group_dn}: {e}")
 
@@ -172,8 +170,7 @@ def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: L
 
             for group_dn in new_groups:
                 try:
-                    mod_attrs = [(ldap.MOD_ADD, "member", [user_dn.encode("utf-8")])]
-                    ldap_conn.modify_s(group_dn, mod_attrs)
+                    ldap_conn.modify(group_dn, {"member": [ldap3.MODIFY_ADD, [user_dn]]})
                     total_moves += 1
 
                     # Track addition
@@ -181,7 +178,7 @@ def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: L
                         changes[group_dn] = {"removed": set(), "added": set()}
                     changes[group_dn]["added"].add(user_dn)
 
-                except ldap.LDAPError as e:
+                except ldap3.core.exceptions.LDAPException as e:
                     print(f"Error adding user to group {group_dn}: {e}")
                     raise RuntimeError(f"Failed to add user {user_dn} to group {group_dn}: {e}")
 
@@ -201,8 +198,8 @@ def get_user_groups(env, ldap_conn, user_dn: str) -> List[str]:
     """Get all groups a user belongs to."""
     try:
         search_filter = f"(&(objectClass=groupOfNames)(member={user_dn}))"
-        result = ldap_conn.search_s(f"cn=groups,{env.LDAP_BASE_DN}", ldap.SCOPE_SUBTREE, search_filter, ["dn"])
-        return [dn for dn, _ in result]
-    except ldap.LDAPError as e:
+        ldap_conn.search(f"cn=groups,{env.LDAP_BASE_DN}", search_filter, ldap3.SUBTREE, attributes=[])
+        return [item["dn"] for item in ldap_conn.response]
+    except ldap3.core.exceptions.LDAPException as e:
         print(f"Error getting groups for user {user_dn}: {e}")
         raise RuntimeError(f"Failed to get groups for user {user_dn}: {e}")
