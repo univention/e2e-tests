@@ -5,7 +5,6 @@ import string
 from typing import List
 
 import ldap
-from env_vars import env
 from ldap.modlist import addModlist
 
 
@@ -14,7 +13,7 @@ def generate_random_string(length: int = 8) -> str:
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
 
-def create_initial_groups(ldap_conn, num_groups: int) -> List[str]:
+def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
     """Create initial groups in LDAP."""
     print("\nCreating initial groups...")
 
@@ -58,7 +57,7 @@ def create_initial_groups(ldap_conn, num_groups: int) -> List[str]:
     return groups
 
 
-def create_initial_users(ldap_conn, num_users: int) -> List[str]:
+def create_initial_users(env, ldap_conn, num_users: int) -> List[str]:
     """Create initial users in LDAP."""
     print(f"\nCreating {num_users} users...")
     users = []
@@ -112,7 +111,7 @@ def assign_random_users_to_groups(
     print(f"Successfully completed {total_assignments} group assignments")
 
 
-def move_random_users_between_groups(ldap_conn, users: List[str], groups: List[str], num_users: int):
+def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: List[str], num_users: int):
     """
     Move random users between groups and return the changes made.
 
@@ -140,7 +139,7 @@ def move_random_users_between_groups(ldap_conn, users: List[str], groups: List[s
         print(f"\nProcessing user {i + 1}/{num_users}: {user_dn}")
 
         # Get current groups
-        current_groups = get_user_groups(ldap_conn, user_dn)
+        current_groups = get_user_groups(env, ldap_conn, user_dn)
         print(f"Current group membership: {len(current_groups)} groups")
 
         # Remove from some current groups
@@ -198,7 +197,7 @@ def move_random_users_between_groups(ldap_conn, users: List[str], groups: List[s
     return changes
 
 
-def get_user_groups(ldap_conn, user_dn: str) -> List[str]:
+def get_user_groups(env, ldap_conn, user_dn: str) -> List[str]:
     """Get all groups a user belongs to."""
     try:
         search_filter = f"(&(objectClass=groupOfNames)(member={user_dn}))"

@@ -57,7 +57,3 @@ class EnvConfig:
             raise RuntimeError(f"Failed to load Kubernetes configurations: {e}")
         except KeyError as e:
             raise RuntimeError(f"Missing required configuration key: {e}")
-
-
-# Create a global instance of the configuration
-env = EnvConfig()
