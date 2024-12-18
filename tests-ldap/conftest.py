@@ -3,13 +3,45 @@
 
 # conftest.py
 import subprocess
+import os
 from typing import Dict
 
 import ldap
 import pytest
 from env_vars import env
 from kubernetes import client, config
+from kubernetes.client import ApiClient
+from kubernetes.dynamic import DynamicClient
 from utils.k8s_helpers import setup_port_forward, wait_for_pod_ready
+
+
+
+from e2e.chaos import ChaosMeshFixture
+from e2e.ldap import LDAPFixture
+
+@pytest.fixture(autouse=True, scope="session")
+def k8s_configure_client():
+    """
+    Configures the Kubernetes client.
+
+    Does not (yet) support in-cluster configuration.
+    """
+    config.load_kube_config()
+
+
+@pytest.fixture(scope="session")
+def k8s_namespace():
+    """
+    The Kubernetes Namespace to use when interacting with the cluster.
+
+    The namespace is selected from the currently active context. Inspect and
+    prepare via ``kubens``.
+    """
+    _, active_context = config.list_kube_config_contexts()
+    namespace_from_context = active_context["context"]["namespace"]
+    namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
+    print("namespace:", namespace)
+    return namespace
 
 
 @pytest.fixture(scope="session")
@@ -23,6 +55,20 @@ def k8s_apps_api():
     """Initialize and return Kubernetes Apps API client."""
     config.load_kube_config()
     return client.AppsV1Api()
+
+
+@pytest.fixture
+def k8s_chaos(k8s_namespace):
+    """
+    Returns a configured `ChaosMeshFixture` instance.
+
+    This allows to deploy various chaos experiment types from Chaos Mesh. It will
+    clean up the Kubernetes resources at the end of the test case.
+    """
+    client = DynamicClient(ApiClient())
+    chaos_mesh = ChaosMeshFixture(client, k8s_namespace)
+    yield chaos_mesh
+    chaos_mesh.cleanup()
 
 
 @pytest.fixture(scope="session")
@@ -117,3 +163,11 @@ def cleanup_ldap(ldap_primary_0):
         pass
 
     print("Finished cleanup")
+
+
+@pytest.fixture
+def ldap():
+    """
+    Returns an instance of `LDAPFixture`.
+    """
+    return LDAPFixture()
