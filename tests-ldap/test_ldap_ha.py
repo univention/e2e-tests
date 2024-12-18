@@ -56,8 +56,8 @@ class TestLDAPHighAvailability:
         first_batch_memberships = get_all_group_memberships(conn_primary_0, groups)
         verify_membership_changes(initial_memberships, first_batch_memberships, first_batch_changes)
 
-        print(f"\nDeleting PVC and killing pod: {env.HELM_RELEASE_NAME}-ldap-server-primary-0")
-        pod_name = f"{env.HELM_RELEASE_NAME}-ldap-server-primary-0"
+        print(f"\nDeleting PVC and killing pod: {env.release_prefix}ldap-server-primary-0")
+        pod_name = f"{env.release_prefix}ldap-server-primary-0"
         delete_pod_pvc(k8s_api, pod_name, env.k8s_namespace)
 
         print(f"\nMoving second batch of {env.NUM_USERS_TO_MOVE} users between groups...")
