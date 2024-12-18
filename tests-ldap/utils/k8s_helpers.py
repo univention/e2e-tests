@@ -1,21 +1,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
-import subprocess
 import time
 
 from kubernetes import client
 from kubernetes.client.rest import ApiException
-
-
-def setup_port_forward(pod_name: str, namespace: str, local_port: int, remote_port: int = 389):
-    """
-    Setup kubectl port-forward and return the process.
-    """
-    cmd = ["kubectl", "port-forward", f"pod/{pod_name}", f"{local_port}:{remote_port}", "-n", namespace]
-    process = subprocess.Popen(cmd)
-    time.sleep(2)  # Give it some time to establish the connection
-    return process
 
 
 def wait_for_pod_ready(api: client.CoreV1Api, pod_name: str, namespace: str, timeout: int = 300):

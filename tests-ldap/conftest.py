@@ -1,24 +1,34 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
-# conftest.py
-import subprocess
 import os
-from typing import Dict
 
-import ldap3
-import ldap3.core.exceptions
-import pytest
-from env_vars import EnvConfig
 from kubernetes import client, config
 from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
-from utils.k8s_helpers import setup_port_forward, wait_for_pod_ready
-
-
+import ldap3
+import ldap3.core.exceptions
+import pytest
 
 from e2e.chaos import ChaosMeshFixture
 from e2e.ldap import LDAPFixture
+from e2e.kubernetes import KubernetesCluster
+
+from env_vars import EnvConfig
+from utils.k8s_helpers import wait_for_pod_ready
+
+
+@pytest.fixture(scope="session")
+def k8s():
+    """
+    Kubernetes abstraction.
+
+    Returns a utility to interact with a Kubernetes cluster.
+    """
+    cluster = KubernetesCluster()
+    yield cluster
+    cluster.cleanup()
+
 
 @pytest.fixture(autouse=True, scope="session")
 def k8s_configure_client():
@@ -78,29 +88,12 @@ def k8s_chaos(k8s_namespace):
     chaos_mesh.cleanup()
 
 
-@pytest.fixture(scope="session")
-def port_forwarder(env):
-    """Manage kubectl port-forward processes."""
-    processes: Dict[str, subprocess.Popen] = {}
-
-    def forward_port(pod_name: str, local_port: int):
-        if pod_name in processes:
-            processes[pod_name].terminate()
-        process = setup_port_forward(pod_name, env.k8s_namespace, local_port)
-        processes[pod_name] = process
-
-    yield forward_port
-
-    # Cleanup
-    for process in processes.values():
-        process.terminate()
-
-
-def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
+def create_ldap_connection(k8s, pod_name: str, local_port: int, env):
     """Create a new LDAP connection with port forwarding."""
     try:
-        port_forwarder(pod_name, local_port)
-        uri = f"ldap://localhost:{local_port}"
+        pod_port = 389
+        hostname, port = k8s.port_forward_if_needed(pod_name, env.k8s_namespace, pod_port, local_port)
+        uri = f"ldap://{hostname}:{port}"
         server = ldap3.Server(host=uri, connect_timeout=5)
         conn = ldap3.Connection(
             server,
@@ -116,27 +109,27 @@ def create_ldap_connection(pod_name: str, local_port: int, port_forwarder, env):
 
 
 @pytest.fixture
-def ldap_primary_0(k8s_api, port_forwarder, env):
+def ldap_primary_0(k8s, k8s_api, env):
     """Return a factory function for getting connections to first LDAP primary."""
     pod_name = f"{env.release_prefix}ldap-server-primary-0"
     local_port = 3890
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
-        return create_ldap_connection(pod_name, local_port, port_forwarder, env)
+        return create_ldap_connection(k8s, pod_name, local_port, env)
 
     return get_connection
 
 
 @pytest.fixture
-def ldap_primary_1(k8s_api, port_forwarder, env):
+def ldap_primary_1(k8s, k8s_api, env):
     """Return a factory function for getting connections to second LDAP primary."""
     pod_name = f"{env.release_prefix}ldap-server-primary-1"
     local_port = 3891
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
-        return create_ldap_connection(pod_name, local_port, port_forwarder, env)
+        return create_ldap_connection(k8s, pod_name, local_port, env)
 
     return get_connection
 
