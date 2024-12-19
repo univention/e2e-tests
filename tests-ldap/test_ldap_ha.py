@@ -20,7 +20,7 @@ from utils.ldap_helpers import (
 
 
 @pytest.mark.usefixtures("cleanup_ldap")
-def test_ldap_mirror_mode_robustness(k8s_api, ldap_primary_0, ldap_primary_1, env):
+def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap_primary_0, ldap_primary_1, env):
     """Test LDAP mirror mode robustness under pod failure."""
     print("\n=== Starting LDAP Mirror Mode Robustness Test ===")
 
@@ -57,9 +57,9 @@ def test_ldap_mirror_mode_robustness(k8s_api, ldap_primary_0, ldap_primary_1, en
 
     print(f"\nDeleting PVC and killing pod: {env.release_prefix}ldap-server-primary-0")
     pod_name = f"{env.release_prefix}ldap-server-primary-0"
-    delete_pod_pvc(k8s_api, pod_name, env.k8s_namespace)
+    delete_pod_pvc(k8s_api, pod_name, k8s.namespace)
     notifier_pod_name = f"{env.release_prefix}ldap-notifier-0"
-    delete_pod(k8s_api, notifier_pod_name, env.k8s_namespace)
+    delete_pod(k8s_api, notifier_pod_name, k8s.namespace)
 
     print(f"\nMoving second batch of {env.NUM_USERS_TO_MOVE} users between groups...")
     second_batch_changes = move_random_users_between_groups(env, conn_primary_1, users, groups, env.NUM_USERS_TO_MOVE)
@@ -69,7 +69,7 @@ def test_ldap_mirror_mode_robustness(k8s_api, ldap_primary_0, ldap_primary_1, en
     verify_membership_changes(first_batch_memberships, intermediate_memberships, second_batch_changes)
 
     print("\nWaiting for deleted pod to come back...")
-    wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
+    wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
     print("\nWaiting additional 10 seconds for sync...")
     time.sleep(10)
 

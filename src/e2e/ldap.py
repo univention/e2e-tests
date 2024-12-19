@@ -79,7 +79,6 @@ class LDAPFixture:
     def _uri_for_pod(self, pod_name, target_type="pod"):
         host, port = self._k8s.port_forward_if_needed(
             target_name=pod_name,
-            target_namespace="default",
             target_port=389,
             local_port=self._next_local_port,
             target_type=target_type,
