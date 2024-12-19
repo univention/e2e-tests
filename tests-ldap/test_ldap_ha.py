@@ -6,6 +6,7 @@ import time
 import ldap3
 import ldap3.core.exceptions
 import pytest
+from kubernetes import client
 from utils.data_generators import (
     assign_random_users_to_groups,
     create_initial_groups,
@@ -20,6 +21,7 @@ from utils.ldap_helpers import (
     verify_membership_changes,
 )
 
+from e2e.kubernetes import KubernetesCluster
 from e2e.ldap import LdapDeployment
 
 # Test configurations
@@ -65,7 +67,8 @@ def cleanup_ldap(ldap: LdapDeployment):
 
 
 @pytest.mark.usefixtures("cleanup_ldap")
-def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap: LdapDeployment):
+def test_ldap_mirror_mode_robustness(k8s: KubernetesCluster, ldap: LdapDeployment):
+    v1 = client.CoreV1Api()
     """Test LDAP mirror mode robustness under pod failure."""
     print("\n=== Starting LDAP Mirror Mode Robustness Test ===")
 
@@ -101,8 +104,8 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap: LdapDeployment):
     verify_membership_changes(initial_memberships, first_batch_memberships, first_batch_changes)
 
     print(f"\nDeleting PVC and killing pod: {ldap.primary_0_pod_name}")
-    delete_pod_pvc(k8s_api, ldap.primary_0_pod_name, k8s.namespace)
-    delete_pod(k8s_api, ldap.notifier_pod_name, k8s.namespace)
+    delete_pod_pvc(v1, ldap.primary_0_pod_name, k8s.namespace)
+    delete_pod(v1, ldap.notifier_pod_name, k8s.namespace)
 
     print(f"\nMoving second batch of {NUM_USERS_TO_MOVE} users between groups...")
     second_batch_changes = move_random_users_between_groups(ldap, conn_primary_1, users, groups, NUM_USERS_TO_MOVE)
@@ -112,7 +115,7 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap: LdapDeployment):
     verify_membership_changes(first_batch_memberships, intermediate_memberships, second_batch_changes)
 
     print("\nWaiting for deleted pod to come back...")
-    wait_for_pod_ready(k8s_api, ldap.primary_0_pod_name, k8s.namespace)
+    wait_for_pod_ready(v1, ldap.primary_0_pod_name, k8s.namespace)
     print("\nWaiting additional 10 seconds for sync...")
     time.sleep(10)
 

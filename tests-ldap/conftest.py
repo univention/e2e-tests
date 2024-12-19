@@ -4,7 +4,6 @@
 import os
 
 import pytest
-from kubernetes import client
 from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
 
@@ -23,18 +22,6 @@ def k8s():
     cluster = KubernetesCluster()
     yield cluster
     cluster.cleanup()
-
-
-@pytest.fixture(scope="session")
-def k8s_api(k8s):
-    """Initialize and return Kubernetes API client."""
-    return client.CoreV1Api()
-
-
-@pytest.fixture(scope="session")
-def k8s_apps_api(k8s):
-    """Initialize and return Kubernetes Apps API client."""
-    return client.AppsV1Api()
 
 
 @pytest.fixture
