@@ -1,8 +1,6 @@
 import logging
-import os
-import signal
-import subprocess
-import time
+
+from .port_forward import PortForwardingManager
 
 
 log = logging.getLogger(__name__)
@@ -54,7 +52,9 @@ class KubernetesCluster:
     """Flag to indicate if the code runs inside of the target cluster."""
 
     def __init__(self):
-        self.port_forward_processes: dict[str, subprocess.Popen] = {}
+        self.port_forwarding = PortForwardingManager()
+        if not self.direct_access:
+            self.port_forwarding.start_monitoring()
 
     def port_forward_if_needed(
         self,
@@ -66,57 +66,15 @@ class KubernetesCluster:
     ) -> tuple[str, int]:
         if self.direct_access:
             return target_name, target_port
-
-        if target_name in self.port_forward_processes:
-            self._terminate_forward_process(target_name, self.port_forward_processes[target_name])
-        process = setup_port_forward(
-            target_name,
-            target_namespace,
-            local_port,
-            target_type=target_type,
-        )
-        self.port_forward_processes[f"{target_type}/{target_name}"] = process
-        return "localhost", local_port
+        else:
+            self.port_forwarding.add(
+                target_namespace,
+                target_name,
+                local_port,
+                target_port,
+                target_type,
+            )
+            return "localhost", local_port
 
     def cleanup(self):
-        self._cleanup_port_forward_processes()
-
-    def _cleanup_port_forward_processes(self):
-        for name, process in self.port_forward_processes.items():
-            self._terminate_forward_process(name, process)
-
-    def _terminate_forward_process(self, name, process):
-        log.debug("Terminating port forwarding subprocess %s", name)
-        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-        process.terminate()
-        process.kill()
-        process.wait(timeout=5)
-
-
-
-
-
-def setup_port_forward(
-    target_name: str,
-    namespace: str,
-    local_port: int,
-    remote_port: int = 389,
-    target_type: str = "pod",
-):
-    """
-    Setup kubectl port-forward and return the process.
-    """
-    cmd = [
-        "kubectl",
-        "port-forward",
-        f"{target_type}/{target_name}",
-        f"{local_port}:{remote_port}",
-        "-n", namespace,
-    ]
-    cmd = "while true; do " + " ".join(cmd) + "; sleep 1; done"
-    log.debug("Calling kubectl: %s", cmd)
-    process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid)
-    # Give it some time to establish the connection
-    time.sleep(2)
-    return process
+        self.port_forwarding.stop_monitoring()
