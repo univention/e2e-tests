@@ -68,13 +68,21 @@ class LDAPFixture:
     servers: dict[str, LDAPServer]
     _next_local_port = 3890
 
-    def __init__(self, k8s: KubernetesCluster):
+    def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
+        self.release_name = release_name
+        primary_0 = self._apply_release_prefix("ldap-server-primary-0")
+        primary_1 = self._apply_release_prefix("ldap-server-primary-1")
         servers = [
-            LDAPServer(name="primary_0", host=self._uri_for_pod("ldap-server-primary-0")),
-            LDAPServer(name="primary_1", host=self._uri_for_pod("ldap-server-primary-1")),
+            LDAPServer(name="primary_0", host=self._uri_for_pod(primary_0)),
+            LDAPServer(name="primary_1", host=self._uri_for_pod(primary_1)),
         ]
         self.servers = {server.name: server for server in servers}
+
+    def _apply_release_prefix(self, name):
+        if not self.release_name or self.release_name == name:
+            return name
+        return f"{self.release_name}-{name}"
 
     def _uri_for_pod(self, pod_name, target_type="pod"):
         host, port = self._k8s.port_forward_if_needed(
@@ -108,9 +116,10 @@ class LDAPFixture:
             client_strategy = "RESTARTABLE"
         else:
             client_strategy = "SYNC"
+        service_name = self._apply_release_prefix("ldap-server-primary")
         server = LDAPServer(
             name=role,
-            host=self._uri_for_pod("ldap-server-primary", target_type="service"),
+            host=self._uri_for_pod(service_name, target_type="service"),
             client_strategy=client_strategy,
         )
         return server

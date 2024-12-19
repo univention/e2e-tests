@@ -9,9 +9,9 @@ from kubernetes import client, config
 
 
 class EnvConfig:
-    def __init__(self, namespace):
+    def __init__(self, namespace, release_name):
         self.k8s_namespace = namespace
-        self.release_name = os.getenv("RELEASE_NAME", "nubus")
+        self.release_name = release_name
         if self.release_name:
             self.release_prefix = f"{self.release_name}-"
         else:
