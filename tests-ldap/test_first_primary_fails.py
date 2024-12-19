@@ -10,12 +10,6 @@ from e2e.util import wait_until
 
 log = logging.getLogger(__name__)
 
-LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
-    "app.kubernetes.io/name": "ldap-server",
-    "ldap-server-type": "primary",
-    "ldap-leader": "true",
-}
-
 
 @pytest.fixture(autouse=True)
 def wait_until_ready(ldap):
@@ -27,7 +21,7 @@ def wait_until_ready(ldap):
 
 
 def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_chaos):
-    k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
+    k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
 
     primary = ldap.get_server_for_primary_service()
@@ -46,7 +40,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
     create_and_delete_a_ldap_entry(faker, conn)
     expected_context_csn = primary.get_context_csn()
-    k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
+    k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
 
     found_context_csn = list(filter(None, ldap.get_context_csn().values()))
@@ -59,7 +53,7 @@ def test_write_during_leader_switch(faker, ldap, k8s_chaos):
     conn = primary.connect()
 
     create_and_delete_a_ldap_entry(faker, conn)
-    k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
+    k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     create_and_delete_a_ldap_entry(faker, conn)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
     create_and_delete_a_ldap_entry(faker, conn)
