@@ -2,8 +2,10 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
+from base64 import b64decode
 
 import ldap3.core.exceptions
+from kubernetes import client
 from ldap3 import Connection, Server
 
 from e2e.kubernetes import KubernetesCluster
@@ -29,10 +31,20 @@ class LDAPServer:
 
     conn: Connection
 
-    def __init__(self, name: str, host: str, port: int | None = None, client_strategy="SYNC"):
+    def __init__(
+        self,
+        name: str,
+        host: str,
+        bind_dn: str,
+        bind_password: str,
+        port: int | None = None,
+        client_strategy="SYNC",
+    ):
         self.name = name
         self.host = host
         self.port = port
+        self.bind_dn = bind_dn
+        self.bind_password = bind_password
         self.server = Server(host=self.host, port=self.port, get_info="ALL", connect_timeout=1)
         self.client_strategy = client_strategy
 
@@ -41,8 +53,8 @@ class LDAPServer:
             client_strategy = self.client_strategy
         connection = Connection(
             self.server,
-            user="cn=admin,dc=univention-organization,dc=intranet",
-            password="univention",
+            user=self.bind_dn,
+            password=self.bind_password,
             client_strategy=client_strategy,
             raise_exceptions=True,
         )
@@ -86,13 +98,44 @@ class LdapDeployment:
     def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
         self.release_name = release_name
-        primary_0 = self._apply_release_prefix("ldap-server-primary-0")
-        primary_1 = self._apply_release_prefix("ldap-server-primary-1")
+        self.primary_0_pod_name = self._apply_release_prefix("ldap-server-primary-0")
+        self.primary_1_pod_name = self._apply_release_prefix("ldap-server-primary-1")
+        self.notifier_pod_name = self._apply_release_prefix("ldap-notifier-0")
+        self._discover_from_cluster()
         servers = [
-            LDAPServer(name="primary_0", host=self._uri_for_pod(primary_0)),
-            LDAPServer(name="primary_1", host=self._uri_for_pod(primary_1)),
+            LDAPServer(
+                name="primary_0",
+                host=self._uri_for_pod(self.primary_0_pod_name),
+                bind_dn=self.admin_dn,
+                bind_password=self.admin_password,
+            ),
+            LDAPServer(
+                name="primary_1",
+                host=self._uri_for_pod(self.primary_1_pod_name),
+                bind_dn=self.admin_dn,
+                bind_password=self.admin_password,
+            ),
         ]
         self.servers = {server.name: server for server in servers}
+
+    def _discover_from_cluster(self):
+        config_map_name = self._apply_release_prefix("ldap-server")
+        v1 = client.CoreV1Api()
+        config_map = v1.read_namespaced_config_map(
+            name=config_map_name,
+            namespace=self._k8s.namespace,
+        )
+
+        self.base_dn = config_map.data["LDAP_BASE_DN"]
+        self.admin_dn = f"cn=admin,{self.base_dn}"
+
+        secret_name = self._apply_release_prefix("ldap-server-credentials")
+        secret = v1.read_namespaced_secret(
+            name=secret_name,
+            namespace=self._k8s.namespace,
+        )
+
+        self.admin_password = b64decode(secret.data["adminPassword"]).decode()
 
     def _apply_release_prefix(self, name):
         if not self.release_name or self.release_name == name:
@@ -132,5 +175,7 @@ class LdapDeployment:
             name=role,
             host=self._uri_for_pod(service_name, target_type="service"),
             client_strategy=client_strategy,
+            bind_dn=self.admin_dn,
+            bind_password=self.admin_password,
         )
         return server
