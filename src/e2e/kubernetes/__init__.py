@@ -1,4 +1,5 @@
 import logging
+import time
 
 from .port_forward import PortForwardingManager
 
@@ -74,6 +75,9 @@ class KubernetesCluster:
                 target_port,
                 target_type,
             )
+            # TODO: Give kubectl a chance to have the socket ready. Better
+            # would be a check if the Socket can be reached or similar.
+            time.sleep(1)
             return "localhost", local_port
 
     def cleanup(self):
