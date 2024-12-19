@@ -19,6 +19,12 @@ from utils.ldap_helpers import (
 )
 
 
+# Test configurations
+NUM_GROUPS = 10
+NUM_USERS = 100
+NUM_USERS_TO_MOVE = 50
+
+
 @pytest.mark.usefixtures("cleanup_ldap")
 def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap, env):
     """Test LDAP mirror mode robustness under pod failure."""
@@ -29,12 +35,12 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap, env):
     conn_primary_1 = ldap.servers["primary_1"].connect(bind=True, client_strategy="RESTARTABLE")
     print("Successfully connected to both LDAP servers")
 
-    print(f"\nCreating initial state with {env.NUM_GROUPS} groups...")
-    groups = create_initial_groups(env, conn_primary_0, env.NUM_GROUPS)
+    print(f"\nCreating initial state with {NUM_GROUPS} groups...")
+    groups = create_initial_groups(env, conn_primary_0, NUM_GROUPS)
     print(f"Successfully created {len(groups)} groups")
 
-    print(f"\nCreating {env.NUM_USERS} users...")
-    users = create_initial_users(env, conn_primary_0, env.NUM_USERS)
+    print(f"\nCreating {NUM_USERS} users...")
+    users = create_initial_users(env, conn_primary_0, NUM_USERS)
     print(f"Successfully created {len(users)} users")
 
     print("\nAssigning random users to groups...")
@@ -48,8 +54,8 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap, env):
     # Track initial group memberships
     initial_memberships = get_all_group_memberships(conn_primary_0, groups)
 
-    print(f"\nMoving first batch of {env.NUM_USERS_TO_MOVE} users between groups...")
-    first_batch_changes = move_random_users_between_groups(env, conn_primary_0, users, groups, env.NUM_USERS_TO_MOVE)
+    print(f"\nMoving first batch of {NUM_USERS_TO_MOVE} users between groups...")
+    first_batch_changes = move_random_users_between_groups(env, conn_primary_0, users, groups, NUM_USERS_TO_MOVE)
 
     # Verify first batch changes were applied
     first_batch_memberships = get_all_group_memberships(conn_primary_0, groups)
@@ -61,8 +67,8 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap, env):
     notifier_pod_name = f"{env.release_prefix}ldap-notifier-0"
     delete_pod(k8s_api, notifier_pod_name, k8s.namespace)
 
-    print(f"\nMoving second batch of {env.NUM_USERS_TO_MOVE} users between groups...")
-    second_batch_changes = move_random_users_between_groups(env, conn_primary_1, users, groups, env.NUM_USERS_TO_MOVE)
+    print(f"\nMoving second batch of {NUM_USERS_TO_MOVE} users between groups...")
+    second_batch_changes = move_random_users_between_groups(env, conn_primary_1, users, groups, NUM_USERS_TO_MOVE)
 
     # Verify second batch changes were applied to primary-1
     intermediate_memberships = get_all_group_memberships(conn_primary_1, groups)
