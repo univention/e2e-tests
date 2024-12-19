@@ -5,7 +5,6 @@ import contextlib
 import logging
 import queue
 import time
-from e2e.ldap import LdapDeployment
 
 import pytest
 from kubernetes import client, watch
