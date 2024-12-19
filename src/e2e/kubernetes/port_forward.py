@@ -16,6 +16,12 @@ class PortForwardingManager:
     this utility has to ensure that the port-forwardings are re-established
     whenever they terminate. It does run a monitoring thread in the background
     for this purpose to keep an eye on all processes.
+
+    When working on this class, using the following command to observe the
+    subprocesses is useful for troubleshooting:
+
+        watch "ps | grep kubectl"
+
     """
 
     def __init__(self, first_local_port=3890):
