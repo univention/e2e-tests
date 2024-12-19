@@ -11,7 +11,7 @@ from kubernetes.dynamic import DynamicClient
 
 from e2e.chaos import ChaosMeshFixture
 from e2e.kubernetes import KubernetesCluster
-from e2e.ldap import LDAPFixture
+from e2e.ldap import LdapDeployment
 
 
 @pytest.fixture(scope="session")
@@ -72,6 +72,6 @@ def release_name():
 @pytest.fixture
 def ldap(k8s, release_name):
     """
-    Returns an instance of `LDAPFixture`.
+    Returns an instance of `LdapDeployment`.
     """
-    return LDAPFixture(k8s, release_name)
+    return LdapDeployment(k8s, release_name)
