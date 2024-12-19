@@ -100,7 +100,7 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
 
     primary = ldap.get_server_for_primary_service()
-    conn = primary.conn
+    conn = primary.connect()
     user_dn, new_description = change_administrator_description(faker, conn)
 
     wait_until_udm_listener_processed_change(user_dn, k8s.namespace)

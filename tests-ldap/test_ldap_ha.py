@@ -20,13 +20,13 @@ from utils.ldap_helpers import (
 
 
 @pytest.mark.usefixtures("cleanup_ldap")
-def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap_primary_0, ldap_primary_1, env):
+def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap, env):
     """Test LDAP mirror mode robustness under pod failure."""
     print("\n=== Starting LDAP Mirror Mode Robustness Test ===")
 
     print("Getting initial connections to LDAP servers...")
-    conn_primary_0 = ldap_primary_0()
-    conn_primary_1 = ldap_primary_1()
+    conn_primary_0 = ldap.servers["primary_0"].connect(bind=True, client_strategy="RESTARTABLE")
+    conn_primary_1 = ldap.servers["primary_1"].connect(bind=True, client_strategy="RESTARTABLE")
     print("Successfully connected to both LDAP servers")
 
     print(f"\nCreating initial state with {env.NUM_GROUPS} groups...")
@@ -74,7 +74,7 @@ def test_ldap_mirror_mode_robustness(k8s, k8s_api, ldap_primary_0, ldap_primary_
     time.sleep(10)
 
     print("Getting fresh connection to primary-0...")
-    conn_primary_0 = ldap_primary_0()
+    conn_primary_0 = ldap.servers["primary_0"].connect(bind=True, client_strategy="RESTARTABLE")
 
     print("\nVerifying final state...")
     # Verify both servers have identical state
