@@ -58,12 +58,12 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
 
 
 @pytest.fixture
-def provisioning_api(release_name):
-    return ProvisioningApi(release_name)
+def provisioning_api(k8s, release_name):
+    return ProvisioningApi(k8s, release_name)
 
 
 @pytest.fixture
-def consumer(k8s, provisioning_api):
+def consumer(k8s, provisioning_api: ProvisioningApi):
     host, port = k8s.port_forward_if_needed(
         target_name=provisioning_api.service_name,
         target_port=provisioning_api.service_port,
@@ -74,9 +74,8 @@ def consumer(k8s, provisioning_api):
         atarget=users_consumer(
             messages,
             api_url=f"http://{host}:{port}",
-            # TODO: find these based on discovery via provisioning api fixture
-            username="admin",
-            password="provisioning",
+            username=provisioning_api.admin_username,
+            password=provisioning_api.admin_password,
         ),
     )
     consumer_thread.start()
