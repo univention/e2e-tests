@@ -3,6 +3,8 @@
 
 import time
 
+import ldap3
+import ldap3.core.exceptions
 import pytest
 from utils.data_generators import (
     assign_random_users_to_groups,
@@ -18,11 +20,47 @@ from utils.ldap_helpers import (
     verify_membership_changes,
 )
 
-
 # Test configurations
 NUM_GROUPS = 10
 NUM_USERS = 100
 NUM_USERS_TO_MOVE = 50
+
+
+@pytest.fixture
+def cleanup_ldap(ldap, env):
+    """Cleanup LDAP data after tests."""
+    yield
+    base_dn = env.LDAP_BASE_DN
+    conn_primary_0 = ldap.servers["primary_0"].connect(bind=True)
+
+    # Delete test users
+    print("Deleting test users")
+    user_filter = "(uid=test-user-*)"
+    conn_primary_0.search(f"cn=users,{base_dn}", user_filter, ldap3.LEVEL)
+    for item in conn_primary_0.response:
+        try:
+            conn_primary_0.delete(item["dn"])
+        except ldap3.core.exceptions.LDAPException:
+            pass
+
+    # Delete test groups
+    print("Deleting test groups")
+    group_filter = "(cn=test-group-*)"
+    conn_primary_0.search(f"cn=groups,{base_dn}", group_filter, ldap3.LEVEL)
+    for item in conn_primary_0.response:
+        try:
+            conn_primary_0.delete(item["dn"])
+        except ldap3.core.exceptions.LDAPException:
+            pass
+
+    # Delete dummy user if it exists
+    try:
+        print("Deleting dummy user")
+        conn_primary_0.delete(f"cn=dummy,cn=users,{base_dn}")
+    except ldap3.core.exceptions.LDAPException:
+        pass
+
+    print("Finished cleanup")
 
 
 @pytest.mark.usefixtures("cleanup_ldap")
