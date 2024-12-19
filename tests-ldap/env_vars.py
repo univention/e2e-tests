@@ -23,11 +23,6 @@ class EnvConfig:
         # Load configurations from ConfigMap and Secret
         self._load_configs()
 
-        # Test configurations (hardcoded)
-        self.NUM_GROUPS = 10
-        self.NUM_USERS = 100
-        self.NUM_USERS_TO_MOVE = 50
-
     def _load_configs(self):
         try:
             # Get ConfigMap

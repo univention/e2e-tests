@@ -66,7 +66,7 @@ The test uses configuration from:
 - `env_vars.py`: Loads Kubernetes configurations and LDAP credentials
 - Environment variables for namespace and cluster access
 
-Key configurable parameters (hardcoded in the file):
+Key configurable parameters are in the test file:
 - `NUM_GROUPS`: Number of test groups to create (default: 10)
 - `NUM_USERS`: Number of test users to create (default: 100)
 - `NUM_USERS_TO_MOVE`: Number of users to move between groups (default: 50)
