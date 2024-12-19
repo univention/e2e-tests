@@ -41,9 +41,9 @@ def k8s_configure_client():
 
 
 @pytest.fixture(scope="session")
-def env(k8s):
+def env(k8s, release_name):
     """Provide an instance of EnvConfig."""
-    return EnvConfig(k8s.namespace)
+    return EnvConfig(k8s.namespace, release_name)
 
 
 @pytest.fixture(scope="session")
@@ -157,9 +157,20 @@ def cleanup_ldap(ldap_primary_0, env):
     print("Finished cleanup")
 
 
+@pytest.fixture(scope="session")
+def release_name():
+    """
+    Discovers the release name based on the env variable RELEASE_NAME.
+
+    Will fallback to "nubus" if the variable is not set.
+    """
+    value = os.getenv("RELEASE_NAME", "nubus")
+    return value
+
+
 @pytest.fixture
-def ldap(k8s):
+def ldap(k8s, release_name):
     """
     Returns an instance of `LDAPFixture`.
     """
-    return LDAPFixture(k8s)
+    return LDAPFixture(k8s, release_name)
