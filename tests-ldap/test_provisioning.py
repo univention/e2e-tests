@@ -10,6 +10,7 @@ import pytest
 from kubernetes import client, watch
 from ldap3 import MODIFY_REPLACE
 
+from e2e.provisioning import ProvisioningApi
 from e2e.util import StoppableAsyncThread, wait_until
 from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
 from univention.provisioning.models import MessageProcessingStatus, RealmTopic
@@ -64,11 +65,15 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
 
 
 @pytest.fixture
-def consumer(k8s):
+def provisioning_api(release_name):
+    return ProvisioningApi(release_name)
+
+
+@pytest.fixture
+def consumer(k8s, provisioning_api):
     host, port = k8s.port_forward_if_needed(
-        target_name="provisioning-api",
-        # TODO: port handling
-        target_port=80,
+        target_name=provisioning_api.service_name,
+        target_port=provisioning_api.service_port,
         target_type="service",
     )
     messages = queue.Queue()
@@ -76,7 +81,7 @@ def consumer(k8s):
         atarget=users_consumer(
             messages,
             api_url=f"http://{host}:{port}",
-            # TODO: find these
+            # TODO: find these based on discovery via provisioning api fixture
             username="admin",
             password="provisioning",
         ),
@@ -139,7 +144,7 @@ def wait_until_udm_listener_processed_change(user_dn, namespace):
     # a state where the ldap-server and/or ldap-notifier are not yet reachable.
     # In this case it will try to re-connect with an internal back-off time.
     log.info("Waiting until the udm-listener got the ldap update.")
-    wait_until_pod_log(
+    wait_until_pod_log_contains(
         pod_name="provisioning-udm-listener-0",
         namespace=namespace,
         expected_fragment=f"ldap_listener: [ modify ] dn: '{user_dn}'",
