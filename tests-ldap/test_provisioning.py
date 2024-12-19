@@ -35,7 +35,7 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
         log_level="DEBUG",
     )
     admin_client = ProvisioningConsumerClient(admin_settings)
-    subscription_password = "password"
+    subscription_password = "stub_password"
 
     async with admin_client:
         with contextlib.suppress(Exception):
@@ -146,7 +146,7 @@ def wait_until_udm_listener_processed_change(user_dn, namespace):
     )
 
 
-def wait_until_pod_log(pod_name, namespace, expected_fragment, timeout=120):
+def wait_until_pod_log_contains(pod_name, namespace, expected_fragment, timeout=120):
     v1 = client.CoreV1Api()
     w = watch.Watch()
     stream = w.stream(
