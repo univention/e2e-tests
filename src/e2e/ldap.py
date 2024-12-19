@@ -77,6 +77,12 @@ class LDAPFixture:
 
     servers: dict[str, LDAPServer]
 
+    LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
+        "app.kubernetes.io/name": "ldap-server",
+        "ldap-server-type": "primary",
+        "ldap-leader": "true",
+    }
+
     def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
         self.release_name = release_name
