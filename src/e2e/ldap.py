@@ -15,6 +15,17 @@ log = logging.getLogger(__name__)
 class LDAPServer:
     """
     Represents one LDAP server process / Pod in our deployment.
+
+    The `client_stragety` parameter around the connections is important.
+    Typically we use the following options:
+
+    - `"SYNC"` is the default in use. This will fail if the connection cannot
+      be established.
+
+    - `"RESTARTABLE"` is useful in some scenarios. It will automatically try to
+      re-establish the connection until an internal timeout.
+
+    Regarding details see: https://ldap3.readthedocs.io/en/latest/connection.html
     """
 
     conn: Connection
