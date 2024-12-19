@@ -20,13 +20,18 @@
 
 - `/src/e2e/email` - Contains email related models.
 
+- `/src/e2e/kubernetes` - Supporting the interaction with the Kubernetes
+  cluster.
+
+- `/src/e2e/ldap` - Supporting the ldap deployment interaction.
+
 - `/src/e2e/pages` - (former `/src/umspages`) Contains the Page Object Model
   implementations.
 
 - `/tests` - All regular e2e test cases are within this top level folder.
 
-- `/tests-chaos` - Specific test cases which simulate failure scenarios and
-  typically need an adjusted deployment as a starting point.
+- `/tests-ldap` - Specific test cases which simulate failure scenarios around
+  ldap and typically need an adjusted deployment as a starting point.
 
 
 ## Page Objects
