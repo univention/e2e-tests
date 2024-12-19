@@ -5,6 +5,8 @@ import logging
 
 from ldap3 import Connection, Server
 
+from e2e.kubernetes import KubernetesCluster
+
 
 log = logging.getLogger(__name__)
 
@@ -16,7 +18,7 @@ class LDAPServer:
 
     conn: Connection
 
-    def __init__(self, name: str, host: str, port: int, client_strategy="SYNC"):
+    def __init__(self, name: str, host: str, port: int | None = None, client_strategy="SYNC"):
         self.name = name
         self.host = host
         self.port = port
@@ -64,13 +66,26 @@ class LDAPFixture:
     """
 
     servers: dict[str, LDAPServer]
+    _next_local_port = 3890
 
-    def __init__(self):
+    def __init__(self, k8s: KubernetesCluster):
+        self._k8s = k8s
         servers = [
-            LDAPServer(name="primary_1", host="ldap://localhost", port=8389),
-            LDAPServer(name="primary_0", host="ldap://localhost", port=9389),
+            LDAPServer(name="primary_0", host=self._uri_for_pod("ldap-server-primary-0")),
+            LDAPServer(name="primary_1", host=self._uri_for_pod("ldap-server-primary-1")),
         ]
         self.servers = {server.name: server for server in servers}
+
+    def _uri_for_pod(self, pod_name, target_type="pod"):
+        host, port = self._k8s.port_forward_if_needed(
+            target_name=pod_name,
+            target_namespace="default",
+            target_port=389,
+            local_port=self._next_local_port,
+            target_type=target_type,
+        )
+        self._next_local_port += 1
+        return f"ldap://{host}:{port}"
 
     def all_primaries_reachable(self):
         for server in self.servers.values():
@@ -96,8 +111,7 @@ class LDAPFixture:
             client_strategy = "SYNC"
         server = LDAPServer(
             name=role,
-            host="ldap://localhost",
-            port=7389,
+            host=self._uri_for_pod("ldap-server-primary", target_type="service"),
             client_strategy=client_strategy,
         )
         return server

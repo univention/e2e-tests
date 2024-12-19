@@ -172,8 +172,8 @@ def cleanup_ldap(ldap_primary_0, env):
 
 
 @pytest.fixture
-def ldap():
+def ldap(k8s):
     """
     Returns an instance of `LDAPFixture`.
     """
-    return LDAPFixture()
+    return LDAPFixture(k8s)
