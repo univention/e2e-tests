@@ -13,6 +13,9 @@ from e2e.kubernetes import KubernetesCluster
 log = logging.getLogger(__name__)
 
 
+DEFAULT_CLIENT_STRATEGY = ldap3.SYNC
+
+
 class LdapServer:
     """
     Represents one LDAP server process / Pod in our deployment.
@@ -39,7 +42,7 @@ class LdapServer:
         bind_password: str,
         base_dn: str,
         port: int | None = None,
-        client_strategy="SYNC",
+        client_strategy=DEFAULT_CLIENT_STRATEGY,
     ):
         self.name = name
         self.host = host
@@ -129,29 +132,6 @@ class LdapDeployment:
 
         self.admin_password = b64decode(secret.data["adminPassword"]).decode()
 
-    def _apply_release_prefix(self, name):
-        if not self.release_name or self.release_name == name:
-            return name
-        return f"{self.release_name}-{name}"
-
-    def _uri_for_pod(self, pod_name, target_type="pod"):
-        host, port = self._k8s.port_forward_if_needed(
-            target_name=pod_name,
-            target_port=389,
-            target_type=target_type,
-        )
-        return f"ldap://{host}:{port}"
-
-    def _create_server(self, name, pod_name) -> LdapServer:
-        server = LdapServer(
-            name=name,
-            host=self._uri_for_pod(pod_name),
-            bind_dn=self.admin_dn,
-            bind_password=self.admin_password,
-            base_dn=self.base_dn,
-        )
-        return server
-
     def all_primaries_reachable(self):
         for server in self.servers.values():
             log.debug("Checking reachability of server %s", server.name)
@@ -169,15 +149,44 @@ class LdapDeployment:
     def get_server_for_primary_service(self, auto_reconnect=True) -> LdapServer:
         role = "primary_service"
         if auto_reconnect:
-            client_strategy = "RESTARTABLE"
+            client_strategy = ldap3.RESTARTABLE
         else:
-            client_strategy = "SYNC"
+            client_strategy = DEFAULT_CLIENT_STRATEGY
         service_name = self._apply_release_prefix("ldap-server-primary")
-        server = LdapServer(
+        server = self._create_server(
             name=role,
-            host=self._uri_for_pod(service_name, target_type="service"),
+            pod_name=service_name,
             client_strategy=client_strategy,
-            bind_dn=self.admin_dn,
-            bind_password=self.admin_password,
+            target_type="service",
         )
         return server
+
+    def _apply_release_prefix(self, name):
+        if not self.release_name or self.release_name == name:
+            return name
+        return f"{self.release_name}-{name}"
+
+    def _create_server(
+        self,
+        name,
+        pod_name,
+        client_strategy=DEFAULT_CLIENT_STRATEGY,
+        target_type="pod",
+    ) -> LdapServer:
+        server = LdapServer(
+            name=name,
+            host=self._uri_for_pod(pod_name, target_type),
+            bind_dn=self.admin_dn,
+            bind_password=self.admin_password,
+            base_dn=self.base_dn,
+            client_strategy=client_strategy,
+        )
+        return server
+
+    def _uri_for_pod(self, pod_name, target_type="pod"):
+        host, port = self._k8s.port_forward_if_needed(
+            target_name=pod_name,
+            target_port=389,
+            target_type=target_type,
+        )
+        return f"ldap://{host}:{port}"
