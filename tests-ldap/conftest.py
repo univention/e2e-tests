@@ -3,19 +3,17 @@
 
 import os
 
-from kubernetes import client, config
-from kubernetes.client import ApiClient
-from kubernetes.dynamic import DynamicClient
 import ldap3
 import ldap3.core.exceptions
 import pytest
+from env_vars import EnvConfig
+from kubernetes import client, config
+from kubernetes.client import ApiClient
+from kubernetes.dynamic import DynamicClient
 
 from e2e.chaos import ChaosMeshFixture
-from e2e.ldap import LDAPFixture
 from e2e.kubernetes import KubernetesCluster
-
-from env_vars import EnvConfig
-from utils.k8s_helpers import wait_for_pod_ready
+from e2e.ldap import LDAPFixture
 
 
 @pytest.fixture(scope="session")

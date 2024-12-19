@@ -1,9 +1,11 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import asyncio
 import logging
 import threading
 
 from e2e.util import StoppableAsyncThread
-
 
 log = logging.getLogger(__name__)
 
@@ -57,7 +59,7 @@ class PortForwardingManager:
         log.debug("Stopped all forwarding processes.")
 
     async def _add(self, process_data):
-        if not process_data.key() in self._processes:
+        if process_data.key() not in self._processes:
             if process_data.local_port is None:
                 process_data.local_port = self._next_local_port
                 self._next_local_port += 1
