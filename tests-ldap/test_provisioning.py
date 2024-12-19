@@ -5,6 +5,7 @@ import contextlib
 import logging
 import queue
 import time
+from e2e.ldap import LdapDeployment
 
 import pytest
 from kubernetes import client, watch
@@ -95,7 +96,7 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
 
     primary = ldap.get_server_for_primary_service()
     conn = primary.connect()
-    user_dn, new_description = change_administrator_description(faker, conn, ldap.base_dn)
+    user_dn, new_description = change_administrator_description(faker, conn, ldap)
 
     wait_until_udm_listener_processed_change(user_dn, k8s.namespace)
 
@@ -118,15 +119,12 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
     assert msg_changed.body.new["properties"]["description"] == new_description
 
 
-def change_administrator_description(faker, conn, base_dn):
-    users_container_dn = f"cn=users,{base_dn}"
-    user_dn = f"uid=Administrator,{users_container_dn}"
-
+def change_administrator_description(faker, conn, ldap: LdapDeployment):
     new_description = faker.paragraph()
     with conn:
-        conn.modify(user_dn, {"description": [MODIFY_REPLACE, [new_description]]})
+        conn.modify(ldap.administrator_dn, {"description": [MODIFY_REPLACE, [new_description]]})
 
-    return user_dn, new_description
+    return ldap.administrator_dn, new_description
 
 
 def wait_until_udm_listener_processed_change(user_dn, namespace):

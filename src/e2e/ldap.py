@@ -123,6 +123,8 @@ class LdapDeployment:
 
         self.base_dn = config_map.data["LDAP_BASE_DN"]
         self.admin_dn = f"cn=admin,{self.base_dn}"
+        self.users_container_dn = f"cn=users,{self.base_dn}"
+        self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
         secret_name = self._apply_release_prefix("ldap-server-credentials")
         secret = v1.read_namespaced_secret(
