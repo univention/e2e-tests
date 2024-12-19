@@ -72,7 +72,6 @@ def consumer(k8s):
         target_name="provisioning-api",
         # TODO: port handling
         target_port=80,
-        local_port=8100,
         target_type="service",
     )
     messages = queue.Queue()

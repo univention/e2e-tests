@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import threading
-import typing
 
 from e2e.util import StoppableAsyncThread
 
@@ -19,20 +18,23 @@ class PortForwardingManager:
     for this purpose to keep an eye on all processes.
     """
 
-    def __init__(self):
+    def __init__(self, first_local_port=3890):
         self._loop = None
         self._running = threading.Event()
         self._worker_thread = StoppableAsyncThread(atarget=self._run())
         self._processes = {}
+        self._next_local_port = first_local_port
 
-    def add(self, namespace, name, local_port, target_port, target_type="pod"):
+    def add(self, namespace, name, target_port, local_port=None, target_type="pod"):
+        process_data = ProcessData(namespace, name, local_port, target_port, target_type, None)
         if not self._loop:
             raise RuntimeError("Forwarding manager has not been started.")
         future = asyncio.run_coroutine_threadsafe(
-            self._add(namespace, name, local_port, target_port, target_type),
+            self._add(process_data),
             self._loop,
         )
-        return future.result()
+        used_local_port = future.result()
+        return used_local_port
 
     def start_monitoring(self):
         self._worker_thread.start()
@@ -43,15 +45,22 @@ class PortForwardingManager:
 
     async def _terminate(self):
         log.debug("Terminating all forwarding processes.")
-        for process in self._processes.values():
-            await _terminate_process(process)
+        for process_data in self._processes.values():
+            await _terminate_process(process_data.process)
         self._processes.clear()
         log.debug("Stopped all forwarding processes.")
 
-    async def _add(self, namespace, name, local_port, target_port, target_type):
-        key = ProcessKey(namespace, name, local_port, target_port, target_type)
-        if not key in self._processes:
-            await self._start_new_port_forward(namespace, name, local_port, target_port, target_type)
+    async def _add(self, process_data):
+        if not process_data.key() in self._processes:
+            if process_data.local_port is None:
+                process_data.local_port = self._next_local_port
+                self._next_local_port += 1
+            await self._start_new_port_forward(process_data)
+            local_port = process_data.local_port
+        else:
+            existing_data = self._processes[process_data.key()]
+            local_port = existing_data.local_port
+        return local_port
 
     async def _run(self):
         try:
@@ -64,14 +73,14 @@ class PortForwardingManager:
             self.running = False
             await self._terminate()
 
-    async def _start_new_port_forward(self, namespace, name, local_port, target_port, target_type):
+    async def _start_new_port_forward(self, process_data):
         cmd = [
             "kubectl",
             "port-forward",
-            f"{target_type}/{name}",
-            f"{local_port}:{target_port}",
+            f"{process_data.target_type}/{process_data.name}",
+            f"{process_data.local_port}:{process_data.target_port}",
             "-n",
-            namespace,
+            process_data.namespace,
         ]
         log.debug("Starting new forward via kubectl: %s", " ".join(cmd))
         process = await asyncio.create_subprocess_exec(
@@ -79,24 +88,23 @@ class PortForwardingManager:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        key = ProcessKey(namespace, name, local_port, target_port, target_type)
-        self._processes[key] = process
-        asyncio.create_task(self._monitor_process(key, process))
-        asyncio.create_task(self._log_output(key, process))
+        process_data.process = process
+        self._processes[process_data.key()] = process_data
+        asyncio.create_task(self._monitor_process(process_data))
+        asyncio.create_task(self._log_output(process_data))
         return process
 
-    async def _monitor_process(self, key, process):
-        await process.wait()
+    async def _monitor_process(self, process_data):
+        await process_data.process.wait()
         await asyncio.sleep(1)
         if self._running.is_set():
-            log.debug("Restarting process: %s", key)
-            await self._start_new_port_forward(
-                key.namespace, key.name, key.local_port, key.target_port, key.target_type)
+            log.debug("Restarting process: %s", process_data)
+            await self._start_new_port_forward(process_data)
 
-    async def _log_output(self, key, process):
+    async def _log_output(self, process_data):
         await asyncio.gather(
-            self._log_output_stream("stdout", key, process.stdout),
-            self._log_output_stream("stderr", key, process.stderr),
+            self._log_output_stream("stdout", process_data, process_data.process.stdout),
+            self._log_output_stream("stderr", process_data, process_data.process.stderr),
         )
 
     async def _log_output_stream(self, prefix, key, stream):
@@ -105,12 +113,21 @@ class PortForwardingManager:
             log.debug("kubectl %s/%s %s: %s", key.target_type, key.name, prefix, content)
 
 
-class ProcessKey(typing.NamedTuple):
-    namespace: str
-    name: str
-    local_port: int
-    target_port: int
-    target_type: str
+class ProcessData:
+    """
+    The relevant data regarding one forwarding process.
+    """
+
+    def __init__(self, namespace, name, local_port, target_port, target_type, process):
+        self.namespace = namespace
+        self.name = name
+        self.local_port = local_port
+        self.target_port = target_port
+        self.target_type = target_type
+        self.process = process
+
+    def key(self):
+        return (self.namespace, self.name, self.target_port, self.target_type)
 
 
 async def _terminate_process(process):
