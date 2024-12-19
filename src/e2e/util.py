@@ -1,9 +1,11 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import asyncio
 import contextlib
 import logging
 import threading
 import time
-
 
 log = logging.getLogger(__name__)
 

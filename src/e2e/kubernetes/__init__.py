@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import logging
 import os
 import time
@@ -5,7 +8,6 @@ import time
 from kubernetes import config
 
 from .port_forward import PortForwardingManager
-
 
 log = logging.getLogger(__name__)
 

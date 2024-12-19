@@ -3,11 +3,10 @@
 
 import logging
 
-from ldap3 import Connection, Server
 import ldap3.core.exceptions
+from ldap3 import Connection, Server
 
 from e2e.kubernetes import KubernetesCluster
-
 
 log = logging.getLogger(__name__)
 
@@ -114,9 +113,7 @@ class LDAPFixture:
         return True
 
     def get_context_csn(self) -> dict[str, list[str]]:
-        return {
-            name: server.get_context_csn() for name, server in self.servers.items()
-        }
+        return {name: server.get_context_csn() for name, server in self.servers.items()}
 
     def get_server_for_primary_service(self, auto_reconnect=True) -> LDAPServer:
         role = "primary_service"

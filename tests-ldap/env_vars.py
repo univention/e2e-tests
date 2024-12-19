@@ -3,7 +3,6 @@
 
 # env_vars.py
 import base64
-import os
 
 from kubernetes import client, config
 

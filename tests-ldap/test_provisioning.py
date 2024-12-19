@@ -1,16 +1,18 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
 import contextlib
 import logging
 import queue
 import time
 
-from ldap3 import MODIFY_REPLACE
-from kubernetes import client, watch
-from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
-from univention.provisioning.models import RealmTopic, MessageProcessingStatus
 import pytest
+from kubernetes import client, watch
+from ldap3 import MODIFY_REPLACE
 
 from e2e.util import StoppableAsyncThread, wait_until
-
+from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
+from univention.provisioning.models import MessageProcessingStatus, RealmTopic
 
 log = logging.getLogger(__name__)
 
@@ -39,10 +41,8 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
         with contextlib.suppress(Exception):
             await admin_client.cancel_subscription(name=subscription_name)
         await admin_client.create_subscription(
-            name=subscription_name,
-            password=subscription_password,
-            realms_topics=realms_topics,
-            request_prefill=False)
+            name=subscription_name, password=subscription_password, realms_topics=realms_topics, request_prefill=False
+        )
 
     settings = ProvisioningConsumerClientSettings(
         provisioning_api_base_url=api_url,
@@ -52,7 +52,6 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
     )
     client = ProvisioningConsumerClient(settings)
 
-
     async with client:
         while True:
             response = await client.get_subscription_message(
@@ -60,9 +59,7 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
                 timeout=1,
             )
             if response:
-                await client.set_message_status(
-                    subscription_name, response.sequence_number, MessageProcessingStatus.ok
-                )
+                await client.set_message_status(subscription_name, response.sequence_number, MessageProcessingStatus.ok)
                 messages.put(response, timeout=1)
 
 

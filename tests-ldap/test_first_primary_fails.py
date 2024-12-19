@@ -2,11 +2,11 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
-from e2e.ldap import LDAPFixture
-from e2e.util import wait_until
 
 import pytest
 
+from e2e.ldap import LDAPFixture
+from e2e.util import wait_until
 
 log = logging.getLogger(__name__)
 
