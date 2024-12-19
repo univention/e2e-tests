@@ -16,8 +16,6 @@ class EnvConfig:
         else:
             self.release_prefix = ""
 
-        # Initialize Kubernetes client
-        config.load_kube_config()
         self.k8s_api = client.CoreV1Api()
 
         # Load configurations from ConfigMap and Secret

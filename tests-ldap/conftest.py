@@ -26,16 +26,6 @@ def k8s():
     cluster.cleanup()
 
 
-@pytest.fixture(autouse=True, scope="session")
-def k8s_configure_client():
-    """
-    Configures the Kubernetes client.
-
-    Does not (yet) support in-cluster configuration.
-    """
-    config.load_kube_config()
-
-
 @pytest.fixture(scope="session")
 def env(k8s, release_name):
     """Provide an instance of EnvConfig."""
@@ -49,9 +39,8 @@ def k8s_api(env):
 
 
 @pytest.fixture(scope="session")
-def k8s_apps_api():
+def k8s_apps_api(k8s):
     """Initialize and return Kubernetes Apps API client."""
-    config.load_kube_config()
     return client.AppsV1Api()
 
 

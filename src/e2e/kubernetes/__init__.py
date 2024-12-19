@@ -58,6 +58,7 @@ class KubernetesCluster:
     """Flag to indicate if the code runs inside of the target cluster."""
 
     def __init__(self):
+        config.load_kube_config()
         self.port_forwarding = PortForwardingManager()
         self.namespace = discover_namespace()
         if not self.direct_access:
