@@ -100,6 +100,7 @@ def create_ldap_connection(k8s, pod_name: str, local_port: int, env):
             user=env.LDAP_ADMIN_DN,
             password=env.LDAP_ADMIN_PASSWORD,
             raise_exceptions=True,
+            client_strategy="RESTARTABLE",
         )
         conn.bind()
         return conn
