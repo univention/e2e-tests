@@ -5,7 +5,7 @@ import logging
 
 import pytest
 
-from e2e.ldap import LDAPFixture
+from e2e.ldap import LdapDeployment
 from e2e.util import wait_until
 
 log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def wait_until_ready(ldap):
     log.info("All ldap servers are reachable.")
 
 
-def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_chaos):
+def test_correct_context_csn_after_leader_switch(faker, ldap: LdapDeployment, k8s_chaos):
     k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
 

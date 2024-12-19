@@ -66,7 +66,7 @@ class LDAPServer:
         return context_csn
 
 
-class LDAPFixture:
+class LdapDeployment:
     """
     Represents the openldap deployment.
 
