@@ -66,7 +66,6 @@ class LDAPFixture:
     """
 
     servers: dict[str, LDAPServer]
-    _next_local_port = 3890
 
     def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
@@ -88,10 +87,8 @@ class LDAPFixture:
         host, port = self._k8s.port_forward_if_needed(
             target_name=pod_name,
             target_port=389,
-            local_port=self._next_local_port,
             target_type=target_type,
         )
-        self._next_local_port += 1
         return f"ldap://{host}:{port}"
 
     def all_primaries_reachable(self):

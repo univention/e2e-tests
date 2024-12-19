@@ -65,7 +65,7 @@ class KubernetesCluster:
         self,
         target_name: str,
         target_port: int,
-        local_port: int,
+        local_port: int | None = None,
         target_type: str = "pod",
         target_namespace: str | None = None,
     ) -> tuple[str, int]:
@@ -84,23 +84,23 @@ class KubernetesCluster:
         self,
         target_name: str,
         target_port: int,
-        local_port: int,
+        local_port: int | None = None,
         target_type: str = "pod",
         target_namespace: str | None = None,
     ) -> tuple[str, int]:
         if target_namespace is None:
             target_namespace = self.namespace
-        self.port_forwarding.add(
+        used_port = self.port_forwarding.add(
             target_namespace,
             target_name,
-            local_port,
             target_port,
+            local_port,
             target_type,
         )
         # TODO: Give kubectl a chance to have the socket ready. Better
         # would be a check if the Socket can be reached or similar.
         time.sleep(1)
-        return "localhost", local_port
+        return "localhost", used_port
 
     def cleanup(self):
         self.port_forwarding.stop_monitoring()

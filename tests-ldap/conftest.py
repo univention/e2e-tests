@@ -73,7 +73,7 @@ def k8s_chaos(k8s):
     chaos_mesh.cleanup()
 
 
-def create_ldap_connection(k8s, pod_name: str, local_port: int, env):
+def create_ldap_connection(k8s, pod_name: str, local_port: int | None, env):
     """Create a new LDAP connection with port forwarding."""
     try:
         pod_port = 389
@@ -98,11 +98,10 @@ def create_ldap_connection(k8s, pod_name: str, local_port: int, env):
 def ldap_primary_0(k8s, k8s_api, env):
     """Return a factory function for getting connections to first LDAP primary."""
     pod_name = f"{env.release_prefix}ldap-server-primary-0"
-    local_port = 3890
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
-        return create_ldap_connection(k8s, pod_name, local_port, env)
+        return create_ldap_connection(k8s, pod_name, None, env)
 
     return get_connection
 
@@ -111,11 +110,10 @@ def ldap_primary_0(k8s, k8s_api, env):
 def ldap_primary_1(k8s, k8s_api, env):
     """Return a factory function for getting connections to second LDAP primary."""
     pod_name = f"{env.release_prefix}ldap-server-primary-1"
-    local_port = 3891
 
     def get_connection():
         wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
-        return create_ldap_connection(k8s, pod_name, local_port, env)
+        return create_ldap_connection(k8s, pod_name, None, env)
 
     return get_connection
 
