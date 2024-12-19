@@ -96,9 +96,9 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
 
     primary = ldap.get_server_for_primary_service()
     conn = primary.connect()
-    user_dn, new_description = change_administrator_description(faker, conn, ldap)
+    new_description = change_user_description(faker, conn, ldap.administrator_dn)
 
-    wait_until_udm_listener_processed_change(user_dn, k8s.namespace)
+    wait_until_udm_listener_processed_change(ldap.administrator_dn, k8s.namespace)
 
     messages = []
     expected_number_of_messages = 1
@@ -113,18 +113,18 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
     assert len(messages) == expected_number_of_messages
     msg_changed = messages[0]
 
-    assert msg_changed.body.old["dn"] == user_dn
+    assert msg_changed.body.old["dn"] == ldap.administrator_dn
     assert msg_changed.body.old["properties"]["description"] != new_description
-    assert msg_changed.body.new["dn"] == user_dn
+    assert msg_changed.body.new["dn"] == ldap.administrator_dn
     assert msg_changed.body.new["properties"]["description"] == new_description
 
 
-def change_administrator_description(faker, conn, ldap: LdapDeployment):
+def change_user_description(faker, conn, user_dn):
     new_description = faker.paragraph()
     with conn:
-        conn.modify(ldap.administrator_dn, {"description": [MODIFY_REPLACE, [new_description]]})
+        conn.modify(user_dn, {"description": [MODIFY_REPLACE, [new_description]]})
 
-    return ldap.administrator_dn, new_description
+    return new_description
 
 
 def wait_until_udm_listener_processed_change(user_dn, namespace):
