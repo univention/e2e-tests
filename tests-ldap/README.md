@@ -2,9 +2,42 @@
 
 ## Overview
 
-This test suite is designed to validate the high availability (HA) and data replication capabilities of an LDAP server deployment, specifically focusing on mirror mode robustness and data consistency during pod failures.
+This test suite is designed to validate the high availability (HA) and data
+replication capabilities of an LDAP server deployment, specifically focusing on
+mirror mode robustness and data consistency during pod failures.
 
-## Test Scenario
+The tests are grouped into multiple files, so that every file does represent a
+bigger scenario.
+
+The tests in this folder cannot be executed as a whole suite and they do expect
+that the deployment is prepared upfront. Every file has slightly different
+requirements towards the deployment.
+
+## Common
+
+### Setup and Configuration
+
+1. Set required environment variables:
+
+   ```bash
+   # Ensure that you have your kubernetes configuration selected.
+   # Either by kubectx or via environment variables.
+   export KUBECONFIG=/path/to/your/kubeconfig
+
+   # Ensure that you have the target namespace selected
+   # Either via kubens
+   kubens your-namespace
+   # Or via environment variables
+   export DEPLOY_NAMESPACE=your-namespace
+   ```
+
+2. Enter the Python environment of the test suite, see `../README.md`:
+
+   ```bash
+   pipenv shell
+   ```
+
+## Test Scenario `test_ldap_ha.py`
 
 The test performs the following key operations:
 - Creates a predefined number of groups and users
@@ -13,26 +46,15 @@ The test performs the following key operations:
 - Simulates a pod failure by deleting a primary LDAP server pod
 - Verifies data consistency and replication across LDAP servers
 
-## Prerequisites
+### Deployment requirements
 
 - Nubus deployment with at least the `ldap-server`, configured with 2 primaries.
+- Alternative is a minimal deployment of the `ldap-server` chart together with
+  the `ldap-notifier`.
 
-## Setup and Configuration
+### Running the Tests
 
-1. Set required environment variables:
-   ```bash
-   export K8S_NAMESPACE=your-namespace
-   export KUBECONFIG=/path/to/your/kubeconfig # only if you have more than one in your env
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install python-ldap kubernetes pytest
-   ```
-
-## Running the Tests
-
-Execute the test suite using pytest:
+Execute the test file using pytest:
 
 ```bash
 pytest -lvs tests-ldap/test_ldap_ha.py
@@ -40,7 +62,7 @@ pytest -lvs tests-ldap/test_ldap_ha.py
 
 ### Configuration Parameters
 
-The test suite uses configuration from:
+The test uses configuration from:
 - `env_vars.py`: Loads Kubernetes configurations and LDAP credentials
 - Environment variables for namespace and cluster access
 
@@ -49,9 +71,9 @@ Key configurable parameters (hardcoded in the file):
 - `NUM_USERS`: Number of test users to create (default: 100)
 - `NUM_USERS_TO_MOVE`: Number of users to move between groups (default: 50)
 
-## Test Details
+### Test Details
 
-### Workflow
+#### Workflow
 
 1. Create initial test groups
 2. Create test users
@@ -61,9 +83,44 @@ Key configurable parameters (hardcoded in the file):
 6. Continue group membership changes
 7. Verify data consistency and replication
 
-### Verification Steps
+#### Verification Steps
 
 - Compare LDAP server contents
 - Verify group memberships
 - Ensure all changes are preserved after pod recovery
 - Validate data replication between LDAP servers
+
+
+## Test scenario `test_first_primary_fails.py`
+
+Various test cases check minimal scenarios around the switch of the primary ldap
+server.
+
+### Deployment Requirements
+
+The following components are required:
+
+- `ldap-server`
+
+- The ldap server has to be scaled to two primaries. Proxies and secondaries can
+  be scaled down to zero.
+- Nubus deployment.
+- Alternative: Deployment of `ldap-server`.
+
+
+## Test scenario `test_provisioning.py`
+
+This scenario does verify that the provisioning subsystem is receiving and
+delivering messages when a change occurs.
+
+### Deployment requirements
+
+The following components are required:
+
+- `ldap-server`
+- `ldap-notifier`
+- `provisioning`
+- `provisioning-udm-listener`
+- `udm-rest-api`
+
+Either individually deployed or as a Nubus deployment.
