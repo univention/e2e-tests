@@ -110,5 +110,5 @@ def discover_namespace():
     _, active_context = config.list_kube_config_contexts()
     namespace_from_context = active_context["context"]["namespace"]
     namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
-    print("namespace:", namespace)
+    log.info("Discovered target namespace: %s", namespace)
     return namespace
