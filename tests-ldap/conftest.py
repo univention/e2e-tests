@@ -73,57 +73,12 @@ def k8s_chaos(k8s):
     chaos_mesh.cleanup()
 
 
-def create_ldap_connection(k8s, pod_name: str, local_port: int | None, env):
-    """Create a new LDAP connection with port forwarding."""
-    try:
-        pod_port = 389
-        hostname, port = k8s.port_forward_if_needed(pod_name, pod_port, local_port)
-        uri = f"ldap://{hostname}:{port}"
-        server = ldap3.Server(host=uri, connect_timeout=5)
-        conn = ldap3.Connection(
-            server,
-            user=env.LDAP_ADMIN_DN,
-            password=env.LDAP_ADMIN_PASSWORD,
-            raise_exceptions=True,
-            client_strategy="RESTARTABLE",
-        )
-        conn.bind()
-        return conn
-    except Exception as e:
-        print(f"Failed to set up LDAP connection: {e}")
-        raise
-
-
 @pytest.fixture
-def ldap_primary_0(k8s, k8s_api, env):
-    """Return a factory function for getting connections to first LDAP primary."""
-    pod_name = f"{env.release_prefix}ldap-server-primary-0"
-
-    def get_connection():
-        wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
-        return create_ldap_connection(k8s, pod_name, None, env)
-
-    return get_connection
-
-
-@pytest.fixture
-def ldap_primary_1(k8s, k8s_api, env):
-    """Return a factory function for getting connections to second LDAP primary."""
-    pod_name = f"{env.release_prefix}ldap-server-primary-1"
-
-    def get_connection():
-        wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
-        return create_ldap_connection(k8s, pod_name, None, env)
-
-    return get_connection
-
-
-@pytest.fixture
-def cleanup_ldap(ldap_primary_0, env):
+def cleanup_ldap(ldap, env):
     """Cleanup LDAP data after tests."""
     yield
     base_dn = env.LDAP_BASE_DN
-    conn_primary_0 = ldap_primary_0()
+    conn_primary_0 = ldap.servers["primary_0"].connect(bind=True)
 
     # Delete test users
     print("Deleting test users")

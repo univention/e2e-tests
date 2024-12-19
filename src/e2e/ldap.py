@@ -4,6 +4,7 @@
 import logging
 
 from ldap3 import Connection, Server
+import ldap3.core.exceptions
 
 from e2e.kubernetes import KubernetesCluster
 
@@ -22,36 +23,35 @@ class LDAPServer:
         self.name = name
         self.host = host
         self.port = port
+        self.server = Server(host=self.host, port=self.port, get_info="ALL", connect_timeout=1)
+        self.client_strategy = client_strategy
 
-        self._connect(client_strategy)
-
-    def _connect(self, client_strategy):
-        server = Server(
-            host=self.host,
-            port=self.port,
-            get_info="ALL",
-            connect_timeout=1,
-        )
-        self.conn = Connection(
-            server,
+    def connect(self, bind=False, client_strategy=None):
+        if not client_strategy:
+            client_strategy = self.client_strategy
+        connection = Connection(
+            self.server,
             user="cn=admin,dc=univention-organization,dc=intranet",
             password="univention",
             client_strategy=client_strategy,
             raise_exceptions=True,
         )
+        if bind:
+            connection.bind()
+        return connection
 
     def get_context_csn(self) -> list[str]:
         context_csn = []
         try:
-            with self.conn:
-                self.conn.search(
+            with self.connect() as conn:
+                conn.search(
                     "dc=univention-organization,dc=intranet",
                     "(objectClass=*)",
                     search_scope="BASE",
                     attributes=["contextCSN"],
                 )
-                context_csn = self.conn.entries[0].contextCSN.values
-        except Exception:
+                context_csn = conn.entries[0].contextCSN.values
+        except ldap3.core.exceptions.LDAPException:
             log.debug("Reading contextCSN from server %s failed.", self.name)
         return context_csn
 
@@ -95,7 +95,7 @@ class LDAPFixture:
         for server in self.servers.values():
             log.debug("Checking reachability of server %s", server.name)
             try:
-                with server.conn:
+                with server.connect():
                     pass
             except Exception:
                 log.debug("Server %s not reachable", server.name)

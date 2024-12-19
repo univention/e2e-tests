@@ -31,7 +31,7 @@ def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_c
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
 
     primary = ldap.get_server_for_primary_service()
-    conn = primary.conn
+    conn = primary.connect()
     create_and_delete_a_ldap_entry(faker, conn)
     expected_context_csn = [primary.get_context_csn()] * 2
 
@@ -42,7 +42,7 @@ def test_correct_context_csn_after_leader_switch(faker, ldap: LDAPFixture, k8s_c
 
 def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
     primary = ldap.get_server_for_primary_service()
-    conn = primary.conn
+    conn = primary.connect()
 
     create_and_delete_a_ldap_entry(faker, conn)
     expected_context_csn = primary.get_context_csn()
@@ -56,7 +56,7 @@ def test_new_leader_has_correct_context_csn(faker, ldap, k8s_chaos):
 
 def test_write_during_leader_switch(faker, ldap, k8s_chaos):
     primary = ldap.get_server_for_primary_service()
-    conn = primary.conn
+    conn = primary.connect()
 
     create_and_delete_a_ldap_entry(faker, conn)
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
