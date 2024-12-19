@@ -13,7 +13,7 @@ from e2e.kubernetes import KubernetesCluster
 log = logging.getLogger(__name__)
 
 
-class LDAPServer:
+class LdapServer:
     """
     Represents one LDAP server process / Pod in our deployment.
 
@@ -89,7 +89,7 @@ class LdapDeployment:
     and "proxy".
     """
 
-    servers: dict[str, LDAPServer]
+    servers: dict[str, LdapServer]
 
     LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
         "app.kubernetes.io/name": "ldap-server",
@@ -142,8 +142,8 @@ class LdapDeployment:
         )
         return f"ldap://{host}:{port}"
 
-    def _create_server(self, name, pod_name) -> LDAPServer:
-        server = LDAPServer(
+    def _create_server(self, name, pod_name) -> LdapServer:
+        server = LdapServer(
             name=name,
             host=self._uri_for_pod(pod_name),
             bind_dn=self.admin_dn,
@@ -166,14 +166,14 @@ class LdapDeployment:
     def get_context_csn(self) -> dict[str, list[str]]:
         return {name: server.get_context_csn() for name, server in self.servers.items()}
 
-    def get_server_for_primary_service(self, auto_reconnect=True) -> LDAPServer:
+    def get_server_for_primary_service(self, auto_reconnect=True) -> LdapServer:
         role = "primary_service"
         if auto_reconnect:
             client_strategy = "RESTARTABLE"
         else:
             client_strategy = "SYNC"
         service_name = self._apply_release_prefix("ldap-server-primary")
-        server = LDAPServer(
+        server = LdapServer(
             name=role,
             host=self._uri_for_pod(service_name, target_type="service"),
             client_strategy=client_strategy,
