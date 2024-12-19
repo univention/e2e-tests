@@ -22,31 +22,32 @@ LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {
 }
 
 
-async def users_consumer(messages: queue.Queue):
+async def users_consumer(messages: queue.Queue, api_url: str, username: str, password: str):
     realms_topics = [RealmTopic(realm="udm", topic="users/user")]
     subscription_name = "test-suite-client"
 
     admin_settings = ProvisioningConsumerClientSettings(
-        provisioning_api_base_url="http://localhost:8100",
-        provisioning_api_username="admin",
-        provisioning_api_password="provisioning",
+        provisioning_api_base_url=api_url,
+        provisioning_api_username=username,
+        provisioning_api_password=password,
         log_level="DEBUG",
     )
     admin_client = ProvisioningConsumerClient(admin_settings)
+    subscription_password = "password"
 
     async with admin_client:
         with contextlib.suppress(Exception):
             await admin_client.cancel_subscription(name=subscription_name)
         await admin_client.create_subscription(
             name=subscription_name,
-            password="password",
+            password=subscription_password,
             realms_topics=realms_topics,
             request_prefill=False)
 
     settings = ProvisioningConsumerClientSettings(
-        provisioning_api_base_url="http://localhost:8100",
+        provisioning_api_base_url=api_url,
         provisioning_api_username=subscription_name,
-        provisioning_api_password="password",
+        provisioning_api_password=subscription_password,
         log_level="DEBUG",
     )
     client = ProvisioningConsumerClient(settings)
@@ -66,9 +67,26 @@ async def users_consumer(messages: queue.Queue):
 
 
 @pytest.fixture
-def consumer():
+def consumer(k8s):
+    host, port = k8s.port_forward_if_needed(
+        target_name="provisioning-api",
+        # TODO: use the namespace from k8s
+        target_namespace="default",
+        # TODO: port handling
+        target_port=80,
+        local_port=8100,
+        target_type="service",
+    )
     messages = queue.Queue()
-    consumer_thread = StoppableAsyncThread(atarget=users_consumer(messages))
+    consumer_thread = StoppableAsyncThread(
+        atarget=users_consumer(
+            messages,
+            api_url=f"http://{host}:{port}",
+            # TODO: find these
+            username="admin",
+            password="provisioning",
+        ),
+    )
     consumer_thread.start()
 
     # Wait until consumer is set up
