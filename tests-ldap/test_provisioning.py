@@ -96,7 +96,7 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
 
     primary = ldap.get_server_for_primary_service()
     conn = primary.connect()
-    user_dn, new_description = change_administrator_description(faker, conn)
+    user_dn, new_description = change_administrator_description(faker, conn, ldap.base_dn)
 
     wait_until_udm_listener_processed_change(user_dn, k8s.namespace)
 
@@ -119,8 +119,7 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
     assert msg_changed.body.new["properties"]["description"] == new_description
 
 
-def change_administrator_description(faker, conn):
-    base_dn = "dc=univention-organization,dc=intranet"
+def change_administrator_description(faker, conn, base_dn):
     users_container_dn = f"cn=users,{base_dn}"
     user_dn = f"uid=Administrator,{users_container_dn}"
 

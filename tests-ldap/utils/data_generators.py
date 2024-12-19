@@ -13,7 +13,7 @@ def generate_random_string(length: int = 8) -> str:
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
 
-def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
+def create_initial_groups(ldap, ldap_conn, num_groups: int) -> List[str]:
     """Create initial groups in LDAP."""
     print("\nCreating initial groups...")
 
@@ -26,7 +26,7 @@ def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
         "mail": ["dummy@example.com"],
         "userPassword": ["password"],
     }
-    dummy_user_dn = "cn=dummy,cn=users," + env.LDAP_BASE_DN
+    dummy_user_dn = "cn=dummy,cn=users," + ldap.base_dn
     try:
         ldap_conn.add(dummy_user_dn, "inetOrgPerson", dummy_user_attrs)
         print("Dummy user created successfully")
@@ -38,11 +38,11 @@ def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
     print(f"Creating {num_groups} groups...")
     for i in range(num_groups):
         group_name = f"test-group-{i}"
-        group_dn = f"cn={group_name},cn=groups,{env.LDAP_BASE_DN}"
+        group_dn = f"cn={group_name},cn=groups,{ldap.base_dn}"
         group_attrs = {
             "objectClass": ["top", "groupOfNames"],
             "cn": [group_name],
-            "member": ["cn=dummy,cn=users," + env.LDAP_BASE_DN],
+            "member": ["cn=dummy,cn=users," + ldap.base_dn],
         }
         try:
             ldap_conn.add(group_dn, "groupOfNames", group_attrs)
@@ -57,13 +57,13 @@ def create_initial_groups(env, ldap_conn, num_groups: int) -> List[str]:
     return groups
 
 
-def create_initial_users(env, ldap_conn, num_users: int) -> List[str]:
+def create_initial_users(ldap, ldap_conn, num_users: int) -> List[str]:
     """Create initial users in LDAP."""
     print(f"\nCreating {num_users} users...")
     users = []
     for i in range(num_users):
         username = f"test-user-{i}"
-        user_dn = f"uid={username},cn=users,{env.LDAP_BASE_DN}"
+        user_dn = f"uid={username},cn=users,{ldap.base_dn}"
         user_attrs = {
             "objectClass": ["top", "person", "organizationalPerson", "inetOrgPerson"],
             "uid": [username],
@@ -194,11 +194,11 @@ def move_random_users_between_groups(env, ldap_conn, users: List[str], groups: L
     return changes
 
 
-def get_user_groups(env, ldap_conn, user_dn: str) -> List[str]:
+def get_user_groups(ldap, ldap_conn, user_dn: str) -> List[str]:
     """Get all groups a user belongs to."""
     try:
         search_filter = f"(&(objectClass=groupOfNames)(member={user_dn}))"
-        ldap_conn.search(f"cn=groups,{env.LDAP_BASE_DN}", search_filter, ldap3.SUBTREE, attributes=[])
+        ldap_conn.search(f"cn=groups,{ldap.base_dn}", search_filter, ldap3.SUBTREE, attributes=[])
         return [item["dn"] for item in ldap_conn.response]
     except ldap3.core.exceptions.LDAPException as e:
         print(f"Error getting groups for user {user_dn}: {e}")

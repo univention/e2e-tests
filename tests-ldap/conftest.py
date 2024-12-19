@@ -4,8 +4,7 @@
 import os
 
 import pytest
-from env_vars import EnvConfig
-from kubernetes import client, config
+from kubernetes import client
 from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
 
@@ -27,15 +26,9 @@ def k8s():
 
 
 @pytest.fixture(scope="session")
-def env(k8s, release_name):
-    """Provide an instance of EnvConfig."""
-    return EnvConfig(k8s.namespace, release_name)
-
-
-@pytest.fixture(scope="session")
-def k8s_api(env):
+def k8s_api(k8s):
     """Initialize and return Kubernetes API client."""
-    return env.k8s_api
+    return client.CoreV1Api()
 
 
 @pytest.fixture(scope="session")
