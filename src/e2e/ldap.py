@@ -37,6 +37,7 @@ class LDAPServer:
         host: str,
         bind_dn: str,
         bind_password: str,
+        base_dn: str,
         port: int | None = None,
         client_strategy="SYNC",
     ):
@@ -45,6 +46,7 @@ class LDAPServer:
         self.port = port
         self.bind_dn = bind_dn
         self.bind_password = bind_password
+        self.base_dn = base_dn
         self.server = Server(host=self.host, port=self.port, get_info="ALL", connect_timeout=1)
         self.client_strategy = client_strategy
 
@@ -67,7 +69,7 @@ class LDAPServer:
         try:
             with self.connect() as conn:
                 conn.search(
-                    "dc=univention-organization,dc=intranet",
+                    self.base_dn,
                     "(objectClass=*)",
                     search_scope="BASE",
                     attributes=["contextCSN"],
@@ -103,18 +105,8 @@ class LdapDeployment:
         self.notifier_pod_name = self._apply_release_prefix("ldap-notifier-0")
         self._discover_from_cluster()
         servers = [
-            LDAPServer(
-                name="primary_0",
-                host=self._uri_for_pod(self.primary_0_pod_name),
-                bind_dn=self.admin_dn,
-                bind_password=self.admin_password,
-            ),
-            LDAPServer(
-                name="primary_1",
-                host=self._uri_for_pod(self.primary_1_pod_name),
-                bind_dn=self.admin_dn,
-                bind_password=self.admin_password,
-            ),
+            self._create_server("primary_0", self.primary_0_pod_name),
+            self._create_server("primary_1", self.primary_1_pod_name),
         ]
         self.servers = {server.name: server for server in servers}
 
@@ -149,6 +141,16 @@ class LdapDeployment:
             target_type=target_type,
         )
         return f"ldap://{host}:{port}"
+
+    def _create_server(self, name, pod_name) -> LDAPServer:
+        server = LDAPServer(
+            name=name,
+            host=self._uri_for_pod(pod_name),
+            bind_dn=self.admin_dn,
+            bind_password=self.admin_password,
+            base_dn=self.base_dn,
+        )
+        return server
 
     def all_primaries_reachable(self):
         for server in self.servers.values():
