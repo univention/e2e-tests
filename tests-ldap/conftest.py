@@ -41,24 +41,9 @@ def k8s_configure_client():
 
 
 @pytest.fixture(scope="session")
-def env():
+def env(k8s):
     """Provide an instance of EnvConfig."""
-    return EnvConfig()
-
-
-@pytest.fixture(scope="session")
-def k8s_namespace():
-    """
-    The Kubernetes Namespace to use when interacting with the cluster.
-
-    The namespace is selected from the currently active context. Inspect and
-    prepare via ``kubens``.
-    """
-    _, active_context = config.list_kube_config_contexts()
-    namespace_from_context = active_context["context"]["namespace"]
-    namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
-    print("namespace:", namespace)
-    return namespace
+    return EnvConfig(k8s.namespace)
 
 
 @pytest.fixture(scope="session")
@@ -75,7 +60,7 @@ def k8s_apps_api():
 
 
 @pytest.fixture
-def k8s_chaos(k8s_namespace):
+def k8s_chaos(k8s):
     """
     Returns a configured `ChaosMeshFixture` instance.
 
@@ -83,7 +68,7 @@ def k8s_chaos(k8s_namespace):
     clean up the Kubernetes resources at the end of the test case.
     """
     client = DynamicClient(ApiClient())
-    chaos_mesh = ChaosMeshFixture(client, k8s_namespace)
+    chaos_mesh = ChaosMeshFixture(client, k8s.namespace)
     yield chaos_mesh
     chaos_mesh.cleanup()
 
@@ -92,7 +77,7 @@ def create_ldap_connection(k8s, pod_name: str, local_port: int, env):
     """Create a new LDAP connection with port forwarding."""
     try:
         pod_port = 389
-        hostname, port = k8s.port_forward_if_needed(pod_name, env.k8s_namespace, pod_port, local_port)
+        hostname, port = k8s.port_forward_if_needed(pod_name, pod_port, local_port)
         uri = f"ldap://{hostname}:{port}"
         server = ldap3.Server(host=uri, connect_timeout=5)
         conn = ldap3.Connection(
@@ -116,7 +101,7 @@ def ldap_primary_0(k8s, k8s_api, env):
     local_port = 3890
 
     def get_connection():
-        wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
+        wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
         return create_ldap_connection(k8s, pod_name, local_port, env)
 
     return get_connection
@@ -129,7 +114,7 @@ def ldap_primary_1(k8s, k8s_api, env):
     local_port = 3891
 
     def get_connection():
-        wait_for_pod_ready(k8s_api, pod_name, env.k8s_namespace)
+        wait_for_pod_ready(k8s_api, pod_name, k8s.namespace)
         return create_ldap_connection(k8s, pod_name, local_port, env)
 
     return get_connection

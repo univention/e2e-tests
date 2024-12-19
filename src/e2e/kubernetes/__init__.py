@@ -1,5 +1,8 @@
 import logging
+import os
 import time
+
+from kubernetes import config
 
 from .port_forward import PortForwardingManager
 
@@ -54,31 +57,58 @@ class KubernetesCluster:
 
     def __init__(self):
         self.port_forwarding = PortForwardingManager()
+        self.namespace = discover_namespace()
         if not self.direct_access:
             self.port_forwarding.start_monitoring()
 
     def port_forward_if_needed(
         self,
         target_name: str,
-        target_namespace: str,
         target_port: int,
         local_port: int,
-        target_type: str = "pod"
+        target_type: str = "pod",
+        target_namespace: str | None = None,
     ) -> tuple[str, int]:
         if self.direct_access:
             return target_name, target_port
         else:
-            self.port_forwarding.add(
-                target_namespace,
+            return self.port_forward(
                 target_name,
-                local_port,
                 target_port,
+                local_port,
                 target_type,
+                target_namespace,
             )
-            # TODO: Give kubectl a chance to have the socket ready. Better
-            # would be a check if the Socket can be reached or similar.
-            time.sleep(1)
-            return "localhost", local_port
+
+    def port_forward(
+        self,
+        target_name: str,
+        target_port: int,
+        local_port: int,
+        target_type: str = "pod",
+        target_namespace: str | None = None,
+    ) -> tuple[str, int]:
+        if target_namespace is None:
+            target_namespace = self.namespace
+        self.port_forwarding.add(
+            target_namespace,
+            target_name,
+            local_port,
+            target_port,
+            target_type,
+        )
+        # TODO: Give kubectl a chance to have the socket ready. Better
+        # would be a check if the Socket can be reached or similar.
+        time.sleep(1)
+        return "localhost", local_port
 
     def cleanup(self):
         self.port_forwarding.stop_monitoring()
+
+
+def discover_namespace():
+    _, active_context = config.list_kube_config_contexts()
+    namespace_from_context = active_context["context"]["namespace"]
+    namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
+    print("namespace:", namespace)
+    return namespace

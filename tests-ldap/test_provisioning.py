@@ -70,8 +70,6 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
 def consumer(k8s):
     host, port = k8s.port_forward_if_needed(
         target_name="provisioning-api",
-        # TODO: use the namespace from k8s
-        target_namespace="default",
         # TODO: port handling
         target_port=80,
         local_port=8100,
@@ -97,7 +95,7 @@ def consumer(k8s):
     consumer_thread.join()
 
 
-def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s_namespace, ldap, consumer):
+def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consumer):
     k8s_chaos.pod_kill(label_selectors=LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=5)
     wait_until(ldap.all_primaries_reachable, True, timeout=40)
@@ -106,7 +104,7 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s_namespace, lda
     conn = primary.conn
     user_dn, new_description = change_administrator_description(faker, conn)
 
-    wait_until_udm_listener_processed_change(user_dn, k8s_namespace)
+    wait_until_udm_listener_processed_change(user_dn, k8s.namespace)
 
     messages = []
     expected_number_of_messages = 1
@@ -139,7 +137,7 @@ def change_administrator_description(faker, conn):
     return user_dn, new_description
 
 
-def wait_until_udm_listener_processed_change(user_dn, k8s_namespace):
+def wait_until_udm_listener_processed_change(user_dn, namespace):
     # The udm-listener will sometimes crash and need time to start again.
     # Checking the container status is not good enough, because it may start in
     # a state where the ldap-server and/or ldap-notifier are not yet reachable.
@@ -147,7 +145,7 @@ def wait_until_udm_listener_processed_change(user_dn, k8s_namespace):
     log.info("Waiting until the udm-listener got the ldap update.")
     wait_until_pod_log(
         pod_name="provisioning-udm-listener-0",
-        namespace=k8s_namespace,
+        namespace=namespace,
         expected_fragment=f"ldap_listener: [ modify ] dn: '{user_dn}'",
     )
 
