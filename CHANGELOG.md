@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.21.0...v0.22.0) (2024-12-20)
+
+
+### Features
+
+* upgrade UCS base image to 2024-12-12 ([8b8c171](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8b8c171ba12d3eec7a704ddabd30c80aff61f03c))
+
 ## [0.21.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.20.1...v0.21.0) (2024-12-16)
 
 
