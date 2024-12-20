@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
-FROM mcr.microsoft.com/playwright/python:v1.37.0-jammy as build
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble as build
 WORKDIR /e2e/
 COPY ./Pipfile .
 COPY ./Pipfile.lock .
