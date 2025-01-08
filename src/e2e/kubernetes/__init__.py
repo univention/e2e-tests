@@ -182,6 +182,24 @@ class KubernetesCluster:
         except ApiException as e:
             raise RuntimeError(f"Failed to get pod logs: {e}")
 
+    def scale_stateful_set(self, stateful_set_name: str, replicas: int, namespace: str | None = None):
+        if not namespace:
+            namespace = self.namespace
+        api = client.AppsV1Api()
+        print(f"Scaling StatefulSet {stateful_set_name} to {replicas} replicas ...")
+        patch_replicas = [
+            {
+                "op": "replace",
+                "path": "/spec/replicas",
+                "value": replicas,
+            }
+        ]
+        api.patch_namespaced_stateful_set(
+            name=stateful_set_name,
+            namespace=namespace,
+            body=patch_replicas,
+        )
+
     def wait_for_pod_ready(self, pod_name: str, namespace: str | None = None, timeout: int = 300):
         if not namespace:
             namespace = self.namespace

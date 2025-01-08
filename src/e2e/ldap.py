@@ -107,6 +107,7 @@ class LdapDeployment:
         self.primary_0_pod_name = add_release_prefix("ldap-server-primary-0", self.release_name)
         self.primary_1_pod_name = add_release_prefix("ldap-server-primary-1", self.release_name)
         self.notifier_pod_name = add_release_prefix("ldap-notifier-0", self.release_name)
+        self.notifier_stateful_set_name = add_release_prefix("ldap-notifier", self.release_name)
         self._discover_from_cluster()
         servers = [
             self._create_server("primary_0", self.primary_0_pod_name),
