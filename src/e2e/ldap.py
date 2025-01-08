@@ -8,6 +8,7 @@ import ldap3.core.exceptions
 from kubernetes import client
 from ldap3 import Connection, Server
 
+from e2e.helm import add_release_prefix
 from e2e.kubernetes import KubernetesCluster
 
 log = logging.getLogger(__name__)
@@ -103,9 +104,9 @@ class LdapDeployment:
     def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
         self.release_name = release_name
-        self.primary_0_pod_name = self._apply_release_prefix("ldap-server-primary-0")
-        self.primary_1_pod_name = self._apply_release_prefix("ldap-server-primary-1")
-        self.notifier_pod_name = self._apply_release_prefix("ldap-notifier-0")
+        self.primary_0_pod_name = add_release_prefix("ldap-server-primary-0", self.release_name)
+        self.primary_1_pod_name = add_release_prefix("ldap-server-primary-1", self.release_name)
+        self.notifier_pod_name = add_release_prefix("ldap-notifier-0", self.release_name)
         self._discover_from_cluster()
         servers = [
             self._create_server("primary_0", self.primary_0_pod_name),
@@ -114,7 +115,7 @@ class LdapDeployment:
         self.servers = {server.name: server for server in servers}
 
     def _discover_from_cluster(self):
-        config_map_name = self._apply_release_prefix("ldap-server")
+        config_map_name = add_release_prefix("ldap-server", self.release_name)
         v1 = client.CoreV1Api()
         config_map = v1.read_namespaced_config_map(
             name=config_map_name,
@@ -126,7 +127,7 @@ class LdapDeployment:
         self.users_container_dn = f"cn=users,{self.base_dn}"
         self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
-        secret_name = self._apply_release_prefix("ldap-server-credentials")
+        secret_name = add_release_prefix("ldap-server-credentials", self.release_name)
         secret = v1.read_namespaced_secret(
             name=secret_name,
             namespace=self._k8s.namespace,
@@ -154,7 +155,7 @@ class LdapDeployment:
             client_strategy = ldap3.RESTARTABLE
         else:
             client_strategy = DEFAULT_CLIENT_STRATEGY
-        service_name = self._apply_release_prefix("ldap-server-primary")
+        service_name = add_release_prefix("ldap-server-primary", self.release_name)
         server = self._create_server(
             name=role,
             pod_name=service_name,
@@ -162,11 +163,6 @@ class LdapDeployment:
             target_type="service",
         )
         return server
-
-    def _apply_release_prefix(self, name):
-        if not self.release_name or self.release_name == name:
-            return name
-        return f"{self.release_name}-{name}"
 
     def _create_server(
         self,
