@@ -64,6 +64,19 @@ def cleanup_ldap(ldap: LdapDeployment):
     print("Finished cleanup")
 
 
+@pytest.fixture(autouse=True)
+def disable_ldap_notifier(k8s, ldap):
+    """
+    Scales the ldap-notifier down to zero during the test.
+
+    This is required because of the shared volume. Otherwise the ldap server
+    won't start again in the worst case.
+    """
+    k8s.scale_stateful_set(ldap.notifier_stateful_set_name, replicas=0)
+    yield
+    k8s.scale_stateful_set(ldap.notifier_stateful_set_name, replicas=1)
+
+
 @pytest.mark.usefixtures("cleanup_ldap")
 def test_ldap_mirror_mode_robustness(k8s: KubernetesCluster, ldap: LdapDeployment):
     """Test LDAP mirror mode robustness under pod failure."""
@@ -102,7 +115,6 @@ def test_ldap_mirror_mode_robustness(k8s: KubernetesCluster, ldap: LdapDeploymen
 
     print(f"\nDeleting PVC and killing pod: {ldap.primary_0_pod_name}")
     k8s.delete_pod_pvc(ldap.primary_0_pod_name)
-    k8s.delete_pod(ldap.notifier_pod_name)
 
     print(f"\nMoving second batch of {NUM_USERS_TO_MOVE} users between groups...")
     second_batch_changes = move_random_users_between_groups(ldap, conn_primary_1, users, groups, NUM_USERS_TO_MOVE)
