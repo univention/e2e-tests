@@ -20,6 +20,9 @@ requirements towards the deployment.
 1. `kubectl` version `v1.30.0` or later. The test suite depends on the process
    to exit if the target of a port forward is gone.
 
+2. Port forwards start at port `3890`. Compare
+   `./src/e2e/kubernetes/port_forward.py`.
+
 ### Setup and Configuration
 
 1. Set required environment variables:
