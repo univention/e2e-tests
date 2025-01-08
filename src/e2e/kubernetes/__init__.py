@@ -52,6 +52,15 @@ class KubernetesCluster:
       implemented when needed.
     """
 
+    # The timeout values are tweaked to suite our development cluster.
+    # Different target clusters may require adjustments.
+
+    LDAP_READY_TIMEOUT = 120
+    """Reasonable time to wait for an ldap pod to become available again."""
+
+    POD_REMOVED_TIMEOUT = 5
+    """Time to wait for a Pod to be removed when using a minimal grace period."""
+
     direct_access = False
     """Flag to indicate if direct access into the cluster resources is possible."""
 
