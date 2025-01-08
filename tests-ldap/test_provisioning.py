@@ -17,6 +17,9 @@ from univention.provisioning.models import MessageProcessingStatus, RealmTopic
 
 log = logging.getLogger(__name__)
 
+LDAP_READY_TIMEOUT = 120
+POD_REMOVED_TIMEOUT = 5
+
 
 async def users_consumer(messages: queue.Queue, api_url: str, username: str, password: str):
     realms_topics = [RealmTopic(realm="udm", topic="users/user")]
@@ -90,8 +93,8 @@ def consumer(k8s, provisioning_api: ProvisioningApi):
 
 def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consumer):
     k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
-    wait_until(ldap.all_primaries_reachable, False, timeout=5)
-    wait_until(ldap.all_primaries_reachable, True, timeout=40)
+    wait_until(ldap.all_primaries_reachable, False, timeout=POD_REMOVED_TIMEOUT)
+    wait_until(ldap.all_primaries_reachable, True, timeout=LDAP_READY_TIMEOUT)
 
     primary = ldap.get_server_for_primary_service()
     conn = primary.connect()
