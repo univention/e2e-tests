@@ -15,6 +15,11 @@ requirements towards the deployment.
 
 ## Common
 
+### Special requirements
+
+1. `kubectl` version `v1.30.0` or later. The test suite depends on the process
+   to exit if the target of a port forward is gone.
+
 ### Setup and Configuration
 
 1. Set required environment variables:
@@ -37,6 +42,20 @@ requirements towards the deployment.
    pipenv shell
    ```
 
+### Running the tests
+
+Suggested parameters to run the tests:
+
+```bash
+pytest -lvs --log-cli-level=info tests-ldap/${TEST_MODULE}
+```
+
+- `--log-cli-level` allows to show logging output from the test run. Setting
+  this to `debug` helps for troubleshooting.
+
+- `-lvs` ensures that the output is immediately visible and not captured (`s`)
+  and that local variables are shown in case of errors.
+
 ## Test Scenario `test_ldap_ha.py`
 
 The test performs the following key operations:
@@ -57,7 +76,7 @@ The test performs the following key operations:
 Execute the test file using pytest:
 
 ```bash
-pytest -lvs tests-ldap/test_ldap_ha.py
+pytest -lvs --log-cli-level=info tests-ldap/test_ldap_ha.py
 ```
 
 ### Configuration Parameters
