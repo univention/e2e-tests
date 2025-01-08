@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.22.0...v0.23.0) (2025-01-08)
+
+
+### Features
+
+* guardian-ui test ([95f05e0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/95f05e085ae3b0d6635405ca7d1e7b94414d6f37))
+
 ## [0.22.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.21.0...v0.22.0) (2024-12-20)
 
 
