@@ -8,8 +8,10 @@ import time
 
 import pytest
 from kubernetes import client, watch
+from kubernetes.client.exceptions import ApiException
 from ldap3 import MODIFY_REPLACE
 
+from e2e.helm import add_release_prefix
 from e2e.provisioning import ProvisioningApi
 from e2e.util import StoppableAsyncThread, wait_until
 from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
@@ -91,7 +93,7 @@ def consumer(k8s, provisioning_api: ProvisioningApi):
     consumer_thread.join()
 
 
-def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consumer):
+def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consumer, release_name):
     k8s_chaos.pod_kill(label_selectors=ldap.LABELS_ACTIVE_PRIMARY_LDAP_SERVER)
     wait_until(ldap.all_primaries_reachable, False, timeout=POD_REMOVED_TIMEOUT)
     wait_until(ldap.all_primaries_reachable, True, timeout=LDAP_READY_TIMEOUT)
@@ -100,7 +102,14 @@ def test_provisioning_messages_are_consumed(faker, k8s_chaos, k8s, ldap, consume
     conn = primary.connect()
     new_description = change_user_description(faker, conn, ldap.administrator_dn)
 
-    wait_until_udm_listener_processed_change(ldap.administrator_dn, k8s.namespace)
+    # TODO: Nubus is inconsistent with the nameOverride for this component,
+    # using the fallback name interim.
+    listener_pod_name = add_release_prefix("provisioning-udm-listener-0", release_name)
+    listener_pod_fallback_name = add_release_prefix("provisioning-listener-0", release_name)
+    try:
+        wait_until_udm_listener_processed_change(ldap.administrator_dn, k8s.namespace, listener_pod_name)
+    except ApiException:
+        wait_until_udm_listener_processed_change(ldap.administrator_dn, k8s.namespace, listener_pod_fallback_name)
 
     messages = []
     expected_number_of_messages = 1
@@ -129,14 +138,14 @@ def change_user_description(faker, conn, user_dn):
     return new_description
 
 
-def wait_until_udm_listener_processed_change(user_dn, namespace):
+def wait_until_udm_listener_processed_change(user_dn, namespace, pod_name):
     # The udm-listener will sometimes crash and need time to start again.
     # Checking the container status is not good enough, because it may start in
     # a state where the ldap-server and/or ldap-notifier are not yet reachable.
     # In this case it will try to re-connect with an internal back-off time.
     log.info("Waiting until the udm-listener got the ldap update.")
     wait_until_pod_log_contains(
-        pod_name="provisioning-udm-listener-0",
+        pod_name=pod_name,
         namespace=namespace,
         expected_fragment=f"ldap_listener: [ modify ] dn: '{user_dn}'",
     )
