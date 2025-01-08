@@ -23,6 +23,20 @@ requirements towards the deployment.
 2. Port forwards start at port `3890`. Compare
    `./src/e2e/kubernetes/port_forward.py`.
 
+### Known limitations
+
+- The ldap notifier can be in a broken state after running `test_ldap_ha.py`. In
+  this case the notifier is sheduled on the Node of the second primary but
+  trying to use the volume of the first primary.
+
+  A fresh deployment is needed in order to be able to run the tests again.
+
+- The provisioning udm listener may be out of sync after `test_ldap_ha.py` has
+  been run together with a recovery. It will not process any changes made to the
+  ldap directory.
+
+  A fresh deployment is needed in order to be able to run the tests again.
+
 ### Setup and Configuration
 
 1. Set required environment variables:
