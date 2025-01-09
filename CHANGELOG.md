@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.24.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.23.0...v0.24.0) (2025-01-09)
+
+
+### Features
+
+* Add "ChaosMeshFixture.pod_failure" ([5f8e350](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/5f8e3507fed1ef7572256b15cffb0e9e4feae231))
+* Add "Experiment.wait_until_running" ([22e2511](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/22e25118b3b557c2d72952ea1be68753b57a7ce3))
+* Add "k8s.scale_stateful_set" ([dba0087](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/dba00878fd6908ba7eda754ea528baa4d1da2eb0))
+* Add "kubernetes" as a new dependency ([8b938db](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8b938dbb94894b6b4d9d295c7768286d86705bfe))
+* Add a support fixture for Chaos Mesh called "chaos" ([c53716d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c53716d06c5ff1c62acd96d33a5455e171fdfa63))
+* Add fixtures to configure the Kubernetes client ([6822eb6](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/6822eb62046e42670629d8f2c023ee14ef23eff9))
+* Add LDAPFixture to abstract the openldap deployment ([d30e461](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d30e461f13781244feb175b4d4b62d4024ca2f25))
+* Add provisioning_api fixture to provide details about the deployment ([9cd1bec](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/9cd1bece26d3bfc2c1e4e73d4c1e47ad509bf393))
+* Add support to specify the release name via RELEASE_NAME env variable ([ac0b740](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/ac0b7406c53c71c8c0fec426bbf5e3f5c39a8243))
+* Add utility function "add_release_prefix" ([0bb4238](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/0bb42382544278732af170ef0e081d065091a058))
+* Check that nothing is lost during ldap leader switch ([26cc24d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/26cc24dac2c32fbee09c29417d8aebf29eb78f6b))
+* Check that the new ldap leader has the correct contextCSN ([b3f8e2f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b3f8e2ffafd6f125632845e349b0ff351547bbc3))
+* Ensure that ldap test cases wait until all servers are ready ([7dad119](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/7dad119eda329766c9d146f9e71be6cf1dad1538))
+* Handle namespace via kubernetes fixture ([1000741](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/1000741a144b30c8978ed14d828d08498c3640d8))
+* Handle selection of the local port based on one starting number ([d8e98a8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d8e98a893e863b2fcf43b73610eecf5994f45217))
+* Increase timeout for ldap to start up again ([c9e4565](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c9e4565e8b56399ebc573ebfd796ea6f18d78f52))
+* LDAPFixture.all_servers_reachable ([b86c852](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b86c852ebbb6b521b66a1d16a913954b1aeb9f85))
+* Prepare a consumer fixture running the eventloop in a thread ([134fe7d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/134fe7de1de67fda0617af37661a366878abf02a))
+* Stable subprocess handling with output forwarding ([6877c93](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/6877c932db09cd4efb3eb8dab617910efcf91305))
+* Start test case simulating primary failure ([63d3c5a](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/63d3c5ab4610ce22c64cedddc715845fd747acc7))
+* Test consumer receives message through provisioning ([2e512af](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2e512af38e78e1f36727e192c001fc65eb724c9a))
+* Update to playwright version v1.49.1-noble ([89e1b45](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/89e1b4584a8ea22c8552abdb9a46bc9c3b3d4a9e))
+* Wait until the udm-listener did process the update ([9fc4cdf](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/9fc4cdf1bd67f05e8996c0806a3d48c0bd8e3b03))
+
+
+### Bug Fixes
+
+* Add credential discovery into provisioning api fixture ([2bb6265](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2bb6265882b3c14bb6982cfed0186ed190cdb465))
+* Add time to allow kubectl to establish the forwarding ([e1a4cdf](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/e1a4cdf64724ba5cd067e69ae4469b72fc344364))
+* Also delete the ldap-notifier after deleting the server's pvcs ([8c0ae51](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8c0ae51ec0541e476a4401b0f246d680a3cac620))
+* Correctly support release name handling for the provisioning udm listener ([d86050b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d86050b8dfb168d627cbb93936863e69d497db36))
+* Import ldap as pyldap to work around naming clash with the ldap fixture ([6c652ca](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/6c652ca823b89a9286a2d8aa4896409333ac9022))
+* Increase timeout when waiting for listener logs ([f89b757](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f89b757d3e599a4f8d05f73f4017063b989b70fc))
+* Provide discovered target namespace via logging ([2dd4aa0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/2dd4aa0a4dae7ebd993f3a448c8683ce9b885837))
+* Scale the notifier to zero in the ldap ha test ([366f712](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/366f71274f93c060281eb3604a9d35a5e70658ee))
+* Use _create_server utility method in all cases ([9bcdf64](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/9bcdf64b29766bd592b2c8416e007e0350ff5352))
+* Use restartable connection strategy for immediately bound ldap connection ([bcd335d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bcd335ddfaab5c63db584600fb53f4b1b8c9f500))
+
 ## [0.23.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.22.0...v0.23.0) (2025-01-08)
 
 
