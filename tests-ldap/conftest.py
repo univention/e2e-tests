@@ -8,20 +8,7 @@ from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
 
 from e2e.chaos import ChaosMeshFixture
-from e2e.kubernetes import KubernetesCluster
 from e2e.ldap import LdapDeployment
-
-
-@pytest.fixture(scope="session")
-def k8s():
-    """
-    Kubernetes abstraction.
-
-    Returns a utility to interact with a Kubernetes cluster.
-    """
-    cluster = KubernetesCluster()
-    yield cluster
-    cluster.cleanup()
 
 
 @pytest.fixture

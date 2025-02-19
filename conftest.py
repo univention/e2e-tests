@@ -6,6 +6,8 @@ import random
 
 import pytest
 
+from e2e.kubernetes import KubernetesCluster
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,3 +68,15 @@ def faker_seed(base_seed, request):
         seed = f"{base_seed}-{test_function_name}"
     logger.info("Generated faker seed unique to the test function is: %s", seed)
     return seed
+
+
+@pytest.fixture(scope="session")
+def k8s():
+    """
+    Kubernetes abstraction.
+
+    Returns a utility to interact with a Kubernetes cluster.
+    """
+    cluster = KubernetesCluster()
+    yield cluster
+    cluster.cleanup()
