@@ -62,3 +62,16 @@ def test_domain_service_user_accesses_udm_rest_api(
     udm = UDM(udm_rest_api_base_url, username, domain_service_user.password)
     with does_not_raise():
         udm.get_ldap_base()
+
+
+def test_domain_service_user_reads_user_object(
+    udm_rest_api_base_url: str,
+    domain_service_user: UserAndPassword,
+    ldap_base_dn: str,
+):
+    username = domain_service_user.user.properties["username"]
+    udm = UDM(udm_rest_api_base_url, username, domain_service_user.password)
+    users_module = udm.get("users/user")
+    administrator_dn = f"uid=Administrator,cn=users,{ldap_base_dn}"
+    with does_not_raise():
+        users_module.get(administrator_dn)
