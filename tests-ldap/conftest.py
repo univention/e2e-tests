@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
-import os
-
 import pytest
 from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
@@ -23,17 +21,6 @@ def k8s_chaos(k8s):
     chaos_mesh = ChaosMeshFixture(client, k8s.namespace)
     yield chaos_mesh
     chaos_mesh.cleanup()
-
-
-@pytest.fixture(scope="session")
-def release_name():
-    """
-    Discovers the release name based on the env variable RELEASE_NAME.
-
-    Will fallback to "nubus" if the variable is not set.
-    """
-    value = os.getenv("RELEASE_NAME", "nubus")
-    return value
 
 
 @pytest.fixture

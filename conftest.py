@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
+import os
 import random
 
 import pytest
@@ -68,6 +69,17 @@ def faker_seed(base_seed, request):
         seed = f"{base_seed}-{test_function_name}"
     logger.info("Generated faker seed unique to the test function is: %s", seed)
     return seed
+
+
+@pytest.fixture(scope="session")
+def release_name():
+    """
+    Discovers the release name based on the env variable RELEASE_NAME.
+
+    Will fallback to "nubus" if the variable is not set.
+    """
+    value = os.getenv("RELEASE_NAME", "nubus")
+    return value
 
 
 @pytest.fixture(scope="session")
