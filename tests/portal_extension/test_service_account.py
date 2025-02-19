@@ -6,9 +6,9 @@ from contextlib import nullcontext as does_not_raise
 from univention.admin.rest.client import UDM
 
 
-def test_service_account_for_portal_server_exists(udm, ldap_base_dn):
+def test_service_account_for_portal_server_exists(udm, portal, ldap_base_dn):
     users_module = udm.get("users/ldap")
-    svc_portal_server_dn = f"uid=svc-portal-server,cn=users,{ldap_base_dn}"
+    svc_portal_server_dn = f"uid={portal.service_account_username},cn=users,{ldap_base_dn}"
     with does_not_raise():
         users_module.get(svc_portal_server_dn)
 
