@@ -8,6 +8,7 @@ import random
 import pytest
 
 from e2e.kubernetes import KubernetesCluster
+from e2e.portal import PortalDeployment
 
 logger = logging.getLogger(__name__)
 
@@ -92,3 +93,11 @@ def k8s():
     cluster = KubernetesCluster()
     yield cluster
     cluster.cleanup()
+
+
+@pytest.fixture
+def portal(k8s, release_name):
+    """
+    Returns an instance of `PortalDeployment`.
+    """
+    return PortalDeployment(k8s, release_name)
