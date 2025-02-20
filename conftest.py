@@ -96,7 +96,7 @@ def k8s():
     cluster.cleanup()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def portal(k8s, release_name, stack_data):
     """
     Returns an instance of `PortalDeployment`.
@@ -104,7 +104,7 @@ def portal(k8s, release_name, stack_data):
     return PortalDeployment(k8s, release_name, stack_data)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def stack_data(k8s, release_name):
     """
     Returns an instance of `StackDataDeployment`.

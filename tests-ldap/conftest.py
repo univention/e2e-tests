@@ -23,7 +23,7 @@ def k8s_chaos(k8s):
     chaos_mesh.cleanup()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def ldap(k8s, release_name):
     """
     Returns an instance of `LdapDeployment`.

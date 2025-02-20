@@ -59,7 +59,7 @@ async def users_consumer(messages: queue.Queue, api_url: str, username: str, pas
                 messages.put(response, timeout=1)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def provisioning_api(k8s, release_name):
     return ProvisioningApi(k8s, release_name)
 
