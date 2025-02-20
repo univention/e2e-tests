@@ -135,13 +135,31 @@ def udm_rest_api_base_url(portal_base_url):
 
 
 @pytest.fixture(scope="session")
-def udm(udm_rest_api_base_url, admin_username, admin_password):
+def udm(udm_factory, admin_username, admin_password):
     """
     A configured instance of the UDM Rest API client.
     """
-    udm = UDM(udm_rest_api_base_url, admin_username, admin_password)
-    _verify_udm_rest_api_configuration(udm)
+    udm = udm_factory(admin_username, admin_password)
     return udm
+
+
+@pytest.fixture(scope="session")
+def udm_factory(udm_rest_api_base_url):
+    """
+    Returns a factory function to create a new UDM connection.
+
+    Example::
+
+       udm_factory("your-username", "your-password")
+
+    """
+
+    def factory(username, password) -> UDM:
+        udm = UDM(udm_rest_api_base_url, username, password)
+        _verify_udm_rest_api_configuration(udm)
+        return udm
+
+    return factory
 
 
 def _verify_udm_rest_api_configuration(udm):

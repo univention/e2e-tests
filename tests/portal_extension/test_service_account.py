@@ -3,8 +3,6 @@
 
 from contextlib import nullcontext as does_not_raise
 
-from univention.admin.rest.client import UDM
-
 
 def test_service_account_for_portal_server_exists(udm, portal, ldap_base_dn):
     users_module = udm.get("users/ldap")
@@ -13,8 +11,8 @@ def test_service_account_for_portal_server_exists(udm, portal, ldap_base_dn):
         users_module.get(svc_portal_server_dn)
 
 
-def test_can_read_users_from_udm_rest_api(udm_rest_api_base_url, portal, ldap_base_dn, k8s):
-    udm = UDM(udm_rest_api_base_url, portal.service_account_username, portal.service_account_password)
+def test_can_read_users_from_udm_rest_api(udm_factory, portal, ldap_base_dn, k8s):
+    udm = udm_factory(portal.service_account_username, portal.service_account_password)
     users_module = udm.get("users/user")
     administrator_dn = f"uid=Administrator,cn=users,{ldap_base_dn}"
     with does_not_raise():
