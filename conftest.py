@@ -9,6 +9,7 @@ import pytest
 
 from e2e.kubernetes import KubernetesCluster
 from e2e.portal import PortalDeployment
+from e2e.stack_data import StackDataDeployment
 
 logger = logging.getLogger(__name__)
 
@@ -96,8 +97,16 @@ def k8s():
 
 
 @pytest.fixture
-def portal(k8s, release_name):
+def portal(k8s, release_name, stack_data):
     """
     Returns an instance of `PortalDeployment`.
     """
-    return PortalDeployment(k8s, release_name)
+    return PortalDeployment(k8s, release_name, stack_data)
+
+
+@pytest.fixture
+def stack_data(k8s, release_name):
+    """
+    Returns an instance of `StackDataDeployment`.
+    """
+    return StackDataDeployment(k8s, release_name)
