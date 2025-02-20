@@ -8,7 +8,7 @@ import ldap3.core.exceptions
 from kubernetes import client
 from ldap3 import Connection, Server
 
-from e2e.helm import add_release_prefix
+from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
 
 log = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ class LdapServer:
         return context_csn
 
 
-class LdapDeployment:
+class LdapDeployment(BaseDeployment):
     """
     Represents the openldap deployment.
 
@@ -104,10 +104,10 @@ class LdapDeployment:
     def __init__(self, k8s: KubernetesCluster, release_name):
         self._k8s = k8s
         self.release_name = release_name
-        self.primary_0_pod_name = add_release_prefix("ldap-server-primary-0", self.release_name)
-        self.primary_1_pod_name = add_release_prefix("ldap-server-primary-1", self.release_name)
-        self.notifier_pod_name = add_release_prefix("ldap-notifier-0", self.release_name)
-        self.notifier_stateful_set_name = add_release_prefix("ldap-notifier", self.release_name)
+        self.primary_0_pod_name = self.add_release_prefix("ldap-server-primary-0")
+        self.primary_1_pod_name = self.add_release_prefix("ldap-server-primary-1")
+        self.notifier_pod_name = self.add_release_prefix("ldap-notifier-0")
+        self.notifier_stateful_set_name = self.add_release_prefix("ldap-notifier")
         self._discover_from_cluster()
         servers = [
             self._create_server("primary_0", self.primary_0_pod_name),
@@ -116,7 +116,7 @@ class LdapDeployment:
         self.servers = {server.name: server for server in servers}
 
     def _discover_from_cluster(self):
-        config_map_name = add_release_prefix("ldap-server", self.release_name)
+        config_map_name = self.add_release_prefix("ldap-server")
         v1 = client.CoreV1Api()
         config_map = v1.read_namespaced_config_map(
             name=config_map_name,
@@ -128,7 +128,7 @@ class LdapDeployment:
         self.users_container_dn = f"cn=users,{self.base_dn}"
         self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
-        secret_name = add_release_prefix("ldap-server-credentials", self.release_name)
+        secret_name = self.add_release_prefix("ldap-server-credentials")
         secret = v1.read_namespaced_secret(
             name=secret_name,
             namespace=self._k8s.namespace,
@@ -156,7 +156,7 @@ class LdapDeployment:
             client_strategy = ldap3.RESTARTABLE
         else:
             client_strategy = DEFAULT_CLIENT_STRATEGY
-        service_name = add_release_prefix("ldap-server-primary", self.release_name)
+        service_name = self.add_release_prefix("ldap-server-primary")
         server = self._create_server(
             name=role,
             pod_name=service_name,

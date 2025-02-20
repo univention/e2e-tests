@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
+from e2e.helm import add_release_prefix
 from e2e.kubernetes import KubernetesCluster
 
 
@@ -20,3 +21,6 @@ class BaseDeployment:
 
         This shall be implemented in sub classes.
         """
+
+    def add_release_prefix(self, name: str) -> str:
+        return add_release_prefix(name, self.release_name)
