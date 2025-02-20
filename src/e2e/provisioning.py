@@ -4,8 +4,6 @@
 
 from base64 import b64decode
 
-from kubernetes import client
-
 from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
 
@@ -23,12 +21,7 @@ class ProvisioningApi(BaseDeployment):
 
     def _discover_from_cluster(self):
         secret_name = self.add_release_prefix("provisioning-api-credentials")
-        v1 = client.CoreV1Api()
-
-        secret = v1.read_namespaced_secret(
-            name=secret_name,
-            namespace=self._k8s.namespace,
-        )
+        secret = self._k8s.get_secret(secret_name)
 
         self.admin_username = b64decode(secret.data["ADMIN_USERNAME"]).decode()
         self.admin_password = b64decode(secret.data["ADMIN_PASSWORD"]).decode()

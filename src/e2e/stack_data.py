@@ -4,7 +4,6 @@
 from base64 import b64decode
 
 import yaml
-from kubernetes import client
 
 from e2e.base import BaseDeployment
 
@@ -19,11 +18,6 @@ class StackDataDeployment(BaseDeployment):
 
     def _discover_from_cluster(self):
         template_context_name = self.add_release_prefix(self.template_context_secret_base_name)
-        v1 = client.CoreV1Api()
-
-        secret = v1.read_namespaced_secret(
-            name=template_context_name,
-            namespace=self._k8s.namespace,
-        )
+        secret = self._k8s.get_secret(template_context_name)
         template_context_yaml = b64decode(secret.data[self.template_context_file_name]).decode()
         self.template_context = yaml.safe_load(template_context_yaml)

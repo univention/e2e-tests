@@ -226,6 +226,20 @@ class KubernetesCluster:
             time.sleep(5)
             print(".", end="", flush=True)
 
+    def get_secret(self, name: str, namespace: str | None = None):
+        """
+        Retrieve a `Secret` from the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.CoreV1Api()
+        secret = v1.read_namespaced_secret(
+            name=name,
+            namespace=namespace or self.namespace,
+        )
+        return secret
+
 
 def discover_namespace():
     _, active_context = config.list_kube_config_contexts()

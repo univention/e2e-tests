@@ -129,11 +129,7 @@ class LdapDeployment(BaseDeployment):
         self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
         secret_name = self.add_release_prefix("ldap-server-credentials")
-        secret = v1.read_namespaced_secret(
-            name=secret_name,
-            namespace=self._k8s.namespace,
-        )
-
+        secret = self._k8s.get_secret(secret_name)
         self.admin_password = b64decode(secret.data["adminPassword"]).decode()
 
     def all_primaries_reachable(self):
