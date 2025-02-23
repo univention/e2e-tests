@@ -47,6 +47,7 @@ portal_hostname=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-
 portal_base_url=https://$portal_hostname
 keycloak_base_url=https://$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak" -o jsonpath="{.spec.rules[0].host}")
 ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
+keycloak_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-credentials" -o jsonpath="{.data.admin_password}" | base64 -d)
 
 email_test_api_base_url=$(kubectl get --ignore-not-found ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
 if [ -n "$email_test_api_base_url" ]
@@ -95,7 +96,7 @@ else
 fi
 
 
-export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --keycloak-base-url=${keycloak_base_url} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
+export PYTEST_ADDOPTS="--portal-base-url=${portal_base_url} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --keycloak-base-url=${keycloak_base_url} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
 
 
 echo

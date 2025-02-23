@@ -62,6 +62,11 @@ class LoginPage(PortalPage):
         self.cookie_dialog = self.page.locator(".cookie-banner .dialog")
         self.forgot_password_link = self.page.get_by_role("link", name="Forgot password")
 
+        # Ad-hoc provisioning options
+        self.ad_hoc_provisioning_button = self.page.locator("#kc-social-providers").get_by_role(
+            "link", name="OIDC test"
+        )
+
     def navigate(self, cookies_accepted=False):
         home_page = HomePageLoggedOut(self.page)
         home_page.navigate(cookies_accepted=cookies_accepted)
