@@ -500,6 +500,62 @@ class AdHocProvisioning:
             else:
                 self.logger.info(f"Client mapper {mapper['name']} already exists, skipping")
 
+    def remove_dummy_realm(self) -> None:
+        """Remove the dummy realm created during setup."""
+        self.logger.info(f"Removing dummy realm: {self.dummy_realm}")
+        try:
+            self.kc_master.delete_realm(self.dummy_realm)
+            self.logger.info(f"Successfully removed dummy realm: {self.dummy_realm}")
+        except KeycloakError as e:
+            if e.response_code == 404:
+                self.logger.info(f"Dummy realm '{self.dummy_realm}' doesn't exist, nothing to remove")
+            else:
+                self.logger.error(f"Failed to remove dummy realm '{self.dummy_realm}': {e}")
+                raise
+
+    def remove_identity_provider(self) -> None:
+        """Remove the Identity Provider (IDP) from the existing realm."""
+        if not self.kc_existing:
+            self.kc_existing = self._create_keycloak_admin(self.existing_realm, "master")
+
+        idp_alias = f"oidc-{self.dummy_realm}"
+        self.logger.info(f"Removing identity provider: {idp_alias} from realm: {self.existing_realm}")
+
+        try:
+            self.kc_existing.delete_idp(idp_alias)
+            self.logger.info(f"Successfully removed identity provider: {idp_alias}")
+        except KeycloakError as e:
+            if e.response_code == 404:
+                self.logger.info(f"Identity provider '{idp_alias}' doesn't exist, nothing to remove")
+            else:
+                self.logger.error(f"Failed to remove identity provider '{idp_alias}': {e}")
+                raise
+
+    def remove_authentication_flow(self) -> None:
+        """Remove the authentication flow from the existing realm."""
+        if not self.kc_existing:
+            self.kc_existing = self._create_keycloak_admin(self.existing_realm, "master")
+
+        flow_alias = "adhoc"
+        self.logger.info(f"Removing authentication flow: {flow_alias} from realm: {self.existing_realm}")
+
+        try:
+            # First, get all authentication flows to find the ID
+            flows = self.kc_existing.get_authentication_flows()
+            flow = next((f for f in flows if f["alias"] == flow_alias), None)
+
+            if flow:
+                flow_id = flow["id"]
+                self.kc_existing.connection.raw_delete(
+                    f"/admin/realms/{self.existing_realm}/authentication/flows/{flow_id}"
+                )
+                self.logger.info(f"Successfully removed authentication flow: {flow_alias}")
+            else:
+                self.logger.info(f"Authentication flow '{flow_alias}' doesn't exist, nothing to remove")
+        except KeycloakError as e:
+            self.logger.error(f"Failed to remove authentication flow '{flow_alias}': {e}")
+            raise
+
     def setup(self) -> None:
         """Main setup method to configure the ad-hoc federation."""
         try:
@@ -584,6 +640,18 @@ class AdHocProvisioning:
 
         except Exception as e:
             self.logger.error(f"Setup failed: {e}", exc_info=True)
+            raise
+
+    def cleanup(self) -> None:
+        """Main cleanup method to remove all federation components."""
+        try:
+            self.logger.info("Starting Keycloak federation cleanup")
+            self.remove_identity_provider()
+            self.remove_authentication_flow()
+            self.remove_dummy_realm()
+            self.logger.info("Keycloak federation cleanup completed successfully")
+        except Exception as e:
+            self.logger.error(f"Cleanup failed: {e}", exc_info=True)
             raise
 
 

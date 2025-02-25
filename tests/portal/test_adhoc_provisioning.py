@@ -29,6 +29,8 @@ def setup_ad_hoc_provisioning(
     ad_hoc_provisioning.setup()
     yield ad_hoc_provisioning
 
+    ad_hoc_provisioning.cleanup()
+
 
 @pytest.mark.xfail(reason="Keycloak does not support ad-hoc provisioning yet")
 @pytest.mark.parametrize(
