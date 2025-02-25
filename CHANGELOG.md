@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.24.0...v0.25.0) (2025-02-25)
+
+
+### Features
+
+* Ad-Hoc Provisioning Keycloak tests setup and login ([15e09ad](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/15e09ad494ab9b2a165b2a35d72b8ac3cdcff227))
+
 ## [0.24.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.23.0...v0.24.0) (2025-01-09)
 
 
