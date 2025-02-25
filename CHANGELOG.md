@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.25.0...v0.25.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* Add cleanup after Ad-Hoc Keycloak tests ([d36d44f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d36d44f4271379a6d1d59bef7adf19b11a9e27ec))
+
 ## [0.25.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.24.0...v0.25.0) (2025-02-25)
 
 
