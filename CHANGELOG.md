@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.25.1...v0.26.0) (2025-02-26)
+
+
+### Features
+
+* Bump ucs-base-image to use released apt sources ([d414db8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/d414db81d600f3aa037b7466b5bae5fa4a450a67))
+
 ## [0.25.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.25.0...v0.25.1) (2025-02-25)
 
 
