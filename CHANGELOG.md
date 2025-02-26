@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.26.0...v0.27.0) (2025-02-26)
+
+
+### Features
+
+* Remove xfail mark for Keycloak Ad Hoc Provisioning ([f46245c](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f46245c1b5753b77e8dfb3c588dc44fe88590240))
+
 ## [0.26.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.25.1...v0.26.0) (2025-02-26)
 
 
