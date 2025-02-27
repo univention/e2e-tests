@@ -31,7 +31,6 @@
 from pathlib import Path
 
 import pytest
-from playwright.sync_api import expect
 
 from umspages.portal.login_page import LoginPage
 
@@ -78,7 +77,7 @@ def screenshot_page(request, page):
 @pytest.mark.parametrize(
     "screenshot_page", [viewport_size_for_screenshots_1280_720, viewport_size_for_screenshots_1920_1080], indirect=True
 )
-class TestScreenshotsBase(object):
+class TestScreenshotsLogin(object):
     def test_login_form_en(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
@@ -93,6 +92,10 @@ class TestScreenshotsBase(object):
         page.get_by_role("menuitem", name="German (Deutsch)").click()
         page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
 
+
+@pytest.mark.screenshots
+@pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1280_720], indirect=True)
+class TestScreenshotsLoginBox(object):
     def test_login_form_box_en(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
