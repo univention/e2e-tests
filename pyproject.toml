@@ -41,6 +41,7 @@ markers = [
     "portal: tests for univention-portal",
     "saml: all tests that enforce SAML login. Other tests may also use SAML depending on the environment",
     "selfservice: tests for updating profile, change recovery email, selfservice portal, etc.",
+    "screenshots: tests to automatically create screenshots",
     "users: tests for user management console for admin users",
     "feature_toggle: tests for the feature toggle",
     "feature_toggle_left_sidebar: tests for the left sidebar feature toggle",
