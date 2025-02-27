@@ -46,6 +46,8 @@ def pytest_addoption(parser):
     parser.addoption(
         "--external-minio", action="store_true", default=False, help="Set if using an externally deployed minio"
     )
+    # Screenshots
+    parser.addoption("--screenshots-output-dir", default="screenshots", help="Output directory for screenshots")
 
 
 @pytest.fixture(scope="session")
