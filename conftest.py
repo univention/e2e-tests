@@ -31,6 +31,8 @@ def pytest_addoption(parser):
     parser.addoption("--release-duration", type=int, default=1, help="Blocks are released after this many minutes")
     parser.addoption("--realm", default="master", help="Realm to attempt logins at")
     parser.addoption("--randomly-seed", help="Seed to use for randomization.")
+    # Screenshots
+    parser.addoption("--screenshots-output-dir", default="screenshots", help="Output directory for screenshots")
 
 
 @pytest.fixture(scope="session")
