@@ -6,6 +6,7 @@ import os
 import time
 
 from kubernetes import client, config
+from kubernetes.client.models import V1Deployment
 from kubernetes.client.rest import ApiException
 
 from .port_forward import PortForwardingManager
@@ -239,6 +240,20 @@ class KubernetesCluster:
             namespace=namespace or self.namespace,
         )
         return secret
+
+    def get_deployment(self, name: str, namespace: str | None = None) -> V1Deployment:
+        """
+        Retrieve a `Deployment` from the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.AppsV1Api()
+        deployment = v1.read_namespaced_deployment(
+            name=name,
+            namespace=namespace or self.namespace,
+        )
+        return deployment
 
 
 def discover_namespace():

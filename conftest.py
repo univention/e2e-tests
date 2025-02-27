@@ -97,11 +97,11 @@ def k8s():
 
 
 @pytest.fixture(scope="session")
-def portal(k8s, release_name, stack_data):
+def portal(k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
     """
-    return PortalDeployment(k8s, release_name, stack_data)
+    return PortalDeployment(k8s, release_name)
 
 
 @pytest.fixture(scope="session")
