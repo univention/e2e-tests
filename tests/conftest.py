@@ -35,6 +35,7 @@ import pytest
 import requests
 
 from api.maildev import MaildevApi
+from umspages.portal.login_page import LoginPage
 from univention.admin.rest.client import UDM
 
 logger = logging.getLogger(__name__)
@@ -180,3 +181,10 @@ def external_email_domain(faker):
     """
     domain = f"{faker.domain_word()}.test"
     return domain
+
+
+@pytest.fixture()
+def navigate_to_login_page(page):
+    login_page = LoginPage(page)
+    login_page.navigate()
+    return page
