@@ -36,6 +36,7 @@ import pytest
 import requests
 
 from api.maildev import MaildevApi
+from umspages.portal.login_page import LoginPage
 from univention.admin.rest.client import UDM, NotFound
 
 logger = logging.getLogger(__name__)
@@ -338,3 +339,10 @@ def portal_link_list(request):
     """
     link_list = request.param
     return link_list
+
+
+@pytest.fixture()
+def navigate_to_login_page(page):
+    """Navigate to default (OIDC) login page"""
+    login_page = LoginPage(page)
+    login_page.navigate()
