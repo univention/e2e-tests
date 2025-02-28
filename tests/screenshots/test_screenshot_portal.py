@@ -28,49 +28,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from pathlib import Path
-
 import pytest
 
 from umspages.portal.login_page import LoginPage
 
-SCREENSHOT_SIZE = [
-    (1920, 1080),
-]
-
-SCREENSHOT_NAME_REPLACEMENTS = str.maketrans(
-    {
-        "[": "--",
-        "]": "",
-        "/": "-",
-    }
+from .conftest import (
+    screenshot_filename,
+    viewport_size_for_screenshots_1280_720,
+    viewport_size_for_screenshots_1920_1080,
 )
-
-
-def screenshot_filename(request, screenshots_output_dir, prefix: str = "") -> Path:
-    filename = request.node.name.translate(SCREENSHOT_NAME_REPLACEMENTS)
-    return Path(screenshots_output_dir, f"{prefix}{filename}.png")
-
-
-def set_viewport_size(page, width=1920, height=1080):
-    page.set_viewport_size({"width": width, "height": height})
-    return page
-
-
-def viewport_size_for_screenshots_1920_1080(page):
-    set_viewport_size(page)
-    return page
-
-
-def viewport_size_for_screenshots_1280_720(page):
-    set_viewport_size(page, 1280, 720)
-    return page
-
-
-@pytest.fixture
-def screenshot_page(request, page):
-    page = request.param(page)
-    return page
 
 
 @pytest.mark.screenshots
@@ -78,11 +44,12 @@ def screenshot_page(request, page):
     "screenshot_page", [viewport_size_for_screenshots_1280_720, viewport_size_for_screenshots_1920_1080], indirect=True
 )
 class TestScreenshotsLogin(object):
-    def test_login_form_en(self, screenshot_page, screenshots_output_dir, request):
+    def test_login_form_en(self, page, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
         page = login_page.page
-        page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
+        page.screenshot(path=screenshot_filename(
+            request, screenshots_output_dir))
 
     def test_login_form_de(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
@@ -90,18 +57,17 @@ class TestScreenshotsLogin(object):
         page = login_page.page
         page.get_by_role("button", name="languages").click()
         page.get_by_role("menuitem", name="German (Deutsch)").click()
-        page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
+        page.screenshot(path=screenshot_filename(
+            request, screenshots_output_dir))
 
-
-@pytest.mark.screenshots
-@pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1280_720], indirect=True)
-class TestScreenshotsLoginBox(object):
-    def test_login_form_box_en(self, screenshot_page, screenshots_output_dir, request):
+    def test_login_form_box(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
         page = login_page.page
-        login_box = page.get_by_text("English English German (Deutsch) Sign in to your account Username or email")
-        login_box.screenshot(path=screenshot_filename(request, screenshots_output_dir, prefix="box-"))
+        login_box = page.get_by_text(
+            "English English German (Deutsch) Sign in to your account Username or email")
+        login_box.screenshot(path=screenshot_filename(
+            request, screenshots_output_dir, prefix="box-"))
 
     def test_login_form_box_de(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
@@ -109,5 +75,8 @@ class TestScreenshotsLoginBox(object):
         page = login_page.page
         page.get_by_role("button", name="languages").click()
         page.get_by_role("menuitem", name="German (Deutsch)").click()
-        login_box = page.get_by_text("Deutsch Deutsch Englisch (English) Bei Ihrem Konto anmelden Benutzername oder E")
-        login_box.screenshot(path=screenshot_filename(request, screenshots_output_dir, prefix="box-"))
+        page.pause()
+        login_box = page.get_by_text(
+            "Deutsch Deutsch Englisch (English) Bei Ihrem Konto anmelden Benutzername oder E")
+        login_box.screenshot(path=screenshot_filename(
+            request, screenshots_output_dir, prefix="box-"))
