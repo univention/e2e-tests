@@ -48,8 +48,7 @@ class TestScreenshotsLogin(object):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
         page = login_page.page
-        page.screenshot(path=screenshot_filename(
-            request, screenshots_output_dir))
+        page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
 
     def test_login_form_de(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
@@ -57,17 +56,14 @@ class TestScreenshotsLogin(object):
         page = login_page.page
         page.get_by_role("button", name="languages").click()
         page.get_by_role("menuitem", name="German (Deutsch)").click()
-        page.screenshot(path=screenshot_filename(
-            request, screenshots_output_dir))
+        page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
 
     def test_login_form_box(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
         login_page.navigate()
         page = login_page.page
-        login_box = page.get_by_text(
-            "English English German (Deutsch) Sign in to your account Username or email")
-        login_box.screenshot(path=screenshot_filename(
-            request, screenshots_output_dir, prefix="box-"))
+        login_box = page.get_by_text("English English German (Deutsch) Sign in to your account Username or email")
+        login_box.screenshot(path=screenshot_filename(request, screenshots_output_dir, prefix="box-"))
 
     def test_login_form_box_de(self, screenshot_page, screenshots_output_dir, request):
         login_page = LoginPage(screenshot_page)
@@ -76,7 +72,5 @@ class TestScreenshotsLogin(object):
         page.get_by_role("button", name="languages").click()
         page.get_by_role("menuitem", name="German (Deutsch)").click()
         page.pause()
-        login_box = page.get_by_text(
-            "Deutsch Deutsch Englisch (English) Bei Ihrem Konto anmelden Benutzername oder E")
-        login_box.screenshot(path=screenshot_filename(
-            request, screenshots_output_dir, prefix="box-"))
+        login_box = page.get_by_text("Deutsch Deutsch Englisch (English) Bei Ihrem Konto anmelden Benutzername oder E")
+        login_box.screenshot(path=screenshot_filename(request, screenshots_output_dir, prefix="box-"))
