@@ -117,9 +117,9 @@ def navigate_to_saml_login_page(page):
 
 
 @pytest.fixture()
-def navigate_to_home_page_logged_in(page, admin_username, admin_password):
+def navigate_to_home_page_logged_in(page, user, user_password):
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.navigate(admin_username, admin_password)
+    home_page_logged_in.navigate(user.properties["username"], user_password)
     return page
 
 
