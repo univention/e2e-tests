@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.28.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.27.0...v0.28.0) (2025-02-28)
+
+
+### Features
+
+* Add base test to verify that the group "Domain Service Users" does exist ([3bfe27b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/3bfe27bae96286828bd34c1cf3c2a0a12e43ca6c))
+* Add fixture "portal" ([8747e00](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8747e0068501e574248d1fe2983ea886feb7cbf3))
+* Check the service account for the portal server ([ab7e6a8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/ab7e6a83e3695e10f954c49c58f128a2fb0bb1b2))
+* Verify that a member of "Domain Service Users" can read UDM Rest API objects ([f76e3f6](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f76e3f68fdcef6d4cdf58fbd64ebd1b7bb82475b))
+* Verify that domain service users can use the UDM Rest API ([36fa5ab](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/36fa5abf9b14da208ec971c6007672af7187f4fd))
+
+
+### Bug Fixes
+
+* Fallback to "default" when discovering the namespace in KubernetesCluster ([c53c76b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c53c76b5c2f1c1317a277ba6bff80509a63b705c))
+
 ## [0.27.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.26.0...v0.27.0) (2025-02-26)
 
 
