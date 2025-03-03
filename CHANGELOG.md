@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.29.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.28.0...v0.29.0) (2025-03-03)
+
+
+### Features
+
+* Add test of the portal server api endpoint "me" ([bb5660b](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bb5660bc1e5b0d238cf0b790e9528677f6b7077b))
+
+
+### Bug Fixes
+
+* Use a regular user for "navigate_to_home_page_logged_in" ([8d5153e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8d5153e9b2040022d45aff6ecd193a35aedf4f72))
+
 ## [0.28.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.27.0...v0.28.0) (2025-02-28)
 
 
