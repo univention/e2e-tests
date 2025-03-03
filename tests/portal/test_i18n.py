@@ -75,7 +75,7 @@ def test_anonymous_user_can_switch_language_to_english(navigate_to_home_page_log
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_logged_in_user_can_switch_language_to_german(navigate_to_home_page_logged_in):
+def test_logged_in_user_can_switch_language_to_german(navigate_to_home_page_logged_in_as_admin):
     """
     This test checks if a logged in user can switch the language to German.
 
@@ -88,7 +88,7 @@ def test_logged_in_user_can_switch_language_to_german(navigate_to_home_page_logg
     7. Clicks the Users tile.
     8. Check the UMC Add button is now in German.
     """
-    page = navigate_to_home_page_logged_in
+    page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.switch_language("Deutsch")
 
@@ -112,7 +112,7 @@ def test_logged_in_user_can_switch_language_to_german(navigate_to_home_page_logg
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_logged_in_user_can_switch_language_to_english(navigate_to_home_page_logged_in):
+def test_logged_in_user_can_switch_language_to_english(navigate_to_home_page_logged_in_as_admin):
     """
     This test checks if a logged in user can switch the language to English.
 
@@ -125,7 +125,7 @@ def test_logged_in_user_can_switch_language_to_english(navigate_to_home_page_log
     7. Clicks the Users tile.
     8. Check the UMC Add button is now in English.
     """
-    page = navigate_to_home_page_logged_in
+    page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.switch_language("Deutsch")
     assert home_page_logged_in.get_language() == "de"

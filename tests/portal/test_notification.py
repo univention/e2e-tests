@@ -49,8 +49,8 @@ def notifications_api_base_url(portal_base_url):
 
 
 @pytest.fixture()
-def login_and_clear_old_notifications(navigate_to_home_page_logged_in, admin_username, admin_password):
-    page = navigate_to_home_page_logged_in
+def login_and_clear_old_notifications(navigate_to_home_page_logged_in_as_admin, admin_username, admin_password):
+    page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.remove_all_notifications()
     yield page
