@@ -16,6 +16,16 @@ from umspages.portal.login_page import LoginPage
 def setup_ad_hoc_provisioning(
     keycloak_base_url, keycloak_admin_username, keycloak_admin_password, admin_username, admin_password, portal_base_url
 ):
+    """
+    Setup Ad-hoc provisioning for the test.
+
+    1. Create an instance of AdHocProvisioning.
+    2. Setup the Ad-hoc provisioning with a test/dummy realm in Keycloak, and
+       setup an Authenticator Flow after setting the test/dummy realm as
+       Identity Provider.
+    3. Yield the instance of AdHocProvisioning.
+    4. Cleanup the ad-hoc provisioning.
+    """
     ad_hoc_provisioning = AdHocProvisioning(
         keycloak_url=keycloak_base_url,
         admin_username=keycloak_admin_username,
@@ -53,6 +63,16 @@ def test_adhoc_provisioning(
     ldap_base_dn,
     faker,
 ):
+    """
+    Test ad-hoc provisioning with a user that is not yet in the LDAP.
+
+    1. Setup ad-hoc provisioning with a dummy realm.
+    2. Create a user in the dummy realm.
+    3. Navigate to the login page.
+    4. Click the ad-hoc provisioning button.
+    5. Login with the user.
+    6. Check that the user is created correctly in the LDAP through UDM.
+    """
     ad_hoc_provisioning = setup_ad_hoc_provisioning
     username = faker.user_name()
     password = faker.password()
