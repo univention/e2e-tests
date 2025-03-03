@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.29.0...v0.29.1) (2025-03-03)
+
+
+### Bug Fixes
+
+* Fix broken i18n tests to again use the correct fixture ([0a573e7](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/0a573e7bc7c1515075e15dcdea0294ae37ec063b))
+
 ## [0.29.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.28.0...v0.29.0) (2025-03-03)
 
 
