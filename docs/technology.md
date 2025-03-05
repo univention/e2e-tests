@@ -22,6 +22,13 @@ provided client is used.
 
 [requests-docs]: https://docs.python-requests.org/en/latest/index.html
 
+### Kubernetes API
+
+The Python client is used to access the Kubernetes API.
+
+- [Repository](https://github.com/kubernetes-client/python)
+- [API overview](https://github.com/kubernetes-client/python/blob/master/kubernetes/README.md#documentation-for-api-endpoints)
+
 ## Stub data
 
 [Faker][faker-docs] is available and used in some places to provide generated
