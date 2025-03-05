@@ -129,12 +129,6 @@ def portal_central_navigation_secret(pytestconfig):
 
 
 @pytest.fixture(scope="session")
-def udm_rest_api_base_url(udm_rest_api):
-    """Base URL to reach the UDM Rest API."""
-    return udm_rest_api.base_url
-
-
-@pytest.fixture(scope="session")
 def udm(udm_factory, ldap):
     """
     A configured instance of the UDM Rest API client.
@@ -148,7 +142,7 @@ def udm(udm_factory, ldap):
 
 
 @pytest.fixture(scope="session")
-def udm_factory(udm_rest_api_base_url):
+def udm_factory(udm_rest_api):
     """
     Returns a factory function to create a new UDM connection.
 
@@ -159,7 +153,7 @@ def udm_factory(udm_rest_api_base_url):
     """
 
     def factory(username, password) -> UDM:
-        udm = UDM(udm_rest_api_base_url, username, password)
+        udm = UDM(udm_rest_api.base_url, username, password)
         _verify_udm_rest_api_configuration(udm)
         return udm
 

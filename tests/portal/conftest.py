@@ -145,9 +145,9 @@ def udm_session(ldap):
 
 
 @pytest.fixture()
-def udm_fixtures(udm_rest_api_base_url, udm_session):
+def udm_fixtures(udm_rest_api, udm_session):
     """An instance of `UDMFixtures` to set up test data through the UDM Rest API."""
-    return UDMFixtures(base_url=udm_rest_api_base_url, session=udm_session)
+    return UDMFixtures(base_url=udm_rest_api.base_url, session=udm_session)
 
 
 @pytest.fixture
