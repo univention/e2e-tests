@@ -8,6 +8,7 @@ available:
 - [Playwright usage recommendations](./playwright.md)
 - [Page Object Model](./pom.md)
 - [Page Object Model - Email](./pom-email.md)
+- [Object Model - Deployment](./pom-deployment.md)
 - [Page Object Model - Inheritance](./pom-inheritance.md)
 - [Pytest recommendations](./pytest.md)
 - [Stub data](./stub-data.md)

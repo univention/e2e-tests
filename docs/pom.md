@@ -6,7 +6,11 @@
 The tests use the *Page Object* pattern as an abstraction layer of the user
 interface.
 
-We apply the pattern loosely also in the [email case](./pom-email.md).
+We apply this pattern loosely also in the cases:
+
+- [Email](./pom-email.md)
+
+- [Deployment](./pom-deployment.md)
 
 
 ### Ongoing refactoring
