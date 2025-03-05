@@ -35,7 +35,7 @@ import pytest
 import requests
 
 from api.maildev import MaildevApi
-from univention.admin.rest.client import UDM
+from univention.admin.rest.client import UDM, NotFound
 
 logger = logging.getLogger(__name__)
 
@@ -223,8 +223,11 @@ def portal_udm(udm, faker, ldap_base_dn):
 
     yield portal_obj
 
-    portal_obj.reload()
-    portal_obj.delete()
+    try:
+        portal_obj.reload()
+        portal_obj.delete()
+    except NotFound:
+        logger.info("Portal %s has been removed by the test case.", portal_obj.dn)
 
 
 @pytest.fixture
@@ -241,7 +244,7 @@ def portal_entry(udm, faker, ldap_base_dn):
     portal_entry = entry_module.new()
     portal_entry.properties.update(
         {
-            "name": faker.slug(),
+            "name": f"test-{faker.slug()}",
             "description": {"en_US": faker.catch_phrase()},
             "displayName": {"en_US": faker.catch_phrase()},
             "link": [["en_US", "http://test.example.com"]],
@@ -252,5 +255,8 @@ def portal_entry(udm, faker, ldap_base_dn):
 
     yield portal_entry
 
-    portal_entry.reload()
-    portal_entry.delete()
+    try:
+        portal_entry.reload()
+        portal_entry.delete()
+    except NotFound:
+        logger.info("Portal Entry %s has been removed by the test case.", portal_entry.dn)

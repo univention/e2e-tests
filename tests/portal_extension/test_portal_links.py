@@ -22,3 +22,13 @@ def test_portal_supports_link_list(udm, portal_link_list, portal_udm, portal_ent
     portal_obj = portal_module.get(portal_udm.dn)
 
     assert portal_obj.properties[portal_link_list] == [portal_entry.dn]
+
+
+def test_deleted_entry_is_removed_from_link_list(udm, portal_link_list, portal_udm, portal_entry):
+    portal_udm.properties[portal_link_list] = [portal_entry.dn]
+    portal_udm.save()
+
+    portal_entry.delete()
+    portal_udm.reload()
+
+    assert portal_entry.dn not in portal_udm.properties[portal_link_list]
