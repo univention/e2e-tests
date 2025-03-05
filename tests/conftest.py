@@ -198,3 +198,59 @@ def external_email_domain(faker):
     """
     domain = f"{faker.domain_word()}.test"
     return domain
+
+
+@pytest.fixture
+def portal_udm(udm, faker, ldap_base_dn):
+    """
+    Creates a Portal object via UDM Rest API.
+
+    The object is as minimal as possible and will be cleaned up after the test
+    run.
+    """
+    portal_module = udm.get("portals/portal")
+    portal_obj = portal_module.new()
+    portal_name = f"test-{faker.slug()}"
+    portal_obj.properties.update(
+        {
+            "name": portal_name,
+            "displayName": {
+                "en_US": faker.catch_phrase(),
+            },
+        }
+    )
+    portal_obj.save()
+
+    yield portal_obj
+
+    portal_obj.reload()
+    portal_obj.delete()
+
+
+@pytest.fixture
+def portal_entry(udm, faker, ldap_base_dn):
+    """
+    Creates an activated test Portal Entry.
+
+    The Portal Entry will be isolated, it will not be added into any Portal or
+    Category.
+
+    The entry will be cleaned up after the test run.
+    """
+    entry_module = udm.get("portals/entry")
+    portal_entry = entry_module.new()
+    portal_entry.properties.update(
+        {
+            "name": faker.slug(),
+            "description": {"en_US": faker.catch_phrase()},
+            "displayName": {"en_US": faker.catch_phrase()},
+            "link": [["en_US", "http://test.example.com"]],
+            "activated": True,
+        }
+    )
+    portal_entry.save()
+
+    yield portal_entry
+
+    portal_entry.reload()
+    portal_entry.delete()
