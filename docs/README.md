@@ -11,6 +11,7 @@ available:
 - [Object Model - Deployment](./pom-deployment.md)
 - [Page Object Model - Inheritance](./pom-inheritance.md)
 - [Pytest recommendations](./pytest.md)
+- [Discovery from cluster](./env-discovery.md)
 - [Stub data](./stub-data.md)
 - [Test cases](./tests.md)
 - [Technology overview](./technology.md)
