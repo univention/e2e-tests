@@ -6,7 +6,7 @@ from kubernetes.client import ApiClient
 from kubernetes.dynamic import DynamicClient
 
 from e2e.chaos import ChaosMeshFixture
-from e2e.ldap import LdapDeployment
+from e2e.kubernetes import KubernetesCluster
 
 
 @pytest.fixture
@@ -24,8 +24,12 @@ def k8s_chaos(k8s):
 
 
 @pytest.fixture(scope="session")
-def ldap(k8s, release_name):
+def k8s():
     """
-    Returns an instance of `LdapDeployment`.
+    Kubernetes abstraction with port-forwarding enabled.
+
+    Returns a utility to interact with a Kubernetes cluster.
     """
-    return LdapDeployment(k8s, release_name)
+    cluster = KubernetesCluster(direct_access=False)
+    yield cluster
+    cluster.cleanup()

@@ -8,8 +8,10 @@ import random
 import pytest
 
 from e2e.kubernetes import KubernetesCluster
+from e2e.ldap import LdapDeployment
 from e2e.portal import PortalDeployment
 from e2e.stack_data import StackDataDeployment
+from e2e.udm import UdmRestApiDeployment
 
 logger = logging.getLogger(__name__)
 
@@ -110,3 +112,19 @@ def stack_data(k8s, release_name):
     Returns an instance of `StackDataDeployment`.
     """
     return StackDataDeployment(k8s, release_name)
+
+
+@pytest.fixture(scope="session")
+def udm_rest_api(k8s, release_name):
+    """
+    Returns an instance of `UdmRestApiDeployment`.
+    """
+    return UdmRestApiDeployment(k8s, release_name)
+
+
+@pytest.fixture(scope="session")
+def ldap(k8s, release_name):
+    """
+    Returns an instance of `LdapDeployment`.
+    """
+    return LdapDeployment(k8s, release_name)

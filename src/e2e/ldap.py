@@ -93,6 +93,15 @@ class LdapDeployment(BaseDeployment):
     and "proxy".
     """
 
+    admin_dn: str = None
+    """The DN of the LDAP admin user."""
+
+    admin_rdn = "cn=admin"
+    """The RDN of the LDAP admin user."""
+
+    admin_password: str = None
+    """The password of the LDAP admin user."""
+
     servers: dict[str, LdapServer]
 
     LABELS_ACTIVE_PRIMARY_LDAP_SERVER = {

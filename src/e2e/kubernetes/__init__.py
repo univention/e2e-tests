@@ -62,18 +62,44 @@ class KubernetesCluster:
     POD_REMOVED_TIMEOUT = 5
     """Time to wait for a Pod to be removed when using a minimal grace period."""
 
-    direct_access = False
-    """Flag to indicate if direct access into the cluster resources is possible."""
+    direct_access = True
+    """
+    Flag to indicate if direct access into the cluster resources is possible.
+
+    Automatic port forwarding will be enabled if this is set to `False`.
+    """
 
     in_cluster = False
     """Flag to indicate if the code runs inside of the target cluster."""
 
-    def __init__(self):
+    ingress_http_port = 80
+    """The port for plain HTTP access of the ingress controller."""
+
+    ingress_https_port = 443
+    """The port for HTTPS access of the intress controller."""
+
+    def __init__(self, direct_access=True):
+        self.direct_access = direct_access
         config.load_kube_config()
         self.port_forwarding = PortForwardingManager()
         self.namespace = discover_namespace()
+        self._discover_from_cluster()
         if not self.direct_access:
             self.port_forwarding.start_monitoring()
+
+    def _discover_from_cluster(self):
+        core_api = client.CoreV1Api()
+        namespace = core_api.read_namespace(name=self.namespace)
+        annotations = namespace.metadata.annotations
+        if annotations:
+            ingress_http_port = annotations.get("nubus.univention.dev/ingress-http-port")
+            if ingress_http_port:
+                log.info("Ingress http port discovered via annotation to be %s.", ingress_http_port)
+                self.ingress_http_port = int(ingress_http_port)
+            ingress_https_port = annotations.get("nubus.univention.dev/ingress-https-port")
+            if ingress_https_port:
+                log.info("Ingress https port discovered via annotation to be %s.", ingress_https_port)
+                self.ingress_https_port = int(ingress_https_port)
 
     def port_forward_if_needed(
         self,
@@ -240,6 +266,20 @@ class KubernetesCluster:
             namespace=namespace or self.namespace,
         )
         return deployment
+
+    def get_ingress(self, name: str, namespace: str | None = None):
+        """
+        Retrieve an `Ingress` from the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.NetworkingV1Api()
+        ingress = v1.read_namespaced_ingress(
+            name=name,
+            namespace=namespace or self.namespace,
+        )
+        return ingress
 
     def get_secret(self, name: str, namespace: str | None = None):
         """

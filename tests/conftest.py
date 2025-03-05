@@ -129,17 +129,21 @@ def portal_central_navigation_secret(pytestconfig):
 
 
 @pytest.fixture(scope="session")
-def udm_rest_api_base_url(portal_base_url):
+def udm_rest_api_base_url(udm_rest_api):
     """Base URL to reach the UDM Rest API."""
-    return urljoin(portal_base_url, "/univention/udm/")
+    return udm_rest_api.base_url
 
 
 @pytest.fixture(scope="session")
-def udm(udm_factory, admin_username, admin_password):
+def udm(udm_factory, ldap):
     """
     A configured instance of the UDM Rest API client.
+
+    This instance uses the most privileged user to access the directory. If you
+    want a client for a particular user, then use the fixture `udm_factory`
+    instead.
     """
-    udm = udm_factory(admin_username, admin_password)
+    udm = udm_factory(ldap.admin_rdn, ldap.admin_password)
     return udm
 
 

@@ -131,7 +131,7 @@ def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_passwor
 
 
 @pytest.fixture(scope="session")
-def udm_session(admin_username, admin_password):
+def udm_session(ldap):
     """
     Prepares an instance of `requests.Session` to call the UDM Rest API.
 
@@ -139,7 +139,7 @@ def udm_session(admin_username, admin_password):
     requests will run with full permissions in the UDM Rest API.
     """
     udm_session = requests.Session()
-    udm_session.auth = (admin_username, admin_password)
+    udm_session.auth = (ldap.admin_rdn, ldap.admin_password)
     udm_session.headers.update({"accept": "application/json"})
     return udm_session
 
