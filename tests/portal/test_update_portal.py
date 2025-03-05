@@ -29,8 +29,6 @@
 # <https://www.gnu.org/licenses/>.
 
 import time
-import uuid
-from contextlib import contextmanager
 from urllib.parse import urljoin
 
 import pytest
@@ -39,32 +37,15 @@ import requests
 from univention.admin.rest.client import UDM
 
 
-@contextmanager
-def create_visible_portal_entry(udm: UDM, ldap_base_dn):
-    portals = udm.get("portals/entry")
-    assert portals
-    portal_entry = portals.new()
-    portal_entry.properties.update(
-        {
-            "name": str(uuid.uuid1()),
-            "description": {"en_US": "New portal tile"},
-            "displayName": {"en_US": "New portal tile"},
-            "link": [["en_US", "http://example.com"]],
-            "activated": True,
-        }
-    )
-    portal_entry.save()
-
+@pytest.fixture
+def portal_entry(udm, ldap_base_dn, portal_entry):
+    """Portal Entry in a Portal Category."""
     # Add portal_entry to the portal categories to make it visible and accessible through the URL
     # f"{portal_endpoint}/univention/portal/portal.json"
     category = udm.obj_by_dn(f"cn=domain-service,cn=category,cn=portals,cn=univention,{ldap_base_dn}")
     category.properties["entries"].append(portal_entry.dn)
     category.save()
-
-    try:
-        yield portal_entry
-    finally:
-        portal_entry.delete()
+    return portal_entry
 
 
 @pytest.fixture
@@ -93,7 +74,6 @@ def wait_for_portal_update(udm: UDM, portal_base_url: str, portal_api_url):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_create_portal_entry(udm, wait_for_portal_update, ldap_base_dn):
-    with create_visible_portal_entry(udm, ldap_base_dn) as portal_entry:
-        entry_exists = wait_for_portal_update(portal_entry.dn)
-        assert entry_exists
+def test_create_portal_entry(portal_entry, wait_for_portal_update):
+    entry_exists = wait_for_portal_update(portal_entry.dn)
+    assert entry_exists
