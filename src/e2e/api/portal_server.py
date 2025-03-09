@@ -17,6 +17,15 @@ class PortalServerApi:
         self._request = request
 
     def get(self, sub_path):
+        """
+        Retrieve a `sub_path` from the API of the `portal-server`.
+        """
         url = urljoin(self.base_path, sub_path)
         response = self._request.get(url)
         return response
+
+    def get_portal(self):
+        """
+        Utility to help fetch the portal API which has a special path.
+        """
+        return self.get("../../portal.json")
