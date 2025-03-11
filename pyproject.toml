@@ -28,6 +28,7 @@ markers = [
     "brute_force_protection: test standalone keycloak-extensions (no univention-portal)",
     "central_navigation: tests related to central navigation for the univention-portal",
     "cookies: univention-portal cookies banner and others",
+    "cookie_banner: Cookie banner related tests around Keycloak",
     "development_environment: target openDesk dev-env",
     "groups: Tests for the group management console for admin users",
     "i18n: univention-portal translations",
