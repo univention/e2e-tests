@@ -10,6 +10,7 @@ from ldap3 import Connection, Server
 
 from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
+from e2e.types import LdapDn
 
 log = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ class LdapDeployment(BaseDeployment):
     and "proxy".
     """
 
-    admin_dn: str = None
+    admin_dn: LdapDn = None
     """The DN of the LDAP admin user."""
 
     admin_rdn = "cn=admin"
