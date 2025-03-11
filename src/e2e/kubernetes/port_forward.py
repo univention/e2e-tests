@@ -26,10 +26,11 @@ class PortForwardingManager:
 
     """
 
+    _worker_thread = None
+
     def __init__(self, first_local_port=3890):
         self._loop = None
         self._running = threading.Event()
-        self._worker_thread = StoppableAsyncThread(atarget=self._run())
         self._processes = {}
         self._next_local_port = first_local_port
 
@@ -45,11 +46,14 @@ class PortForwardingManager:
         return used_local_port
 
     def start_monitoring(self):
+        if not self._worker_thread:
+            self._worker_thread = StoppableAsyncThread(atarget=self._run())
         self._worker_thread.start()
         self._running.wait(timeout=5)
 
     def stop_monitoring(self):
-        self._worker_thread.stop()
+        if self._worker_thread:
+            self._worker_thread.stop()
 
     async def _terminate(self):
         log.debug("Terminating all forwarding processes.")
