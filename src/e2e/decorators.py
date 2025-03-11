@@ -73,12 +73,35 @@ See: https://tenacity.readthedocs.io/en/latest/
 """
 
 
+retrying_fast = retry(
+    stop=stop_after_delay(10),
+    wait=wait_fixed(0.25),
+    before_sleep=before_sleep_log(log, logging.WARNING),
+    retry_error_cls=BetterRetryError,
+)
+"""
+Intended for things which we can poll frequently.
+
+The trade-off is to accept frequent calls and have the test suite run a
+little bit quicker, because it will detect a processed update faster.
+
+Examples:
+
+- UDM API
+- Testing API
+- Portal API
+"""
+
+
 retrying_slow = retry(
     stop=stop_after_delay(40),
     wait=wait_fixed(2),
     before_sleep=before_sleep_log(log, logging.WARNING),
     retry_error_cls=BetterRetryError,
 )
+"""
+Intended for things which take longer to become available.
+"""
 
 
 retrying_keycloak_login = retry(
