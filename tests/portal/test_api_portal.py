@@ -1,28 +1,17 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
-import pytest
-
 from e2e.api.portal_server import PortalServerApi
 from e2e.decorators import retrying_fast
 from umspages.portal.home_page.base import HomePage
 
 
-@pytest.mark.parametrize(
-    "portal_link_list",
-    [
-        "corner_links",
-        "menu_links",
-        "quick_links",
-        "user_links",
-    ],
-)
 def test_result_contains_links(page, portal_link_list):
     home_page = HomePage(page)
     home_page.navigate()
     api = PortalServerApi(page.request)
     result = api.get_portal().json()
-    assert portal_link_list in result
+    assert portal_link_list.portal_attr in result
 
 
 def test_added_entry_appears_in_links(page, udm, ldap_base_dn, portal_entry, portal_link_list):
