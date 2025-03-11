@@ -40,6 +40,11 @@ markers = [
     "selfservice: tests for updating profile, change recovery email, selfservice portal, etc.",
     "users: tests for user management console for admin users",
 ]
+filterwarnings = [
+    # See https://github.com/cannatag/ldap3/issues/1159
+    'ignore:typeMap is deprecated. Please use TYPE_MAP instead:DeprecationWarning',
+    'ignore:tagMap is deprecated. Please use TAG_MAP instead:DeprecationWarning',
+]
 
 [tool.ruff]
 target-version = "py311"
