@@ -6,6 +6,11 @@ from typing import NamedTuple
 
 import pytest
 
+pytestmark = [
+    pytest.mark.development_environment,
+    pytest.mark.acceptance_environment,
+]
+
 
 @pytest.fixture
 def domain_service_users_dn(ldap_base_dn):

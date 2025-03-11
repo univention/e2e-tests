@@ -1,8 +1,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
+import pytest
+
 from e2e.api.portal_server import PortalServerApi
 from umspages.portal.home_page.base import HomePage
+
+pytestmark = [
+    pytest.mark.portal,
+    pytest.mark.development_environment,
+    pytest.mark.acceptance_environment,
+]
 
 
 def test_returns_empty_object_when_not_logged_in(page):

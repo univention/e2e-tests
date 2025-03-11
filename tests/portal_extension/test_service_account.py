@@ -3,6 +3,13 @@
 
 from contextlib import nullcontext as does_not_raise
 
+import pytest
+
+pytestmark = [
+    pytest.mark.development_environment,
+    pytest.mark.acceptance_environment,
+]
+
 
 def test_service_account_for_portal_server_exists(udm, portal, ldap_base_dn):
     users_module = udm.get("users/ldap")

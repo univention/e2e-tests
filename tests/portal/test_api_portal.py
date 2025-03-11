@@ -6,7 +6,6 @@ import pytest
 from e2e.api.portal_server import PortalServerApi
 from univention.admin.rest.client import UDM
 
-
 pytestmark = [
     pytest.mark.portal,
     pytest.mark.development_environment,
