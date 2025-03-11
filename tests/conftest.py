@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import logging
+from typing import NamedTuple
 from urllib.parse import urljoin
 
 import pytest
@@ -258,3 +259,45 @@ def portal_entry(udm, faker, ldap_base_dn):
         portal_entry.delete()
     except NotFound:
         logger.info("Portal Entry %s has been removed by the test case.", portal_entry.dn)
+
+
+class PortalLinkList(NamedTuple):
+    """
+    Represents a "link list" in the context of the Portal.
+
+    The Portal has multiple "link lists" which are expected to show specific
+    common behavior.
+    """
+
+    udm_attr: str
+    """
+    UDM attribute name.
+    """
+
+    portal_attr: str
+    """
+    Portal attribute name.
+    """
+
+    def testid(self):
+        return self.portal_attr
+
+
+@pytest.fixture(
+    params=[
+        PortalLinkList("cornerLinks", "corner_links"),
+        PortalLinkList("menuLinks", "menu_links"),
+        PortalLinkList("quickLinks", "quick_links"),
+        PortalLinkList("userLinks", "user_links"),
+    ],
+    ids=PortalLinkList.testid,
+)
+def portal_link_list(request):
+    """
+    Parametrized fixture which returns the link lists in the Portal.
+
+    The fixture will return a `PotralLinkList` instance per link list supported
+    in the portal.
+    """
+    link_list = request.param
+    return link_list
