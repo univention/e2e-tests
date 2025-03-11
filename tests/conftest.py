@@ -261,6 +261,35 @@ def portal_entry(udm, faker, ldap_base_dn):
         logger.info("Portal Entry %s has been removed by the test case.", portal_entry.dn)
 
 
+@pytest.fixture
+def portal_folder(udm, faker, ldap_base_dn):
+    """
+    Creates an activated test Portal Folder.
+
+    The Portal Folder will be isolated, it will not be added into any Portal or
+    Category.
+
+    The folder will be cleaned up after the test run.
+    """
+    folder_module = udm.get("portals/folder")
+    portal_folder = folder_module.new()
+    portal_folder.properties.update(
+        {
+            "name": f"test-{faker.slug()}",
+            "displayName": {"en_US": faker.catch_phrase()},
+        }
+    )
+    portal_folder.save()
+
+    yield portal_folder
+
+    try:
+        portal_folder.reload()
+        portal_folder.delete()
+    except NotFound:
+        logger.info("Portal Folder %s has been removed by the test case.", portal_folder.dn)
+
+
 class PortalLinkList(NamedTuple):
     """
     Represents a "link list" in the context of the Portal.
