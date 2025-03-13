@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.30.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.29.1...v0.30.0) (2025-03-13)
+
+
+### Features
+
+* Add "retrying_fast" for things which can be polled frequently ([1ab412e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/1ab412ee05a4d024bb5ff06a803394d2541e3795))
+* Add coverage for Portal link lists of portal-extension ([89428cf](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/89428cfcf921fc5eb5bdc1b5b03b33d5a5311f27))
+* Add fixture "portal_link_list", parametrized ([e8764fa](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/e8764fa7ccf502fdfad5bb68b3522513c023d727))
+* Add utility method "PortalServerApi.get_portal" ([2470330](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/24703307ce2d6bb02b2a2347e3ce2b1c7cd367a2))
+* Check link lists in the portal API ([8eddf2f](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/8eddf2ff362d988f6008bc707bb980f99c07a172))
+* Discover UDM URL and credentials from deployment ([fedf9f3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/fedf9f3f555834095105306030ab971171892d6b))
+* Remove fixture "udm_rest_api_base_url" ([ea3a641](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/ea3a64154d3fff755ae2e68592dbfae0f61a1fec))
+* Verify that deleted Portal Entries are removed from the Portal ([bfac49d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bfac49dbe81cd34af0a4f72b31e350cf61153a88))
+* Verify that Portal Folders work in link lists ([5b66520](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/5b66520fb09aff30236756a5ca8c5343e2fdb9bf))
+* Verify that quick links are part of the response from portal-server ([b39187a](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b39187a99cba296856b392f534a5a4ae3b9b0b46))
+
+
+### Bug Fixes
+
+* Add configuration for mark "cookie_banner" ([df60432](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/df60432f9b5152855bd58fdce9eb00940dc50d71))
+* Add pytest marks to ensure tests run when using the mark "acceptance_environment" ([157b174](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/157b1748f2206aeb41bcbd97b6c24fbb99c0daaf))
+* Only create the async thread if needed ([93670cc](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/93670ccad2d729455b12c94741ca732cf3a09f3a))
+
 ## [0.29.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.29.0...v0.29.1) (2025-03-03)
 
 
