@@ -27,3 +27,13 @@ def test_deleted_entry_is_removed_from_link_list(portal_link_list, portal_udm, p
     portal_udm.reload()
 
     assert portal_entry.dn not in portal_udm.properties[portal_link_list.udm_attr]
+
+
+def test_deleted_folder_is_removed_from_link_list(portal_link_list, portal_udm, portal_folder):
+    portal_udm.properties[portal_link_list.udm_attr] = [portal_folder.dn]
+    portal_udm.save()
+
+    portal_folder.delete()
+    portal_udm.reload()
+
+    assert portal_folder.dn not in portal_udm.properties[portal_link_list.udm_attr]
