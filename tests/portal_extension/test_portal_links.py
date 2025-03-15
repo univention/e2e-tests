@@ -37,3 +37,14 @@ def test_deleted_folder_is_removed_from_link_list(portal_link_list, portal_udm, 
     portal_udm.reload()
 
     assert portal_folder.dn not in portal_udm.properties[portal_link_list.udm_attr]
+
+
+def test_wrong_content(udm, portal_link_list, portal_udm):
+    stub_dn = "cn=any-dn-can-be-put-here,dc=test"
+    portal_module = udm.get("portals/portal")
+    portal_udm.properties[portal_link_list.udm_attr] = [stub_dn]
+    portal_udm.save()
+
+    portal_obj = portal_module.get(portal_udm.dn)
+
+    assert portal_obj.properties[portal_link_list.udm_attr] == [stub_dn]
