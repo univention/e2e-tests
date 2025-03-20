@@ -109,11 +109,12 @@ def portal(pytestconfig, k8s, release_name):
 
 
 @pytest.fixture(scope="session")
-def keycloak(k8s, release_name):
+def keycloak(pytestconfig, k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
     """
-    return KeycloakDeployment(k8s, release_name)
+    cli_base_url = pytestconfig.getoption("--keycloak-base-url")
+    return KeycloakDeployment(k8s, release_name, override_base_url=cli_base_url)
 
 
 @pytest.fixture(scope="session")
