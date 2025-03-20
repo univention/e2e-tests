@@ -13,6 +13,15 @@ class PortalDeployment(BaseDeployment):
     Represents a deployment of the portal.
     """
 
+    base_url: str = None
+    """
+    Base URL to reach the Portal deployment.
+
+    This does not include a prefix like `/univention/portal/`.
+
+    Example: "https://domain.example/".
+    """
+
     service_account_username = "svc-portal-server"
     service_account_password = None
 
@@ -28,3 +37,11 @@ class PortalDeployment(BaseDeployment):
 
         secret = self._k8s.get_secret(secret_details.name)
         self.service_account_password = b64decode(secret.data[secret_details.key])
+
+        ingress_name = self.add_release_prefix("portal-frontend-rewrites")
+        ingress = self._k8s.get_ingress(ingress_name)
+        host = ingress.spec.rules[0].host
+        tls = ingress.spec.tls
+        scheme = "https" if tls else "http"
+        port = self._k8s.ingress_https_port if tls else self._k8s.ingress_http_port
+        self.base_url = f"{scheme}://{host}:{port}/"
