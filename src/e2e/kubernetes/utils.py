@@ -21,6 +21,12 @@ class SecretDetails(NamedTuple):
     key: str
 
 
+class UrlParts(NamedTuple):
+    host: str
+    port: int
+    scheme: str
+
+
 def get_secret_by_volume(
     pod_spec: models.V1PodSpec,
     container_name: str,

@@ -10,6 +10,7 @@ from kubernetes.client.models import V1Deployment
 from kubernetes.client.rest import ApiException
 
 from .port_forward import PortForwardingManager
+from .utils import UrlParts
 
 log = logging.getLogger(__name__)
 
@@ -280,6 +281,20 @@ class KubernetesCluster:
             namespace=namespace or self.namespace,
         )
         return ingress
+
+    def discover_url_parts_from_ingress(self, name: str, namespace: str | None = None):
+        """
+        Retrieve URL parts from an Ingress in the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        ingress = self.get_ingress(name, namespace)
+        host = ingress.spec.rules[0].host
+        tls = ingress.spec.tls
+        scheme = "https" if tls else "http"
+        port = self.ingress_https_port if tls else self.ingress_http_port
+        return UrlParts(host=host, port=port, scheme=scheme)
 
     def get_secret(self, name: str, namespace: str | None = None):
         """
