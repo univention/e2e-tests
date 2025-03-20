@@ -7,6 +7,7 @@ import random
 
 import pytest
 
+from e2e.keycloak import KeycloakDeployment
 from e2e.kubernetes import KubernetesCluster
 from e2e.ldap import LdapDeployment
 from e2e.portal import PortalDeployment
@@ -104,6 +105,14 @@ def portal(k8s, release_name):
     Returns an instance of `PortalDeployment`.
     """
     return PortalDeployment(k8s, release_name)
+
+
+@pytest.fixture(scope="session")
+def keycloak(k8s, release_name):
+    """
+    Returns an instance of `PortalDeployment`.
+    """
+    return KeycloakDeployment(k8s, release_name)
 
 
 @pytest.fixture(scope="session")
