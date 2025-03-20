@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.30.0...v0.31.0) (2025-03-20)
+
+
+### Features
+
+* Verify that a deleted Portal Folder is removed from the link lists ([24c1ec9](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/24c1ec93f8f4b5ed420861709fd037c8d1778b9d))
+
 ## [0.30.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.29.1...v0.30.0) (2025-03-13)
 
 
