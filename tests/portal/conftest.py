@@ -50,13 +50,13 @@ WaitForPortalSync = Callable[[str, int], None]
 
 
 @pytest.fixture(scope="session")
-def browser_context_args(browser_context_args, portal_base_url, keycloak_base_url):
+def browser_context_args(browser_context_args, portal, keycloak):
     in_a_week = datetime.now() + timedelta(weeks=1)
-    portal_cookie_domain = urlparse(portal_base_url).hostname
-    keycloak_cookie_domain = urlparse(keycloak_base_url).hostname
+    portal_cookie_domain = urlparse(portal.base_url).hostname
+    keycloak_cookie_domain = urlparse(keycloak.base_url).hostname
     return {
         **browser_context_args,
-        "base_url": portal_base_url,
+        "base_url": portal.base_url,
         "locale": "en-US",
         "timezone_id": "Europe/Berlin",
         "storage_state": {
