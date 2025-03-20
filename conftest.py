@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def pytest_addoption(parser):
     # Portal tests options
-    parser.addoption("--portal-base-url", help="Base URL of the univention portal")
+    parser.addoption("--portal-base-url", help="Override discovered base URL of the Univention Portal")
     parser.addoption("--admin-username", default="Administrator", help="Portal admin login username")
     parser.addoption("--admin-password", default="univention", help="Portal admin login password")
     parser.addoption("--email-test-api-username", default="user", help="Username to access the email test API.")
@@ -100,11 +100,12 @@ def k8s():
 
 
 @pytest.fixture(scope="session")
-def portal(k8s, release_name):
+def portal(pytestconfig, k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
     """
-    return PortalDeployment(k8s, release_name)
+    cli_base_url = pytestconfig.getoption("--portal-base-url")
+    return PortalDeployment(k8s, release_name, override_base_url=cli_base_url)
 
 
 @pytest.fixture(scope="session")
