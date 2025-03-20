@@ -44,8 +44,8 @@ from umspages.portal.home_page.logged_out import HomePageLoggedOut
 
 
 @pytest.fixture()
-def notifications_api_base_url(portal_base_url):
-    return urljoin(portal_base_url, "/univention/portal/notifications-api/")
+def notifications_api_base_url(portal):
+    return urljoin(portal.base_url, "/univention/portal/notifications-api/")
 
 
 @pytest.fixture()

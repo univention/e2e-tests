@@ -161,9 +161,9 @@ def failed_attempts_before_ip_block(pytestconfig):
 
 
 @pytest.fixture
-def navigation_api_url(portal_base_url):
+def navigation_api_url(portal):
     """URL of the navigation API in the Portal."""
-    return urljoin(portal_base_url, "/univention/portal/navigation.json")
+    return urljoin(portal.base_url, "/univention/portal/navigation.json")
 
 
 @pytest.fixture(scope="session")
@@ -263,7 +263,7 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
 
 
 @pytest.fixture
-def wait_for_ldap_secondaries_to_catch_up(portal_base_url) -> Callable[[], None]:
+def wait_for_ldap_secondaries_to_catch_up(portal) -> Callable[[], None]:
     """
     Allows to wait until all ldap server secondaries have caught up
     to the primary at the point of calling this function
@@ -271,7 +271,7 @@ def wait_for_ldap_secondaries_to_catch_up(portal_base_url) -> Callable[[], None]
 
     def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
         response = requests.get(
-            f"{portal_base_url}/testing-api/v1/ldap-replication-waiter",
+            f"{portal.base_url}/testing-api/v1/ldap-replication-waiter",
             {"retry_timeout": retry_timeout},
         )
         response.raise_for_status()

@@ -89,7 +89,7 @@ def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
 
 def get_page(browser_name, ip):
     @pytest.fixture
-    def get_page_for_browser_and_ip(playwright, pytestconfig, request, keycloak_base_url):
+    def get_page_for_browser_and_ip(playwright, pytestconfig, request, keycloak):
         browser_type = getattr(playwright, browser_name)
         launch_options = {}
         headed_option = pytestconfig.getoption("--headed")
@@ -101,8 +101,8 @@ def get_page(browser_name, ip):
         launch_options["slow_mo"] = 500
         browser = browser_type.launch(**launch_options)
         browser_context_args = {}
-        if keycloak_base_url:
-            browser_context_args["base_url"] = keycloak_base_url
+        if keycloak.base_url:
+            browser_context_args["base_url"] = keycloak.base_url
         video_option = pytestconfig.getoption("--video")
         capture_video = video_option in ["on", "retain-on-failure"]
         if capture_video:

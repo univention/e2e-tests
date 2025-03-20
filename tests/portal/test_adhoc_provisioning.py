@@ -14,7 +14,11 @@ from umspages.portal.login_page import LoginPage
 
 @pytest.fixture
 def setup_ad_hoc_provisioning(
-    keycloak_base_url, keycloak_admin_username, keycloak_admin_password, admin_username, admin_password, portal_base_url
+    keycloak,
+    keycloak_admin_username,
+    keycloak_admin_password,
+    ldap,
+    udm_rest_api,
 ):
     """
     Setup Ad-hoc provisioning for the test.
@@ -27,12 +31,12 @@ def setup_ad_hoc_provisioning(
     4. Cleanup the ad-hoc provisioning.
     """
     ad_hoc_provisioning = AdHocProvisioning(
-        keycloak_url=keycloak_base_url,
+        keycloak_url=keycloak.base_url,
         admin_username=keycloak_admin_username,
         admin_password=keycloak_admin_password,
-        udm_url=f"{portal_base_url}/univention/udm/",
-        udm_username=admin_username,
-        udm_password=admin_password,
+        udm_url=udm_rest_api.base_url,
+        udm_username=ldap.admin_rdn,
+        udm_password=ldap.admin_password,
         existing_realm="nubus",
         dummy_realm="test",
     )

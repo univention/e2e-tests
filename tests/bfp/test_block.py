@@ -105,10 +105,10 @@ def test_api_ip_block(
     wrong_password,
     realm,
     release_duration,
-    keycloak_base_url,
+    keycloak,
 ):
     # Generate docstring for this function
-    kc_api = KeycloakAPI(keycloak_base_url, realm)
+    kc_api = KeycloakAPI(keycloak.base_url, realm)
     r = kc_api.get_oidc_token(username, password)
     assert r.status_code == 200
     assert r.json()["access_token"] is not None
