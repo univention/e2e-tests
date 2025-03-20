@@ -28,10 +28,7 @@ class KeycloakDeployment(BaseDeployment):
             self.base_url = override_base_url
 
     def _discover_from_cluster(self):
-        ingress_name = self.add_release_prefix("keycloak")
-        ingress = self._k8s.get_ingress(ingress_name)
-        host = ingress.spec.rules[0].host
-        tls = ingress.spec.tls
-        scheme = "https" if tls else "http"
-        port = self._k8s.ingress_https_port if tls else self._k8s.ingress_http_port
-        self.base_url = f"{scheme}://{host}:{port}/"
+        url_parts = self._k8s.discover_url_parts_from_ingress(
+            self.add_release_prefix("keycloak"),
+        )
+        self.base_url = f"{url_parts.scheme}://{url_parts.host}:{url_parts.port}/"

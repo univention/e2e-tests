@@ -22,10 +22,7 @@ class UdmRestApiDeployment(BaseDeployment):
         super().__init__(k8s, release_name)
 
     def _discover_from_cluster(self):
-        ingress_name = self.add_release_prefix("udm-rest-api")
-        ingress = self._k8s.get_ingress(ingress_name)
-        host = ingress.spec.rules[0].host
-        tls = ingress.spec.tls
-        scheme = "https" if tls else "http"
-        port = self._k8s.ingress_https_port if tls else self._k8s.ingress_http_port
-        self.base_url = f"{scheme}://{host}:{port}/univention/udm/"
+        url_parts = self._k8s.discover_url_parts_from_ingress(
+            self.add_release_prefix("udm-rest-api"),
+        )
+        self.base_url = f"{url_parts.scheme}://{url_parts.host}:{url_parts.port}/univention/udm/"
