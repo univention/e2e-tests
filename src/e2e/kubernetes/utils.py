@@ -21,10 +21,22 @@ class SecretDetails(NamedTuple):
     key: str
 
 
+default_ports = {
+    "http": 80,
+    "https": 443,
+}
+
+
 class UrlParts(NamedTuple):
     host: str
     port: int
     scheme: str
+
+    def to_url(self):
+        if self.port == default_ports.get(self.scheme):
+            return f"{self.scheme}://{self.host}/"
+        else:
+            return f"{self.scheme}://{self.host}:{self.port}/"
 
 
 def get_secret_by_volume(

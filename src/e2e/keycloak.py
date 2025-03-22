@@ -31,4 +31,4 @@ class KeycloakDeployment(BaseDeployment):
         url_parts = self._k8s.discover_url_parts_from_ingress(
             self.add_release_prefix("keycloak"),
         )
-        self.base_url = f"{url_parts.scheme}://{url_parts.host}:{url_parts.port}/"
+        self.base_url = url_parts.to_url()
