@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 
+from urllib.parse import urljoin
+
 from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
 
@@ -25,4 +27,4 @@ class UdmRestApiDeployment(BaseDeployment):
         url_parts = self._k8s.discover_url_parts_from_ingress(
             self.add_release_prefix("udm-rest-api"),
         )
-        self.base_url = f"{url_parts.scheme}://{url_parts.host}:{url_parts.port}/univention/udm/"
+        self.base_url = urljoin(url_parts.to_url(), "/univention/udm/")
