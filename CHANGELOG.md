@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.32.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.31.0...v0.32.0) (2025-03-24)
+
+
+### Features
+
+* Add new fixture KeycloakDeployment as "keycloak" ([15ec33a](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/15ec33a75cda06e11af5078d7d858bc3e4292b69))
+* Add new utility "discover_url_parts_from_ingress" into KubernetesCluster ([4d9d312](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/4d9d3127fb362f66bbebe104694b2db71173ca6f))
+* Discovered portal url and keycloak url are used for browser context ([7024807](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/7024807db97d39c0ac0aef2d278a9f7625f1e81a))
+* PortalDeployment does discover base_url from Ingress ([e2a622e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/e2a622ed54a8402dd3d1eed06666a33dab779b18))
+* Remove fixtures "keycloak_base_url" and "portal_base_url" ([dba8fa3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/dba8fa3f12aa7b39a13105aead8c10a0d54bfee7))
+
+
+### Bug Fixes
+
+* Remove wrong call to "wait_for_portal_sync" from layout test ([41d84de](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/41d84de7fc56458d6f0d5207f1aba7d18d287486))
+
 ## [0.31.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.30.0...v0.31.0) (2025-03-20)
 
 
