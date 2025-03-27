@@ -51,10 +51,11 @@ class LoginPage(PortalPage):
         super().set_content(*args, **kwargs)
         # TODO: Using regular expr to target different langs in SouvAP env. Needs better solution.
         # In headed mode, default language is English. In headless mode, it is Deutsch.
-        self.username_input = self.page.get_by_role("textbox", name="Username")
-        self.password_input = self.page.get_by_role("textbox", name="Password")
+        self.username_input = self.page.locator("#username")
+        self.password_input = self.page.locator("#password")
         # TODO: Using regular expression to target both UCS and SouvAP envs. Needs a better solution.
-        self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In)"))
+        self.login_button = self.page.get_by_role("button", name=re.compile("^(Login|Sign In|Anmelden)"))
+
         # Keycloak login specific
 
         # TODO: Missing role in the sources
@@ -125,6 +126,13 @@ class LoginPage(PortalPage):
         assert (
             "Redirecting, please wait." in response_text
         ), "Login failed, probably due to a wrong username or password."
+
+    def switch_language(self, name):
+        # TODO: Always should set the "lang" attribute.
+        # See https://git.knut.univention.de/univention/components/univention-portal/-/issues/708
+
+        self.page.get_by_role("button", name="languages").click()
+        self.page.get_by_role("menuitem", name=name).click()
 
 
 @contextmanager
