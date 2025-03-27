@@ -37,7 +37,7 @@ from urllib.parse import urlparse
 import pytest
 
 from umspages.common.base import expect
-from umspages.portal.login_page import LoginPage
+from umspages.keycloak.login_page import LoginPage
 
 
 @pytest.fixture
@@ -179,8 +179,7 @@ def test_keycloak_user_locked_message(
     login_page = LoginPage(page)
 
     # Set language
-    login_page_language = login_page.get_language()
-    if not login_page_language == language_code:
+    if not login_page.current_language == language_code:
         login_page.switch_language(language_name)
 
     # Try a login
@@ -215,8 +214,7 @@ def test_keycloak_user_expired_messages(
     login_page = LoginPage(page)
 
     # Set language
-    login_page_language = login_page.get_language()
-    if not login_page_language == language_code:
+    if not login_page.current_language == language_code:
         login_page.switch_language(language_name)
 
     # Try a login
@@ -256,8 +254,7 @@ def test_keycloak_login_page_title_html(
     login_page = LoginPage(page)
 
     # Set language
-    login_page_language = login_page.get_language()
-    if not login_page_language == language_code:
+    if not login_page.current_language == language_code:
         login_page.switch_language(language_name)
 
     expect(login_page.page.get_by_text(expected_titles[language_code]).first).to_be_visible()
