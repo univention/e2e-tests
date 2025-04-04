@@ -122,6 +122,11 @@ def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_passw
         assert extra_central_navigation_items == set()
 
 
+# FIXME: Test might fail because of timing issue
+#        https://git.knut.univention.de/univention/dev/internal/team-nubus/-/issues/1128
+@pytest.mark.skip(
+    reason="Test can fail because of a missing synchronization, needs to be adopted to wait for the user to be actually created in the backend"
+)
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
