@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.33.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.32.0...v0.33.0) (2025-04-04)
+
+
+### Features
+
+* Omit default port in "base_url" ([f16a9e5](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f16a9e54af6df36c1d7d1e2a0ed1a3f442329f37))
+* Remove portal-base-url and keycloak-base-url from discovery script ([b13d7ab](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/b13d7ab750f844896d793e515edf3bd9eb1ea9df))
+
 ## [0.32.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.31.0...v0.32.0) (2025-03-24)
 
 
