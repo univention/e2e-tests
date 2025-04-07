@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.0...v0.34.1) (2025-04-07)
+
+
+### Bug Fixes
+
+* minimal python version ([092a693](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/092a69397e257d4517c704832d953c21e6f5d88f))
+
 ## [0.34.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.33.0...v0.34.0) (2025-04-07)
 
 
