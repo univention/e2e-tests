@@ -56,7 +56,7 @@ fi
 email_test_api_password=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" maildev-web -o jsonpath="{.data.web-password}" | base64 -d)
 
 # TODO: This is a workaround to mitigate the current secret handling
-the_usual_portal_central_navigation_secret=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server-central-navigation-shared-secret" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
+the_usual_portal_central_navigation_secret=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server-central-navigation-shared-secret" -o jsonpath="{.data['password']}" | base64 -d)
 the_other_portal_central_navigation_secret=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-opendesk-portal-server-central-navigation" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
 
 if [ -n "$the_other_portal_central_navigation_secret" ]
