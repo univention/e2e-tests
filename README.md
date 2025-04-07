@@ -49,7 +49,7 @@ before we switch to this as the suggested default approach.
 ### Requirements
 
 Make sure to have a recent Python interpreter. We only verify that the one in
-the container image works, the other versions are best-effort only.
+the container image (atm, 3.12.3) works, the other versions are best-effort only.
 
 Make sure to have `pipenv` available, see <https://pipenv.pypa.io/en/latest/>.
 
