@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.33.0...v0.34.0) (2025-04-07)
+
+
+### Features
+
+* **portal-server:** central navigation secret key is now password ([f9e0161](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/f9e0161d62879c7b9f244581a6adf940641f83bd)), closes [univention/dev/internal/team-nubus#1092](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1092)
+
 ## [0.33.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.32.0...v0.33.0) (2025-04-04)
 
 
