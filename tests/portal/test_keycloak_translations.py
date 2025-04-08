@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-# SPDX-FileCopyrightText: 2024 Univention GmbH
+# SPDX-FileCopyrightText: 2025 Univention GmbH
 
 # Like what you see? Join us!
 # https://www.univention.com/about-us/careers/vacancies/
@@ -239,7 +239,7 @@ def test_keycloak_login_page_title_html(
     """
     Test the login title translation in keycloak for an expired user account.
     """
-    # Extrac main domain from portal domain
+    # Extract main domain from portal domain
     #   e.g. portal.example.com => example.com
     portal_domain = urlparse(portal.base_url).hostname
     domain = re.findall("portal.(.*)", portal_domain)[0]
