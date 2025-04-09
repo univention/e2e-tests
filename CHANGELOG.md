@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.34.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.1...v0.34.2) (2025-04-09)
+
+
+### Bug Fixes
+
+* **keycloak:** Added new Playwright class for Keycloak login page ([6507ca1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/6507ca1fd3f0a990a060aa50735fd80135dbe0e2)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* **keycloak:** Added Playwright page class for Keycloak login. ([fd0f8ed](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/fd0f8edd117ecab518e5ecaeba5f1be58780a693)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* **keycloak:** Added tests for error message translations. ([840f35e](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/840f35e38c27045a2b2eac79814ee12f81ace5b6)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* SPDX values and typos. ([c9921d9](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c9921d97b4a4f2d751549c28ba6e22ed8b40336b)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+
 ## [0.34.1](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.0...v0.34.1) (2025-04-07)
 
 
