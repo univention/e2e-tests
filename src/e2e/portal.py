@@ -3,6 +3,7 @@
 
 import logging
 from base64 import b64decode
+from urllib.parse import urljoin
 
 from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
@@ -48,3 +49,7 @@ class PortalDeployment(BaseDeployment):
             self.add_release_prefix("portal-frontend-rewrites"),
         )
         self.base_url = url_parts.to_url()
+
+    @property
+    def favicon_well_known_url(self):
+        return urljoin(self.base_url, "/favicon.ico")
