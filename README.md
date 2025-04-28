@@ -125,6 +125,8 @@ Here are frequently used ones:
 2. `--slowmo`: Run tests in slow motion e.g. `--slowmo 500`
 3. `--video`: Capture video e.g. `--video on`
 4. `--browser`: Use a specific browser `--browser firefox`
+5. `--tracing=retain-on-failure`: Saves trace files in `test-results/` when tests fail.
+6. `--video=retain-on-failure`: Saves video in `test-results/`  when tests fail.
 
 
 ## Getting started based on a CI Pipeline
