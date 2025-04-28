@@ -6,6 +6,9 @@ name = "pypi"
 # Use `pipenv update ...` to update all or individual dependencies in the
 # lock file instead.
 
+[requires]
+python_version = "3.12"
+
 [packages]
 playwright = "*"
 pytest-html = "*"
