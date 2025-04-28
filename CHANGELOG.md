@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.34.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.2...v0.34.3) (2025-04-28)
+
+
+### Bug Fixes
+
+* **docker:** Raised UCS base image version to 0.16.2 ([7a63fe8](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/7a63fe8ceeae95851f9f18d9f779a3a53269d070)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* **docs:** Added Playwright options. ([c1d3f38](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/c1d3f38e143243043886a9188453f6ae0b7a26ad)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* **keycloak:** Fixing regex for portal domain. ([bc605cd](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/bc605cd30c93e6924fe0bc37cba1d03ecb3cefde)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+* **keycloak:** Refactoring unit tests. ([93a12f5](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/93a12f5be219e51e64133623c95d82f490c377de)), closes [univention/dev/internal/team-nubus#996](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/996)
+
 ## [0.34.2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.1...v0.34.2) (2025-04-09)
 
 
