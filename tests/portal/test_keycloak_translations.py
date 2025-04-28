@@ -242,7 +242,7 @@ def test_keycloak_login_page_title_html(
     # Extract main domain from portal domain
     #   e.g. portal.example.com => example.com
     portal_domain = urlparse(portal.base_url).hostname
-    domain = re.findall("portal.(.*)", portal_domain)[0]
+    domain = re.findall(r"(^.*\.|^)portal\.(.*)$", portal_domain)[0][1]
 
     expected_titles = {
         "en": f"Login at {domain}",
