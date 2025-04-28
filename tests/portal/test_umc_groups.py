@@ -43,7 +43,7 @@ def group(udm, faker, wait_for_ldap_secondaries_to_catch_up):
     """
     A group.
 
-    The group will be created for the test case and removed after the test case.
+    The group will be created for the test case and removed **by** the test case as part of the testing.
     """
     groups_group = udm.get("groups/group")
     test_group = groups_group.new()
