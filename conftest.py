@@ -22,6 +22,7 @@ def pytest_addoption(parser):
     parser.addoption("--portal-base-url", help="Override discovered base URL of the Univention Portal")
     parser.addoption("--admin-username", default="Administrator", help="Portal admin login username")
     parser.addoption("--admin-password", default="univention", help="Portal admin login password")
+    parser.addoption("--udm-base-url", help="Override discovered base URL of the UDM REST API")
     parser.addoption("--email-test-api-username", default="user", help="Username to access the email test API.")
     parser.addoption("--email-test-api-password", default="univention", help="Password to access the email test API.")
     parser.addoption("--email-test-api-base-url", default="", help="Base URL to reach the email test API (Maildev).")
@@ -126,11 +127,12 @@ def stack_data(k8s, release_name):
 
 
 @pytest.fixture(scope="session")
-def udm_rest_api(k8s, release_name):
+def udm_rest_api(k8s, release_name, pytestconfig):
     """
     Returns an instance of `UdmRestApiDeployment`.
     """
-    return UdmRestApiDeployment(k8s, release_name)
+    cli_base_url = pytestconfig.getoption("--udm-base-url")
+    return UdmRestApiDeployment(k8s, release_name, cli_base_url)
 
 
 @pytest.fixture(scope="session")
