@@ -4,6 +4,8 @@
 import uuid
 
 import pytest
+import requests
+from requests.auth import HTTPBasicAuth
 
 
 @pytest.fixture
@@ -155,3 +157,24 @@ def test_portal_obj_explicitly_set_univentionObjectIdentifier(create_object_iden
     assert portal_obj
     portal_obj.reload()
     assert portal_obj.properties["univentionObjectIdentifier"] == test_identifier
+
+
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_openapi_schema(udm_rest_api, ldap, subtests):
+    response = requests.get(
+        f"{udm_rest_api.base_url}openapi.json",
+        headers={"Accept": "application/json"},
+        auth=HTTPBasicAuth(ldap.admin_rdn, ldap.admin_password),
+    )
+    response.raise_for_status()
+    openapi_schema = response.json()
+    assert openapi_schema
+
+    for component, schema in openapi_schema["components"]["schemas"].items():
+        props = schema.get("properties", {}).get("properties", {}).get("properties", {})
+        with subtests.test(msg=component, i=component):
+            if component.endswith("request-patch") and component != "users-passwd.request-patch":
+                assert "univentionObjectIdentifier" in props.keys()
+            else:
+                assert "univentionObjectIdentifier" not in props.keys()
