@@ -60,6 +60,9 @@ def group(udm, faker, wait_for_ldap_secondaries_to_catch_up):
     wait_for_ldap_secondaries_to_catch_up()
     yield test_group
 
+    test_group.reload()
+    test_group.delete()
+
 
 @pytest.mark.groups
 @pytest.mark.portal
