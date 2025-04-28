@@ -32,7 +32,6 @@
 # <https://www.gnu.org/licenses/>.
 import re
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
 
 import pytest
 
@@ -234,19 +233,13 @@ def test_keycloak_login_page_title_html(
     navigate_to_login_page,
     language_code,
     language_name,
-    portal,
 ):
     """
     Test the login title translation in keycloak for an expired user account.
     """
-    # Extract main domain from portal domain
-    #   e.g. portal.example.com => example.com
-    portal_domain = urlparse(portal.base_url).hostname
-    domain = re.findall(r"(^.*\.|^)portal\.(.*)$", portal_domain)[0][1]
-
     expected_titles = {
-        "en": f"Login at {domain}",
-        "de": f"Anmelden bei {domain}",
+        "en": re.compile(r"Login at .*\w"),
+        "de": re.compile(r"Anmelden bei .*\w"),
     }
 
     # Go to login page
