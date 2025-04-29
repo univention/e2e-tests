@@ -126,11 +126,12 @@ def stack_data(k8s, release_name):
 
 
 @pytest.fixture(scope="session")
-def udm_rest_api(k8s, release_name):
+def udm_rest_api(pytestconfig, k8s, release_name):
     """
     Returns an instance of `UdmRestApiDeployment`.
     """
-    return UdmRestApiDeployment(k8s, release_name)
+    cli_base_url = pytestconfig.getoption("--portal-base-url")
+    return UdmRestApiDeployment(k8s, release_name, override_base_url=cli_base_url)
 
 
 @pytest.fixture(scope="session")
