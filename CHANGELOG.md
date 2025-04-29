@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.35.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.3...v0.35.0) (2025-04-29)
+
+
+### Features
+
+* Verify that the well known favicon URL works ([76a5dba](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/76a5dba793f9a246f9efef8a026eb8b510fbdb62)), closes [univention/dev/internal/team-nubus#889](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/889)
+
+
+### Bug Fixes
+
+* **testing-api:** Update base image version to 521:0.16.2-build-2025-04-17 ([e9a54a0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/e9a54a0dc39f47fb02577ad452529044617773a6))
+
 ## [0.34.3](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.2...v0.34.3) (2025-04-28)
 
 
