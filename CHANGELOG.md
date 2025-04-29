@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.35.0...v0.36.0) (2025-04-29)
+
+
+### Features
+
+* **testing-api:** Remove docker.io dependencies ([344b9a2](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/344b9a2d7f8f4e5a305f372e2518cd9b1c6b63d6)), closes [univention/dev/internal/team-nubus#1131](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1131)
+
 ## [0.35.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.34.3...v0.35.0) (2025-04-29)
 
 
