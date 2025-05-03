@@ -32,7 +32,7 @@ def pytest_addoption(parser):
         help="Shared secret with portal-server for central navigation",
     )
     # BFP tests options
-    parser.addoption("--keycloak-base-url", help="Base URL of Keycloak")
+    parser.addoption("--keycloak-base-url", help="Override discovered base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin", help="Keycloak admin login username")
     parser.addoption("--kc-admin-password", default="univention", help="Keycloak admin login password")
     parser.addoption("--num-device-block", type=int, default=5, help="Number of failed logins for device block")
