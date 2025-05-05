@@ -22,16 +22,17 @@ class UdmRestApiDeployment(BaseDeployment):
     Example: "https://domain.example/univention/portal/udm/".
     """
 
-    def __init__(self, k8s: KubernetesCluster, release_name: str, override_base_url: str | None = None):
+    def __init__(self, k8s: KubernetesCluster, override_base_url: str | None = None):
         if override_base_url:
             log.warning("Overriding udm base_url to %s", override_base_url)
             self.base_url = override_base_url
-        super().__init__(k8s, release_name)
+        super().__init__(k8s)
 
     def _discover_from_cluster(self):
         if self.base_url:
             return
         url_parts = self._k8s.discover_url_parts_from_ingress(
             self.add_release_prefix("udm-rest-api"),
+            self._k8s.namespace,
         )
         self.base_url = urljoin(url_parts.to_url(), "/univention/udm/")

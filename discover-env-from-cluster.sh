@@ -94,7 +94,7 @@ else
 fi
 
 
-export PYTEST_ADDOPTS="--admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
+export PYTEST_ADDOPTS="--release-name=${RELEASE_NAME} --namespace=${DEPLOY_NAMESPACE} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
 
 
 echo

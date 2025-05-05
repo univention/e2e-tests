@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
-import os
 import time
 
 from kubernetes import client, config
@@ -79,11 +78,17 @@ class KubernetesCluster:
     ingress_https_port = 443
     """The port for HTTPS access of the intress controller."""
 
-    def __init__(self, direct_access=True):
+    def __init__(
+        self,
+        namespace: str,
+        release_name: str,
+        direct_access=True,
+    ):
         self.direct_access = direct_access
         config.load_kube_config()
         self.port_forwarding = PortForwardingManager()
-        self.namespace = discover_namespace()
+        self.namespace = discover_namespace(namespace)
+        self.release_name = release_name
         self._discover_from_cluster()
         if not self.direct_access:
             self.port_forwarding.start_monitoring()
@@ -311,9 +316,8 @@ class KubernetesCluster:
         return secret
 
 
-def discover_namespace():
+def discover_namespace(namespace):
     _, active_context = config.list_kube_config_contexts()
-    namespace_from_context = active_context["context"].get("namespace", "default")
-    namespace = os.environ.get("DEPLOY_NAMESPACE", namespace_from_context)
+    namespace = namespace or active_context["context"].get("namespace", "default")
     log.info("Discovered target namespace: %s", namespace)
     return namespace

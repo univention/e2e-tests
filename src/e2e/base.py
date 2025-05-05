@@ -10,9 +10,8 @@ class BaseDeployment:
     Base class for deployment abstractions.
     """
 
-    def __init__(self, k8s: KubernetesCluster, release_name: str):
+    def __init__(self, k8s: KubernetesCluster):
         self._k8s = k8s
-        self.release_name = release_name
         self._discover_from_cluster()
 
     def _discover_from_cluster(self):
@@ -23,4 +22,4 @@ class BaseDeployment:
         """
 
     def add_release_prefix(self, name: str) -> str:
-        return add_release_prefix(name, self.release_name)
+        return add_release_prefix(name, self._k8s.release_name)
