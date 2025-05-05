@@ -4,6 +4,7 @@
 import logging
 import time
 
+from e2e.helm import add_release_prefix
 from kubernetes import client, config
 from kubernetes.client.models import V1Deployment
 from kubernetes.client.rest import ApiException
@@ -106,6 +107,9 @@ class KubernetesCluster:
             if ingress_https_port:
                 log.info("Ingress https port discovered via annotation to be %s.", ingress_https_port)
                 self.ingress_https_port = int(ingress_https_port)
+
+    def add_release_prefix(self, name: str) -> str:
+        return add_release_prefix(name, self.release_name)
 
     def port_forward_if_needed(
         self,
@@ -287,14 +291,14 @@ class KubernetesCluster:
         )
         return ingress
 
-    def discover_url_parts_from_ingress(self, name: str, namespace: str | None = None):
+    def discover_url_parts_from_ingress(self, name: str):
         """
         Retrieve URL parts from an Ingress in the cluster.
 
         If `namespace` is not provided, then the discovered namespace will be
         used.
         """
-        ingress = self.get_ingress(name, namespace)
+        ingress = self.get_ingress(name, self.namespace)
         host = ingress.spec.rules[0].host
         tls = ingress.spec.tls
         scheme = "https" if tls else "http"

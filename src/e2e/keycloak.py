@@ -3,13 +3,12 @@
 
 import logging
 
-from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
 
 log = logging.getLogger(__name__)
 
 
-class KeycloakDeployment(BaseDeployment):
+class KeycloakDeployment:
     """
     Represents a deployment of Keycloak.
     """
@@ -22,16 +21,13 @@ class KeycloakDeployment(BaseDeployment):
     """
 
     def __init__(self, k8s: KubernetesCluster, *, override_base_url: str | None = None):
+        self._k8s = k8s
+
         if override_base_url:
             log.warning("Overriding discovered keycloak base_url from %s to %s", self.base_url, override_base_url)
             self.base_url = override_base_url
-        super().__init__(k8s)
-
-    def _discover_from_cluster(self):
-        if self.base_url:
-            return
-        url_parts = self._k8s.discover_url_parts_from_ingress(
-            self.add_release_prefix("keycloak"),
-            self._k8s.namespace,
-        )
-        self.base_url = url_parts.to_url()
+        else:
+            url_parts = self._k8s.discover_url_parts_from_ingress(
+                self._k8s.add_release_prefix("keycloak"),
+            )
+            self.base_url = url_parts.to_url()
