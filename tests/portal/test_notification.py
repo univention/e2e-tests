@@ -182,7 +182,8 @@ def test_notification_expiry_time(
     notification_json_data["expireTime"] = expiry_dt.isoformat()
 
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, f"Got status {response.status_code} while sending notification"
+    assert response.ok, f"Got status { response.status_code } while sending notification: { response.text }"
+
     wait = (expiry_dt - dt_now).total_seconds()
     time.sleep(wait + 1)  # +1 for safety
     home_page_logged_in = HomePageLoggedIn(page)
@@ -195,7 +196,7 @@ def test_notification_expiry_time(
 
     notification_json_data["expireTime"] = (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat()
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, f"Got status {response.status_code} while sending notification"
+    assert response.ok, f"Got status { response.status_code } while sending notification: { response.text }"
     expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_hidden()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(1)
     expect(home_page_logged_in.notification_drawer.notification(0)).to_be_visible()
