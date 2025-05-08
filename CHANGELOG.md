@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.37.0...v0.38.0) (2025-05-08)
+
+
+### Features
+
+* Add response body into the error message of notifications tests ([df7933d](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/commit/df7933d2025fefa348005d2f095b1c815e650a09))
+
 ## [0.37.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.36.0...v0.37.0) (2025-04-29)
 
 
