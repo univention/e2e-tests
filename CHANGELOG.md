@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.39.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.38.0...v0.39.0) (2025-05-11)
+
+
+### Features
+
+* move and upgrade ucs-base-image to 0.17.3-build-2025-05-11 ([f0fde96](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/f0fde9667829ccc87ef27f56f150187c0c49be9d))
+
+
+### Bug Fixes
+
+* move addlicense pre-commit hook ([5d7999a](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/5d7999ada75cbdbf62fbc398dbb82fab08fcc630))
+* update common-ci to main ([4208923](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4208923b486a3daf6e7268d7a6d2f5df99fcf3e5))
+
 ## [0.38.0](https://git.knut.univention.de/univention/customers/dataport/upx/e2e-tests/compare/v0.37.0...v0.38.0) (2025-05-08)
 
 
