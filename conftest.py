@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def pytest_addoption(parser):
     # Portal tests options
     parser.addoption("--release-name", default="nubus", help="The helm release name of the Nubus deployment under test")
-    parser.addoption("--namespace", default=None, help="Kubernetes namespace of the Nubus deployment under test")
+    parser.addoption("--namespace", default=None, help="Override the kubeconfig default namespace")
     parser.addoption("--portal-base-url", help="Override discovered base URL of the Univention Portal")
     parser.addoption("--admin-username", default="Administrator", help="Portal admin login username")
     parser.addoption("--admin-password", default="univention", help="Portal admin login password")
@@ -84,55 +84,51 @@ def release_name(pytestconfig):
 
 
 @pytest.fixture(scope="session")
-def namespace(pytestconfig):
-    return pytestconfig.getoption("--namespace")
-
-
-@pytest.fixture(scope="session")
-def k8s(release_name, namespace):
+def k8s(pytestconfig):
     """
     Kubernetes abstraction.
 
     Returns a utility to interact with a Kubernetes cluster.
     """
-    cluster = KubernetesCluster(namespace=namespace, release_name=release_name)
+    namespace = pytestconfig.getoption("--namespace")
+    cluster = KubernetesCluster(override_namespace=namespace)
     yield cluster
     cluster.cleanup()
 
 
 @pytest.fixture(scope="session")
-def portal(pytestconfig, k8s):
+def portal(pytestconfig, k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
     """
     cli_base_url = pytestconfig.getoption("--portal-base-url")
-    return PortalDeployment(k8s, override_base_url=cli_base_url)
+    return PortalDeployment(k8s, release_name, override_base_url=cli_base_url)
 
 
 @pytest.fixture(scope="session")
-def keycloak(pytestconfig, k8s):
+def keycloak(pytestconfig, k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
     """
     cli_base_url = pytestconfig.getoption("--keycloak-base-url")
-    return KeycloakDeployment(k8s, override_base_url=cli_base_url)
+    return KeycloakDeployment(k8s, release_name, override_base_url=cli_base_url)
 
 
 @pytest.fixture(scope="session")
-def stack_data(k8s):
+def stack_data(k8s, release_name):
     """
     Returns an instance of `StackDataDeployment`.
     """
-    return StackDataDeployment(k8s)
+    return StackDataDeployment(k8s, release_name)
 
 
 @pytest.fixture(scope="session")
-def udm_rest_api(k8s, pytestconfig):
+def udm_rest_api(k8s, release_name, pytestconfig):
     """
     Returns an instance of `UdmRestApiDeployment`.
     """
     cli_base_url = pytestconfig.getoption("--udm-base-url")
-    return UdmRestApiDeployment(k8s, cli_base_url)
+    return UdmRestApiDeployment(k8s, release_name, cli_base_url)
 
 
 @pytest.fixture(scope="session")

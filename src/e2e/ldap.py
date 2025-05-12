@@ -111,7 +111,7 @@ class LdapDeployment(BaseDeployment):
         "ldap-leader": "true",
     }
 
-    def __init__(self, k8s: KubernetesCluster, release_name):
+    def __init__(self, k8s: KubernetesCluster, release_name: str):
         self._k8s = k8s
         self.release_name = release_name
         self.primary_0_pod_name = self.add_release_prefix("ldap-server-primary-0")

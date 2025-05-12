@@ -80,15 +80,13 @@ class KubernetesCluster:
 
     def __init__(
         self,
-        namespace: str,
-        release_name: str,
+        override_namespace: str | None = None,
         direct_access=True,
     ):
         self.direct_access = direct_access
         config.load_kube_config()
         self.port_forwarding = PortForwardingManager()
-        self.namespace = discover_namespace(namespace)
-        self.release_name = release_name
+        self.namespace = override_namespace or discover_namespace()
         self._discover_from_cluster()
         if not self.direct_access:
             self.port_forwarding.start_monitoring()
@@ -294,7 +292,7 @@ class KubernetesCluster:
         If `namespace` is not provided, then the discovered namespace will be
         used.
         """
-        ingress = self.get_ingress(name, namespace)
+        ingress = self.get_ingress(name, namespace or self.namespace)
         host = ingress.spec.rules[0].host
         tls = ingress.spec.tls
         scheme = "https" if tls else "http"
@@ -316,8 +314,8 @@ class KubernetesCluster:
         return secret
 
 
-def discover_namespace(namespace):
+def discover_namespace() -> str:
     _, active_context = config.list_kube_config_contexts()
-    namespace = namespace or active_context["context"].get("namespace", "default")
+    namespace = active_context["context"].get("namespace", "default")
     log.info("Discovered target namespace: %s", namespace)
     return namespace

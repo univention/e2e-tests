@@ -21,17 +21,14 @@ class KeycloakDeployment(BaseDeployment):
     Example: "https://id.domain.example/".
     """
 
-    def __init__(self, k8s: KubernetesCluster, *, override_base_url: str | None = None):
+    def __init__(self, k8s: KubernetesCluster, release_name: str, *, override_base_url: str | None = None):
         if override_base_url:
-            log.warning("Overriding discovered keycloak base_url from %s to %s", self.base_url, override_base_url)
             self.base_url = override_base_url
-        super().__init__(k8s)
+            log.warning("Overriding keycloak base_url to %s", override_base_url)
+        super().__init__(k8s, release_name)
 
     def _discover_from_cluster(self):
         if self.base_url:
             return
-        url_parts = self._k8s.discover_url_parts_from_ingress(
-            self.add_release_prefix("keycloak"),
-            self._k8s.namespace,
-        )
+        url_parts = self._k8s.discover_url_parts_from_ingress(self.add_release_prefix("keycloak"))
         self.base_url = url_parts.to_url()
