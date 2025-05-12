@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.39.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.0...v0.39.1) (2025-05-12)
+
+
+### Bug Fixes
+
+* **autodiscovery:** Add override for the udm_base_url and only evaluate the kubernetes manifests if no override is specified ([a78cf89](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/a78cf8927653494ed4fb71e36f5f625f1b5d147f)), closes [univention/dev/internal/team-nubus#1143](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1143)
+* **autodiscovery:** consolidate configuration from env and cli to cli arguments ([4461f05](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4461f05a4c982f980587e62c8486842655a66962)), closes [univention/dev/internal/team-nubus#1143](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1143)
+* **autodiscovery:** Dont't try to discover the keycloak url if it's overwritten via cli ([cadb6a4](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/cadb6a443fb0b055ba159181e95043c733107045)), closes [univention/dev/internal/team-nubus#930](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/930)
+
 ## [0.39.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.38.0...v0.39.0) (2025-05-11)
 
 
