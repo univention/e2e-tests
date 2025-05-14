@@ -48,7 +48,7 @@ from umspages.portal.selfservice.set_new_password import SetNewPasswordPage
 from umspages.portal.selfservice.set_recovery_email import SetRecoveryEmailDialogPage
 from umspages.portal.users.users_page import UCSUsersPage
 
-from tests.portal.conftest import WaitForPortalSync
+from tests.portal.conftest import WaitForUserExists
 
 DUMMY_USER_PASSWORD_2 = "secondpass"
 DUMMY_EMAIL = "mail@example.org"
@@ -63,13 +63,13 @@ def dummy_username():
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_portal_tiles_and_central_navigation_update(user, wait_for_portal_sync: WaitForPortalSync):
+def test_portal_tiles_and_central_navigation_update(user, ensure_user_exists: WaitForUserExists):
     """
     Prerequisite for all other selfservice tests.
     If the portal-consumer does not work, nothing else will either.
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
 
 @pytest.mark.selfservice
@@ -80,11 +80,11 @@ def test_user_changes_password_via_side_menu(
     navigate_to_login_page: Page,
     user,
     user_password: str,
-    wait_for_portal_sync: WaitForPortalSync,
+    ensure_user_exists: WaitForUserExists,
     wait_for_ldap_secondaries_to_catch_up,
 ):
     username = user.properties["username"]
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
     page = navigate_to_login_page
     change_password_page = ChangePasswordDialogPage(page)
@@ -102,7 +102,7 @@ def test_user_changes_password_via_side_menu(
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_set_recovery_email(user, user_password, wait_for_portal_sync: WaitForPortalSync, page):
+def test_set_recovery_email(user, user_password, ensure_user_exists: WaitForUserExists, page):
     """
     Tests a user can set up a recovery email.
 
@@ -114,7 +114,7 @@ def test_set_recovery_email(user, user_password, wait_for_portal_sync: WaitForPo
     same.
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
     set_recovery_email_page = SetRecoveryEmailDialogPage(page)
     set_recovery_email_page.navigate(username, user_password)
@@ -135,7 +135,7 @@ def test_set_recovery_email(user, user_password, wait_for_portal_sync: WaitForPo
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortalSync, page):
+def test_manage_profile(user, user_password, ensure_user_exists: WaitForUserExists, page):
     """
     Tests a user can manage their profile.
     1. Logs in as the dummy user.
@@ -149,7 +149,7 @@ def test_manage_profile(user, user_password, wait_for_portal_sync: WaitForPortal
     9. Checks the profile picture using the UDM REST API
     """
     username = user.properties["username"]
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
     manage_profile_page = ManageProfileDialogPage(page)
     manage_profile_page.navigate(username, user_password)
@@ -382,14 +382,14 @@ def test_user_forced_to_change_password_on_next_login(
     faker,
     page,
     wait_for_ldap_secondaries_to_catch_up,
-    wait_for_portal_sync: WaitForPortalSync,
+    ensure_user_exists: WaitForUserExists,
 ):
     username = user.properties["username"]
 
     user.properties["pwdChangeNextLogin"] = True
     user.save()
     wait_for_ldap_secondaries_to_catch_up()
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
     home_page_logged_out = HomePageLoggedOut(page)
 

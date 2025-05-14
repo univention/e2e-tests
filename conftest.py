@@ -3,9 +3,12 @@
 
 import logging
 import random
+from base64 import b64decode
 
 import pytest
+from minio import Minio
 
+from e2e.helm import add_release_prefix
 from e2e.keycloak import KeycloakDeployment
 from e2e.kubernetes import KubernetesCluster
 from e2e.ldap import LdapDeployment
@@ -97,6 +100,19 @@ def k8s(pytestconfig):
 
 
 @pytest.fixture(scope="session")
+def k8s_supporting_port_forward(pytestconfig):
+    """
+    Kubernetes abstraction.
+
+    Returns a utility to interact with a Kubernetes cluster allowing port forwarding to local host.
+    """
+    namespace = pytestconfig.getoption("--namespace")
+    cluster = KubernetesCluster(override_namespace=namespace, direct_access=False)
+    yield cluster
+    cluster.cleanup()
+
+
+@pytest.fixture(scope="session")
 def portal(pytestconfig, k8s, release_name):
     """
     Returns an instance of `PortalDeployment`.
@@ -137,3 +153,30 @@ def ldap(k8s, release_name):
     Returns an instance of `LdapDeployment`.
     """
     return LdapDeployment(k8s, release_name)
+
+
+@pytest.fixture(scope="session")
+def minio_client(k8s_supporting_port_forward, release_name):
+    """
+    Returns a Minio client to access the portal data.
+    """
+    k8s = k8s_supporting_port_forward
+    host, port = k8s.port_forward_if_needed(
+        target_name=f"{release_name}-minio",
+        target_port=9000,
+        local_port=9000,
+        target_type="service",
+    )
+
+    secret_name = add_release_prefix("minio-credentials", release_name)
+    secret = k8s.get_secret(secret_name)
+
+    admin_username = b64decode(secret.data["root-user"]).decode()
+    admin_password = b64decode(secret.data["root-password"]).decode()
+
+    return Minio(
+        f"{host}:{port}",
+        access_key=admin_username,
+        secret_key=admin_password,
+        secure=False,
+    )

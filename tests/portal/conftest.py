@@ -28,7 +28,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+import io
+import json
 import logging
+import time
 from datetime import datetime, timedelta
 from typing import Callable
 from urllib.parse import urljoin, urlparse
@@ -47,6 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 WaitForPortalSync = Callable[[str, int], None]
+WaitForUserExists = Callable[[str], None]
 
 
 @pytest.fixture(scope="session")
@@ -237,6 +241,31 @@ def user(udm, faker, email_domain, external_email_domain, user_password, wait_fo
 
 def has_central_navigation_categories(response: requests.Response, minimum_categories):
     return len(response.json()["categories"]) >= minimum_categories
+
+
+@pytest.fixture
+def ensure_user_exists(minio_client) -> WaitForUserExists:
+    """
+    Allows to wait until the portal data for a user is complete.
+    """
+
+    def _wait_for_user_creation(username: str, timeout: int | float = 10) -> None:
+        @retry(
+            stop=stop_after_delay(timeout),
+            wait=wait_fixed(0.25),
+            before_sleep=before_sleep_log(logger, logging.INFO),
+            retry_error_cls=BetterRetryError,
+        )
+        def poll_minio_object():
+            response = minio_client.get_object("nubus", "portal-data/groups")
+            data = json.load(io.BytesIO(response.read()))
+            if username not in data:
+                raise Exception(f"User {username} not found in portal data")
+
+        poll_minio_object()
+        time.sleep(2)  # Give the system some time to process the data
+
+    return _wait_for_user_creation
 
 
 @pytest.fixture

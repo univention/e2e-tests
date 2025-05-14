@@ -7,7 +7,10 @@ COPY ./Pipfile .
 COPY ./Pipfile.lock .
 RUN pip install --no-cache-dir pipenv==2024.0.1 && \
     pipenv sync --system && \
-    playwright install --with-deps
+    playwright install --with-deps && \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && \
+    mv kubectl /usr/local/bin/kubectl
 
 FROM build AS test
 WORKDIR /e2e/
