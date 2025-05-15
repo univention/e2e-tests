@@ -220,7 +220,48 @@ def portal_udm(udm, faker, ldap_base_dn):
 
 
 @pytest.fixture
-def portal_entry(udm, faker, ldap_base_dn):
+def portal_entry_factory(udm, faker, ldap_base_dn):
+    """
+    A factory fixture returning a function which creates portal entry objects.
+
+    Creates an activated test Portal Entry.
+
+    The Portal Entry will be isolated, it will not be added into any Portal or
+    Category.
+
+    All entries created through this fixture will be cleaned up after the test run.
+    """
+    entries = []
+
+    def __create():
+        entry_module = udm.get("portals/entry")
+        portal_entry = entry_module.new()
+        portal_entry.properties.update(
+            {
+                "name": f"test-{faker.slug()}",
+                "description": {"en_US": faker.catch_phrase()},
+                "displayName": {"en_US": faker.catch_phrase()},
+                "link": [["en_US", "http://test.example.com"]],
+                "activated": True,
+            }
+        )
+        portal_entry.save()
+        entries.append(portal_entry)
+        return portal_entry
+
+    yield __create
+
+    for portal_entry in entries:
+        logger.info("Deleting Portal entry %s", portal_entry.dn)
+        try:
+            portal_entry.reload()
+            portal_entry.delete()
+        except NotFound:
+            logger.info("Portal Entry %s has been removed by the test case.", portal_entry.dn)
+
+
+@pytest.fixture
+def portal_entry(portal_entry_factory):
     """
     Creates an activated test Portal Entry.
 
@@ -229,26 +270,8 @@ def portal_entry(udm, faker, ldap_base_dn):
 
     The entry will be cleaned up after the test run.
     """
-    entry_module = udm.get("portals/entry")
-    portal_entry = entry_module.new()
-    portal_entry.properties.update(
-        {
-            "name": f"test-{faker.slug()}",
-            "description": {"en_US": faker.catch_phrase()},
-            "displayName": {"en_US": faker.catch_phrase()},
-            "link": [["en_US", "http://test.example.com"]],
-            "activated": True,
-        }
-    )
-    portal_entry.save()
 
-    yield portal_entry
-
-    try:
-        portal_entry.reload()
-        portal_entry.delete()
-    except NotFound:
-        logger.info("Portal Entry %s has been removed by the test case.", portal_entry.dn)
+    return portal_entry_factory()
 
 
 @pytest.fixture

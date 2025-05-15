@@ -39,3 +39,8 @@ class HomePage(PortalPage):
 
     def navigate(self):
         self.page.goto("/")
+
+    def set_content(self, *args, **kwargs):
+        super().set_content(*args, **kwargs)
+        self.corner_links = self.page.locator(".portal-corner")
+        self.quick_links = self.page.locator(".portal-quick-links")
