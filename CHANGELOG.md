@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.39.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.1...v0.39.2) (2025-05-16)
+
+
+### Bug Fixes
+
+* wait for user entry in s3 instead of original portal sync ([9f28068](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/9f280689267ff475ebaa463420889f92248663ff))
+
 ## [0.39.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.0...v0.39.1) (2025-05-12)
 
 
