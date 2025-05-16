@@ -85,7 +85,7 @@ class AddUserDialog(BasePagePart):
         password: Optional[str] = None,
         invite_email: Optional[str] = None,
     ):
-        _assert_exactly_one_value_is_set(password, invite_email)
+        assert password or invite_email, "Either password or invite_email has to be specified to create a user"
 
         if self.container_indicator.is_visible():
             self.container_indicator.fill(":/users")
@@ -107,8 +107,3 @@ class AddUserDialog(BasePagePart):
         self.submit_password_button.click()
         expect(self.page_part_locator.get_by_text(f'The user "{username}" has been created.')).to_be_visible()
         self.page_part_locator.press("Escape")
-
-
-def _assert_exactly_one_value_is_set(*values):
-    set_values = sum(bool(value) for value in values)
-    assert set_values == 1
