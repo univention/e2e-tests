@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.40.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.2...v0.40.0) (2025-05-19)
+
+
+### Features
+
+* add playwright tests for the corner/quick links feature ([88159b7](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/88159b7909c1f9f24ef28c5feb57b01293014e3c)), closes [univention/dev/internal/team-nubus#1177](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1177)
+
 ## [0.39.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.1...v0.39.2) (2025-05-16)
 
 
