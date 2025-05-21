@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.40.0...v0.41.0) (2025-05-21)
+
+
+### Features
+
+* test no portal icons are missing (i.e. no question mark icons exist) ([66ad10d](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/66ad10d5344b4d3188ce96a5175cfd875d61f72f)), closes [univention/dev/internal/team-nubus#1182](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1182)
+
 ## [0.40.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.39.2...v0.40.0) (2025-05-19)
 
 
