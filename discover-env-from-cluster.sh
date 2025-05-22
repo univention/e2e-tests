@@ -31,11 +31,17 @@
 # general it can be freely chosen.
 : "${RELEASE_NAME:=nubus}"
 
+# detect if using an external minio
+external_minio=""
+if kubectl get -n "${DEPLOY_NAMESPACE}" "secrets" "minio-external-admin-credentials" > /dev/null 2>&1; then
+  external_minio="--external-minio"
+fi
 
 echo "Namespace: ${DEPLOY_NAMESPACE}"
 echo "Release name: ${RELEASE_NAME}"
 echo "API Server: $(kubectl config view --minify -o jsonpath='{..server}')"
 echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}')"
+echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")"
 
 
 # Discover secrets and the domain.
@@ -98,8 +104,7 @@ else
   echo Found a testing-api deployment, skipping install or update.
 fi
 
-
-export PYTEST_ADDOPTS="--release-name=${RELEASE_NAME} --namespace=${DEPLOY_NAMESPACE} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url}"
+export PYTEST_ADDOPTS="--release-name=${RELEASE_NAME} --namespace=${DEPLOY_NAMESPACE} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url} ${external_minio}"
 
 
 echo

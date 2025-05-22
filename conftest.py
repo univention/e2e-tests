@@ -44,6 +44,9 @@ def pytest_addoption(parser):
     parser.addoption("--release-duration", type=int, default=1, help="Blocks are released after this many minutes")
     parser.addoption("--realm", default="master", help="Realm to attempt logins at")
     parser.addoption("--randomly-seed", help="Seed to use for randomization.")
+    parser.addoption(
+        "--external-minio", action="store_true", default=False, help="Set if using an externally deployed minio"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -156,19 +159,27 @@ def ldap(k8s, release_name):
 
 
 @pytest.fixture(scope="session")
-def minio_client(k8s_supporting_port_forward, release_name):
+def external_minio(pytestconfig: pytest.Config):
+    return bool(pytestconfig.getoption("--external-minio"))
+
+
+@pytest.fixture(scope="session")
+def minio_client(k8s_supporting_port_forward, release_name, external_minio):
     """
     Returns a Minio client to access the portal data.
     """
     k8s = k8s_supporting_port_forward
+    service_name = "minio" if external_minio else f"{release_name}-minio"
     host, port = k8s.port_forward_if_needed(
-        target_name=f"{release_name}-minio",
+        target_name=service_name,
         target_port=9000,
         local_port=9000,
         target_type="service",
     )
 
-    secret_name = add_release_prefix("minio-credentials", release_name)
+    secret_name = (
+        "minio-external-admin-credentials" if external_minio else add_release_prefix("minio-credentials", release_name)
+    )
     secret = k8s.get_secret(secret_name)
 
     admin_username = b64decode(secret.data["root-user"]).decode()

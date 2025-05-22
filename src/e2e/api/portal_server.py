@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 from playwright.sync_api import APIRequestContext
 
-from e2e.decorators import retrying_fast
+from e2e.decorators import retrying_slow
 from e2e.types import LdapDn
 
 
@@ -33,7 +33,7 @@ class PortalServerApi:
         """
         return self.get("../../portal.json")
 
-    @retrying_fast
+    @retrying_slow
     def assert_item_is_in_link_list(self, item_dn: LdapDn, link_list: str) -> None:
         """
         Check that an `item_dn` is eventually present in `link_list`.
@@ -44,7 +44,7 @@ class PortalServerApi:
         result = self.get_portal().json()
         assert item_dn in result[link_list]
 
-    @retrying_fast
+    @retrying_slow
     def assert_entry(self, entry_dn: LdapDn) -> None:
         """
         Check that an `entry_dn` is present in the portal response.

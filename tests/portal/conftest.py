@@ -252,7 +252,7 @@ def ensure_user_exists(minio_client) -> WaitForUserExists:
     def _wait_for_user_creation(username: str, timeout: int | float = 30) -> None:
         @retry(
             stop=stop_after_delay(timeout),
-            wait=wait_fixed(0.25),
+            wait=wait_fixed(0.50),
             before_sleep=before_sleep_log(logger, logging.INFO),
             retry_error_cls=BetterRetryError,
         )
