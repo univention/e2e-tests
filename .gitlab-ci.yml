@@ -27,7 +27,6 @@ variables:
   - IMAGE_NAME: "e2e-tests-runner"
     KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "Dockerfile"
-    KANIKO_ARGS: "--cache=false"
   - IMAGE_NAME: "testing-api"
     KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "docker/testing-api/Dockerfile"
@@ -37,6 +36,8 @@ variables:
     - "testing-api"
 
 container-build:
+  tags:
+    - "dm-l"
   parallel:
     matrix: *build-matrix
 
