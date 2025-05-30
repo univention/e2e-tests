@@ -5,6 +5,8 @@ import logging
 from base64 import b64decode
 from urllib.parse import urljoin
 
+from kubernetes.client import models
+
 from e2e.base import BaseDeployment
 from e2e.kubernetes import KubernetesCluster
 from e2e.kubernetes.utils import get_secret_by_volume
@@ -41,19 +43,16 @@ class PortalDeployment(BaseDeployment):
         deployment_name = self.add_release_prefix("portal-server")
         deployment = self._k8s.get_deployment(deployment_name)
 
-        secret_details = get_secret_by_volume(
-            deployment.spec.template.spec, container_name="portal-server", volume_name="secret-udm"
+        self.service_account_password = self._discover_secret_value_from_volume(
+            deployment.spec.template.spec,
+            container_name="portal-server",
+            volume_name="secret-udm",
         )
-
-        secret = self._k8s.get_secret(secret_details.name)
-        self.service_account_password = b64decode(secret.data[secret_details.key])
-
-        secret_details = get_secret_by_volume(
-            deployment.spec.template.spec, container_name="portal-server", volume_name="secret-central-navigation"
+        self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
+            deployment.spec.template.spec,
+            container_name="portal-server",
+            volume_name="secret-central-navigation",
         )
-
-        secret = self._k8s.get_secret(secret_details.name)
-        self.central_navigation_shared_secret = b64decode(secret.data[secret_details.key])
 
         if self.base_url:
             return
@@ -62,6 +61,19 @@ class PortalDeployment(BaseDeployment):
             self._k8s.namespace,
         )
         self.base_url = url_parts.to_url()
+
+    def _discover_secret_value_from_volume(
+        self,
+        pod_spec: models.V1PodSpec,
+        container_name: str,
+        volume_name: str,
+    ) -> str:
+        secret_details = get_secret_by_volume(
+            pod_spec, container_name=container_name, volume_name=volume_name,
+        )
+        secret = self._k8s.get_secret(secret_details.name)
+        return b64decode(secret.data[secret_details.key])
+
 
     @property
     def favicon_well_known_url(self):
