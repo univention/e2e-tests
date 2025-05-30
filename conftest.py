@@ -30,11 +30,7 @@ def pytest_addoption(parser):
     parser.addoption("--email-test-api-username", default="user", help="Username to access the email test API.")
     parser.addoption("--email-test-api-password", default="univention", help="Password to access the email test API.")
     parser.addoption("--email-test-api-base-url", default="", help="Base URL to reach the email test API (Maildev).")
-    parser.addoption(
-        "--portal-central-navigation-secret",
-        default="univention",
-        help="Shared secret with portal-server for central navigation",
-    )
+
     # BFP tests options
     parser.addoption("--keycloak-base-url", help="Override discovered base URL of Keycloak")
     parser.addoption("--kc-admin-username", default="admin", help="Keycloak admin login username")

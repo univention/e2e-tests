@@ -6,7 +6,6 @@
 : "${ADMIN_PASSWORD:=univention}"
 : "${ADMIN_USERNAME:=Administrator}"
 : "${MARKER:=development_environment}"
-: "${PORTAL_CENTRAL_NAVIGATION_SECRET:=univention}"
 : "${PORTAL_BASE_URL:=http://localhost:8000/univention/portal/}"
 : "${EMAIL_TEST_API_USERNAME:=user}"
 : "${EMAIL_TEST_API_PASSWORD:=password}"
@@ -23,7 +22,7 @@ if [ -z "$PYTEST_ADDOPTS" ]; then
         MARKER="acceptance_environment"
     fi
 
-    export PYTEST_ADDOPTS="-m ${MARKER} --admin-password ${ADMIN_PASSWORD} --portal-central-navigation-secret ${PORTAL_CENTRAL_NAVIGATION_SECRET} --num-ip-block 7 --release-duration 1 --portal-base-url ${PORTAL_BASE_URL} --email-test-api-username=${EMAIL_TEST_API_USERNAME} --email-test-api-password=${EMAIL_TEST_API_PASSWORD} --email-test-api-base-url=${EMAIL_TEST_API_BASE_URL}"
+    export PYTEST_ADDOPTS="-m ${MARKER} --admin-password ${ADMIN_PASSWORD} --num-ip-block 7 --release-duration 1 --portal-base-url ${PORTAL_BASE_URL} --email-test-api-username=${EMAIL_TEST_API_USERNAME} --email-test-api-password=${EMAIL_TEST_API_PASSWORD} --email-test-api-base-url=${EMAIL_TEST_API_BASE_URL}"
 fi
 
 # NOTE: This will show secrets in the test logs.

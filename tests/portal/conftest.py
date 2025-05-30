@@ -269,7 +269,7 @@ def ensure_user_exists(minio_client) -> WaitForUserExists:
 
 
 @pytest.fixture
-def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -> WaitForPortalSync:
+def wait_for_portal_sync(navigation_api_url, portal) -> WaitForPortalSync:
     """
     Allows to wait until the portal data for a user is complete.
     """
@@ -282,7 +282,7 @@ def wait_for_portal_sync(navigation_api_url, portal_central_navigation_secret) -
             retry_error_cls=BetterRetryError,
         )
         def poll_central_navigation():
-            result = requests.get(navigation_api_url, auth=(username, portal_central_navigation_secret))
+            result = requests.get(navigation_api_url, auth=(username, portal.central_navigation_shared_secret))
             if not has_central_navigation_categories(result, minimum_categories):
                 raise Exception(f"Portal tiles for user {username} are not (yet) up to date")
 
