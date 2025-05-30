@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
-ARG UCS_BASE_IMAGE_TAG=0.17.3-build-2025-05-11
+ARG UCS_BASE_IMAGE_TAG=0.18.1-build-2025-05-29@sha256:bc5347ec441abe8606779a7a1782aee11b06520b2ff687f9d468d9334b97f940
 ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-521
 
 ARG WORKDIR="/app"
