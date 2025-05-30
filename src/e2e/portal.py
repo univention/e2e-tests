@@ -29,6 +29,8 @@ class PortalDeployment(BaseDeployment):
     service_account_username = "svc-portal-server"
     service_account_password = None
 
+    central_navigation_shared_secret = None
+
     def __init__(self, k8s: KubernetesCluster, release_name: str, *, override_base_url: str | None = None):
         if override_base_url:
             log.warning("Overriding portal base_url to %s", override_base_url)
@@ -38,12 +40,20 @@ class PortalDeployment(BaseDeployment):
     def _discover_from_cluster(self):
         deployment_name = self.add_release_prefix("portal-server")
         deployment = self._k8s.get_deployment(deployment_name)
+
         secret_details = get_secret_by_volume(
             deployment.spec.template.spec, container_name="portal-server", volume_name="secret-udm"
         )
 
         secret = self._k8s.get_secret(secret_details.name)
         self.service_account_password = b64decode(secret.data[secret_details.key])
+
+        secret_details = get_secret_by_volume(
+            deployment.spec.template.spec, container_name="portal-server", volume_name="secret-central-navigation"
+        )
+
+        secret = self._k8s.get_secret(secret_details.name)
+        self.central_navigation_shared_secret = b64decode(secret.data[secret_details.key])
 
         if self.base_url:
             return

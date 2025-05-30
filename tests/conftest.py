@@ -115,11 +115,6 @@ def email_test_api(email_test_api_session, email_test_api_base_url):
 
 
 @pytest.fixture(scope="session")
-def portal_central_navigation_secret(pytestconfig):
-    return pytestconfig.getoption("--portal-central-navigation-secret")
-
-
-@pytest.fixture(scope="session")
 def udm(udm_factory, ldap):
     """
     A configured instance of the UDM Rest API client.
