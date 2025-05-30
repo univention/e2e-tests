@@ -73,7 +73,10 @@ class PortalDeployment(BaseDeployment):
         secret = self._k8s.get_secret(secret_details.name)
         return b64decode(secret.data[secret_details.key])
 
-
     @property
     def favicon_well_known_url(self):
         return urljoin(self.base_url, "/favicon.ico")
+
+    @property
+    def central_navigation_url(self):
+        return urljoin(self.base_url, "/univention/portal/navigation.json")
