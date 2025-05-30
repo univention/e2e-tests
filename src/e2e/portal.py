@@ -54,13 +54,12 @@ class PortalDeployment(BaseDeployment):
             volume_name="secret-central-navigation",
         )
 
-        if self.base_url:
-            return
-        url_parts = self._k8s.discover_url_parts_from_ingress(
-            self.add_release_prefix("portal-frontend-rewrites"),
-            self._k8s.namespace,
-        )
-        self.base_url = url_parts.to_url()
+        if not self.base_url:
+            url_parts = self._k8s.discover_url_parts_from_ingress(
+                self.add_release_prefix("portal-frontend-rewrites"),
+                self._k8s.namespace,
+            )
+            self.base_url = url_parts.to_url()
 
     def _discover_secret_value_from_volume(
         self,
