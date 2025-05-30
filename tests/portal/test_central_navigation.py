@@ -9,8 +9,8 @@ import requests
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_navigation_api_returns_data_for_anonymous_user(navigation_api_url):
-    response = requests.get(navigation_api_url)
+def test_navigation_api_returns_data_for_anonymous_user(portal):
+    response = requests.get(portal.central_navigation_url)
     data = response.json()
 
     assert response.status_code == requests.codes.ok
@@ -22,8 +22,8 @@ def test_navigation_api_returns_data_for_anonymous_user(navigation_api_url):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_navigation_api_returns_valid_icon_urls(navigation_api_url):
-    response = requests.get(navigation_api_url)
+def test_navigation_api_returns_valid_icon_urls(portal):
+    response = requests.get(portal.central_navigation_url)
     data = response.json()
     icon_url = _get_first_entry(data)["icon_url"]
 
@@ -36,10 +36,12 @@ def test_navigation_api_returns_valid_icon_urls(navigation_api_url):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_navigation_api_returns_data_for_authenticated_user(
-    navigation_api_url, admin_username, portal,
+    admin_username,
+    portal,
 ):
     response = requests.get(
-        navigation_api_url, auth=(admin_username, portal.central_navigation_shared_secret))
+        portal.central_navigation_url, auth=(admin_username, portal.central_navigation_shared_secret)
+    )
     data = response.json()
 
     assert response.status_code == requests.codes.ok

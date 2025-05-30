@@ -10,7 +10,7 @@ from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.login_page import LoginPage
 
 
-def get_portal_layout(page, user, user_password, navigation_api_url, admin=False):
+def get_portal_layout(page, user, user_password, central_navigation_url, admin=False):
     layout = defaultdict(list)
 
     login_page = LoginPage(page)
@@ -27,7 +27,7 @@ def get_portal_layout(page, user, user_password, navigation_api_url, admin=False
     home_page_logged_in.hide_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
 
     ## Fill central navigation entries
-    response = requests.get(navigation_api_url)
+    response = requests.get(central_navigation_url)
     assert response.status_code == requests.codes.ok
 
     layout["central_navigation"] = {}
@@ -42,9 +42,9 @@ def get_portal_layout(page, user, user_password, navigation_api_url, admin=False
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_password, subtests, navigation_api_url):
+def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_password, portal, subtests):
     page = navigate_to_login_page
-    admin_layout = get_portal_layout(page, admin_username, admin_password, navigation_api_url, admin=True)
+    admin_layout = get_portal_layout(page, admin_username, admin_password, portal.central_navigation_url, admin=True)
 
     expected_tiles = [
         "Keycloak",
@@ -130,10 +130,10 @@ def test_regular_user_portal_layout(
     user,
     user_password,
     subtests,
-    navigation_api_url,
+    portal,
 ):
     page = navigate_to_login_page
-    user_layout = get_portal_layout(page, user.properties["username"], user_password, navigation_api_url)
+    user_layout = get_portal_layout(page, user.properties["username"], user_password, portal.central_navigation_url)
 
     expected_tiles = []
 

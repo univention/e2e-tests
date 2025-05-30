@@ -34,7 +34,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 from typing import Callable
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 import pytest
 import requests
@@ -164,12 +164,6 @@ def failed_attempts_before_ip_block(pytestconfig):
     return pytestconfig.option.num_ip_block
 
 
-@pytest.fixture
-def navigation_api_url(portal):
-    """URL of the navigation API in the Portal."""
-    return urljoin(portal.base_url, "/univention/portal/navigation.json")
-
-
 @pytest.fixture(scope="session")
 def email_domain(udm):
     """
@@ -269,7 +263,7 @@ def ensure_user_exists(minio_client) -> WaitForUserExists:
 
 
 @pytest.fixture
-def wait_for_portal_sync(navigation_api_url, portal) -> WaitForPortalSync:
+def wait_for_portal_sync(portal) -> WaitForPortalSync:
     """
     Allows to wait until the portal data for a user is complete.
     """
@@ -282,7 +276,9 @@ def wait_for_portal_sync(navigation_api_url, portal) -> WaitForPortalSync:
             retry_error_cls=BetterRetryError,
         )
         def poll_central_navigation():
-            result = requests.get(navigation_api_url, auth=(username, portal.central_navigation_shared_secret))
+            result = requests.get(
+                portal.central_navigation_url, auth=(username, portal.central_navigation_shared_secret)
+            )
             if not has_central_navigation_categories(result, minimum_categories):
                 raise Exception(f"Portal tiles for user {username} are not (yet) up to date")
 

@@ -68,7 +68,9 @@ class PortalDeployment(BaseDeployment):
         volume_name: str,
     ) -> str:
         secret_details = get_secret_by_volume(
-            pod_spec, container_name=container_name, volume_name=volume_name,
+            pod_spec,
+            container_name=container_name,
+            volume_name=volume_name,
         )
         secret = self._k8s.get_secret(secret_details.name)
         return b64decode(secret.data[secret_details.key])
