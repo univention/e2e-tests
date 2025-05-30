@@ -138,7 +138,7 @@ of this repo and run the pipeline with the following variables:
 - `TEST_PORTAL_BASE_URL`: The base URL of the portal to test. Example: `https://portal.uv-username.gaia.open-desk.cloud/univention/portal/`.
 
 The pipeline will use the default secrets for Gaia. But you can override them by
-setting `ADMIN_PASSWORD` and `PORTAL_CENTRAL_NAVIGATION_SECRET`.
+setting `ADMIN_PASSWORD`.
 
 
 ## Getting started based on a container

@@ -60,17 +60,6 @@ fi
 
 email_test_api_password=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" maildev-web -o jsonpath="{.data.web-password}" | base64 -d)
 
-# TODO: This is a workaround to mitigate the current secret handling
-the_usual_portal_central_navigation_secret=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server-central-navigation-shared-secret" -o jsonpath="{.data['password']}" | base64 -d)
-the_other_portal_central_navigation_secret=$(kubectl get --ignore-not-found secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-opendesk-portal-server-central-navigation" -o jsonpath="{.data['authenticator\.secret']}" | base64 -d)
-
-if [ -n "$the_other_portal_central_navigation_secret" ]
-then
-    portal_central_navigation_secret="${the_other_portal_central_navigation_secret}"
-else
-    portal_central_navigation_secret="${the_usual_portal_central_navigation_secret}"
-fi
-
 if ! helm list -n "${DEPLOY_NAMESPACE}" | grep -q testing-api; then
 echo Installing the testing-api into the namespace
 
@@ -104,8 +93,7 @@ else
   echo Found a testing-api deployment, skipping install or update.
 fi
 
-export PYTEST_ADDOPTS="--release-name=${RELEASE_NAME} --namespace=${DEPLOY_NAMESPACE} --admin-password=${default_admin_password} --portal-central-navigation-secret=${portal_central_navigation_secret} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url} ${external_minio}"
-
+export PYTEST_ADDOPTS="--release-name=${RELEASE_NAME} --namespace=${DEPLOY_NAMESPACE} --admin-password=${default_admin_password} --kc-admin-username=kcadmin --kc-admin-password=${keycloak_password} --log-level=INFO --email-test-api-username=user --email-test-api-password=${email_test_api_password} --email-test-api-base-url=${email_test_api_base_url} ${external_minio}"
 
 echo
 echo "Discovered pytest options: ${PYTEST_ADDOPTS}"
