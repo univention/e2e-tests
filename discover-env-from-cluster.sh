@@ -68,6 +68,9 @@ fi
 
 if ! helm list -n "${DEPLOY_NAMESPACE}" | grep -q testing-api; then
 echo Installing the testing-api into the namespace
+
+portal_tls_secret="$(kubectl get ingress -o jsonpath='{.spec.tls[0].secretName}' ${RELEASE_NAME}-portal-server)"
+
 cat <<EOF > values-testing-api.yaml
 ---
 testingApi:
@@ -84,7 +87,9 @@ testingApi:
         name: ${RELEASE_NAME}-ldap-server-credentials
 
   ingress:
-    host: ${portal_hostname}
+    host: "${portal_hostname}"
+    tls:
+      secretName: "${portal_tls_secret}"
 ...
 EOF
 
