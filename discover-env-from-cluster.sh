@@ -49,7 +49,6 @@ echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")
 # These commands depend on the Nubus deployment and will have to be kept in sync
 # with the progressing Nubus chart.
 default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-nubus-credentials" -o jsonpath="{.data.administrator_password}" | base64 -d)
-portal_hostname=$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath="{.spec.rules[0].host}")
 ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
 keycloak_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-credentials" -o jsonpath="{.data.admin_password}" | base64 -d)
 
@@ -75,7 +74,8 @@ fi
 if ! helm list -n "${DEPLOY_NAMESPACE}" | grep -q testing-api; then
 echo Installing the testing-api into the namespace
 
-portal_tls_secret="$(kubectl get ingress -o jsonpath='{.spec.tls[0].secretName}' ${RELEASE_NAME}-portal-server)"
+portal_hostname="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.rules[0].host}')"
+portal_tls_secret="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.tls[0].secretName}')"
 
 cat <<EOF > values-testing-api.yaml
 ---
