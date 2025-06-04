@@ -178,3 +178,14 @@ def test_openapi_schema(udm_rest_api, ldap, subtests):
                 assert "univentionObjectIdentifier" in props.keys()
             else:
                 assert "univentionObjectIdentifier" not in props.keys()
+
+
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+@pytest.mark.parametrize("group_name", ("Domain Users", "Domain Admins"))
+def test_object_has_univentionObjectIdentifier(udm, group_name):
+    groups_group = udm.get("groups/group")
+    group = groups_group.get(f"cn={group_name},cn=groups,{udm.get_ldap_base()}")
+
+    assert "univentionObjectIdentifier" in group.properties
+    assert uuid.UUID(group.properties["univentionObjectIdentifier"])
