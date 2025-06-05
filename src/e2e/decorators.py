@@ -110,3 +110,11 @@ retrying_keycloak_login = retry(
     before_sleep=before_sleep_log(log, logging.WARNING),
     retry_error_cls=BetterRetryError,
 )
+
+
+retrying_umc_pods = retry(
+    stop=stop_after_delay(500),
+    wait=wait_fixed(5),
+    before_sleep=before_sleep_log(log, logging.WARNING),
+    retry_error_cls=BetterRetryError,
+)

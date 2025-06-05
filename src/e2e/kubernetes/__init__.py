@@ -3,6 +3,7 @@
 
 import logging
 import time
+from typing import Any
 
 from kubernetes import client, config
 from kubernetes.client.models import V1Deployment
@@ -312,6 +313,93 @@ class KubernetesCluster:
             namespace=namespace or self.namespace,
         )
         return secret
+
+    def get_configmap(self, name: str, namespace: str | None = None):
+        """
+        Retrieve a `Secret` from the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.CoreV1Api()
+        configmap = v1.read_namespaced_config_map(name=name, namespace=namespace or self.namespace)
+
+        return configmap
+
+    def update_configmap_data(self, data_key: str, data_value: str, name: str, namespace: str | None = None):
+        """
+        Update a specific key-value pair in a `ConfigMap`.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.CoreV1Api()
+        patch_configmap = [{"op": "replace", "path": f"/data/{data_key}", "value": data_value}]
+        v1.patch_namespaced_config_map(name=name, namespace=namespace or self.namespace, body=patch_configmap)
+
+    def get_stateful_set(self, name: str, namespace: str | None = None):
+        """
+        Retrieve a `StatefulSet` from the cluster.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.AppsV1Api()
+
+        return v1.read_namespaced_stateful_set(name=name, namespace=namespace or self.namespace)
+
+    def _get_pods_from_match_labels(self, labels: dict[str, Any], namespace: str | None = None):
+        """
+        Retrieve a list of `Pods` from the cluster that match the given labels.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.CoreV1Api()
+        label_selector = ",".join([f"{k}={v}" for k, v in labels.items()])
+
+        return v1.list_namespaced_pod(namespace=namespace or self.namespace, label_selector=label_selector)
+
+    def get_pods_for_stateful_set(self, name: str, namespace: str | None = None):
+        """
+        Retrieve the `Pods` associated with a `StatefulSet`.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        stateful_set = self.get_stateful_set(name=name, namespace=namespace)
+
+        return self._get_pods_from_match_labels(stateful_set.spec.selector.match_labels)
+
+    def get_pod_names_for_stateful_set(self, name: str, namespace: str | None = None) -> list[str]:
+        """
+        Retrieve the names of the `Pods` associated with a `StatefulSet`.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        pods = self.get_pods_for_stateful_set(name=name, namespace=namespace)
+        return [pod.metadata.name for pod in pods.items]
+
+    def get_pods_for_deployment(self, name: str, namespace: str | None = None):
+        """
+        Retrieve the `Pods` associated with a `Deployment`.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        deployment = self.get_deployment(name=name, namespace=namespace)
+        return self._get_pods_from_match_labels(deployment.spec.selector.match_labels, namespace)
+
+    def get_pod_names_for_deployment(self, name: str, namespace: str | None = None) -> list[str]:
+        """
+        Retrieve the names of the `Pods` associated with a `Deployment`.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        pods = self.get_pods_for_deployment(name=name, namespace=namespace)
+        return [pod.metadata.name for pod in pods.items]
 
 
 def discover_namespace() -> str:

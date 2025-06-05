@@ -14,7 +14,9 @@ from e2e.kubernetes import KubernetesCluster
 from e2e.ldap import LdapDeployment
 from e2e.portal import PortalDeployment
 from e2e.stack_data import StackDataDeployment
+from e2e.ucr import UCR
 from e2e.udm import UdmRestApiDeployment
+from e2e.umc import UniventionManagementConsoleDeployment
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +146,17 @@ def udm_rest_api(k8s, release_name, pytestconfig):
     """
     cli_base_url = pytestconfig.getoption("--udm-base-url")
     return UdmRestApiDeployment(k8s, release_name, cli_base_url)
+
+
+@pytest.fixture(scope="session")
+def ucr_configmap(k8s, release_name):
+    return UCR(k8s, release_name)
+
+
+@pytest.fixture(scope="session")
+def umc_deployment(k8s: KubernetesCluster, release_name: str, portal: PortalDeployment):
+    assert portal.base_url
+    return UniventionManagementConsoleDeployment(k8s, release_name, portal.base_url)
 
 
 @pytest.fixture(scope="session")
