@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 import logging
+import warnings
 from base64 import b64decode
 from urllib.parse import urljoin
 
@@ -48,11 +49,21 @@ class PortalDeployment(BaseDeployment):
             container_name="portal-server",
             volume_name="secret-udm",
         )
-        self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
-            deployment.spec.template.spec,
-            container_name="portal-server",
-            volume_name="secret-central-navigation",
-        )
+        try:
+            self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
+                deployment.spec.template.spec,
+                container_name="portal-server",
+                volume_name="secret-central-navigation",
+            )
+        except StopIteration:
+            # TODO: Remove support for "authenticator-secret" as volume name once
+            # the secret refactoring of the portal repository has been merged.
+            warnings.warn("Falling back to authenticator_secret vollume in portal-server", DeprecationWarning)
+            self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
+                deployment.spec.template.spec,
+                container_name="portal-server",
+                volume_name="authenticator-secret",
+            )
 
         if not self.base_url:
             url_parts = self._k8s.discover_url_parts_from_ingress(
