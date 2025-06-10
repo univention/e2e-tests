@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.43.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.42.0...v0.43.0) (2025-06-10)
+
+
+### Features
+
+* Add 2FA Helpdesk tiles into the expected portal layout ([b158c55](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/b158c55656f8a1836837972eb3012fa934076daa)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* Add property "central_navigation_url" into PortalDeployment ([d5f1a8a](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/d5f1a8a7aaf6f922997a0543b508b5ca0aac6b04)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* add tests for self-service rate-limit ([60065b2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/60065b2ddb4c5625a47a1da6f1a80a76984ba64f)), closes [univention/dev/internal/team-nubus#1220](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1220)
+* Allow to discover central navigation secret with old volume name ([d0c6c12](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/d0c6c12c30ab6da5b72b1c104380d883952df361)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* allow usage of external minio deployment ([db32321](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/db32321bb3da922b2cabb6c56cd1bc3720f3689c)), closes [univention/dev/internal/team-nubus#950](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/950)
+* Discover central navigation secret from cluster in portal fixture ([b5116c7](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/b5116c7ecec08075e435ba5326246c3911e43f6e)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* Remove fixture "navigation_api_url", use PortalDeployment.central_navigation_url instead ([ac6e0f4](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/ac6e0f43b2ffa52adb1cc46e3be3f95d2e4cffd5)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* test univentionObjectIdentifier in user and admin groups ([137ade5](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/137ade5df274b4f6b8c9a5308c158b735792eeb3)), closes [univention/dev/internal/team-nubus#1220](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1220)
+
+
+### Bug Fixes
+
+* **portal-tests:** Increase ensure_user_exists timeout to 30s ([cb6e34d](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/cb6e34d0c6b93aa76503e6dd79a8b47829786905)), closes [univention/dev/internal/team-nubus#1223](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1223)
+* **testing-api:** Set correct ingress TLS settings ([611e93f](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/611e93f7a3a93a1db7cac07c4376c4753a368498)), closes [univention/dev/internal/team-nubus#1223](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1223)
+* **testing-api:** Use correct deploy namespace when getting TLS secret from protal-server ([ba64bed](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/ba64bed1d6e3a44e7c8a2adf416c325f87ff4039)), closes [univention/dev/internal/team-nubus#1223](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1223)
+
 ## [0.42.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.41.0...v0.42.0) (2025-05-27)
 
 
