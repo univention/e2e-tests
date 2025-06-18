@@ -980,7 +980,7 @@
             "version": "==6.4.3"
         },
         "nubus-provisioning-consumer": {
-            "git": "https://git.knut.univention.de/univention/customers/dataport/upx/provisioning.git",
+            "git": "https://git.knut.univention.de/univention/dev/projects/provisioning.git",
             "ref": "9e72e27d39b63ff4b6dd7c3551f65d6e3e0cc817",
             "subdirectory": "src"
         },

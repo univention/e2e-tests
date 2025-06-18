@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
-ARG UCS_BASE_IMAGE_TAG=0.17.3-build-2025-05-11
-ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-521
+ARG UCS_BASE_IMAGE_TAG=0.18.2-build-2025-06-12
+ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-522
 
 ARG WORKDIR="/app"
 
@@ -11,7 +11,7 @@ ARG WORKDIR
 WORKDIR ${WORKDIR}
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-      python3-pip=23.* \
+    python3-pip=23.* \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV \
