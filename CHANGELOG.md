@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.0...v0.43.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* bump umc-base-image version ([4890799](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4890799ae6adf8feb354e23031f5ad79165c0123)), closes [univention/dev/internal/team-nubus#1263](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1263)
+
 ## [0.43.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.42.0...v0.43.0) (2025-06-10)
 
 
