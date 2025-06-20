@@ -171,8 +171,14 @@ def test_openapi_schema(udm_rest_api, ldap, subtests):
     openapi_schema = response.json()
     assert openapi_schema
 
+    blocklist_exceptions = [
+        f"blocklists-{suffix}" for suffix in ["list.request", "list.request-patch", "entry.request-patch"]
+    ]
+
     for component, schema in openapi_schema["components"]["schemas"].items():
         props = schema.get("properties", {}).get("properties", {}).get("properties", {})
+        if component in blocklist_exceptions:
+            continue
         with subtests.test(msg=component, i=component):
             if component.endswith("request-patch") and component != "users-passwd.request-patch":
                 assert "univentionObjectIdentifier" in props.keys()
