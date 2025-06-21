@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.1...v0.43.2) (2025-06-21)
+
+
+### Bug Fixes
+
+* trigger release ([0057224](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/00572247903c8f4756a47bcd1e3bdbc5c0f4f9a5)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.43.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.0...v0.43.1) (2025-06-18)
 
 
