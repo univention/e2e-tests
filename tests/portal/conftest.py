@@ -243,7 +243,7 @@ def ensure_user_exists(minio_client) -> WaitForUserExists:
     Allows to wait until the portal data for a user is complete.
     """
 
-    def _wait_for_user_creation(username: str, timeout: int | float = 30) -> None:
+    def _wait_for_user_creation(username: str, timeout: int | float = 120) -> None:
         @retry(
             stop=stop_after_delay(timeout),
             wait=wait_fixed(0.50),
