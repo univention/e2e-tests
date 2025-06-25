@@ -28,7 +28,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-import random
 import time
 
 import pytest
@@ -56,8 +55,8 @@ DUMMY_TELEPHONE = "123456789"
 
 
 @pytest.fixture()
-def dummy_username():
-    yield f"dummy_{random.randint(1000, 9999)}"  # noqa: S311
+def dummy_username(faker):
+    yield f"test-{ faker.user_name() }"
 
 
 @pytest.mark.portal
