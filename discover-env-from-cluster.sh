@@ -79,7 +79,7 @@ testingApi:
       bindDn:  cn=admin,${ldap_base_dn}
       credentialSecret:
         key: "password"
-        name: ${RELEASE_NAME}-ldap-server-ldap
+        name: ${RELEASE_NAME}-ldap-server-admin
 
   ingress:
     host: "${portal_hostname}"

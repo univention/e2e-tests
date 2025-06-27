@@ -138,7 +138,7 @@ class LdapDeployment(BaseDeployment):
         self.users_container_dn = f"cn=users,{self.base_dn}"
         self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
-        secret_name = self.add_release_prefix("ldap-server-ldap")
+        secret_name = self.add_release_prefix("ldap-server-admin")
         secret = self._k8s.get_secret(secret_name)
         self.admin_password = b64decode(secret.data["password"]).decode()
 
