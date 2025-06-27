@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.44.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.2...v0.44.0) (2025-06-27)
+
+
+### Features
+
+* Adjust discovery of ldap credentials to new secret structure ([f0e477a](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/f0e477a84e6e200bc14af7268ae12e31865d6f89)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* Adjust ldap secret name to use "-admin" suffix ([a292faf](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/a292faf4d62631124ec81c297c3f77b38ea25cf2)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+* Adjust timeout to wait for the portal consumer to 120 seconds ([5a0d77a](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/5a0d77ab789d28741dd406916ce2dc77f9066664)), closes [univention/dev/internal/team-nubus#892](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/892)
+
 ## [0.43.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.1...v0.43.2) (2025-06-21)
 
 
