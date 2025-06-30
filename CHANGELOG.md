@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.44.0...v0.44.1) (2025-06-30)
+
+
+### Bug Fixes
+
+* skip both selfservice rate limit tests if email test api is missing ([d05b6bc](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/d05b6bcf7de7ad2e376489a5ebc0e8253b80db59)), closes [univention/dev/internal/team-nubus#1311](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1311)
+
 ## [0.44.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.43.2...v0.44.0) (2025-06-27)
 
 
