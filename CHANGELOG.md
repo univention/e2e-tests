@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.44.1...v0.45.0) (2025-07-11)
+
+
+### Features
+
+* add SCIM API end-to-end test script ([527cc50](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/527cc5026f14684c1edc448d3144f3903ecfff4e)), closes [univention/dev/internal/team-nubus#1113](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1113)
+
 ## [0.44.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.44.0...v0.44.1) (2025-06-30)
 
 
