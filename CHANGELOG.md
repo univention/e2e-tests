@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.47.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.46.0...v0.47.0) (2025-07-18)
+
+
+### Features
+
+* **2fa:** test admin/user accesses self-service, admin accesses admin page ([8fc05b1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/8fc05b1fb198961d95780e39fc8e1cb56c7d00b3)), closes [univention/dev/internal/team-nubus#1217](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1217)
+
 ## [0.46.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.45.0...v0.46.0) (2025-07-17)
 
 
