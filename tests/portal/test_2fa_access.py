@@ -85,4 +85,4 @@ def assert_user_can_access_2fa_page(
     expect(new_tab.get_by_role("heading", name=re.compile(heading_name_fragment))).to_be_visible()
 
     # Check for common interactive elements on the page
-    expect(new_tab.get_by_role("button", name=re.compile("Token"))).to_be_visible()
+    expect(new_tab.get_by_role("button", name=re.compile("Token")).first).to_be_visible()
