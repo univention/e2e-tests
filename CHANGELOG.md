@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.47.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.47.0...v0.47.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* use first button locator when checking for interactive elements ([c2aca8c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/c2aca8cbd8a4250aac58d521d848d4bc4bca33c1)), closes [univention/dev/internal/team-nubus#1217](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1217)
+
 ## [0.47.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.46.0...v0.47.0) (2025-07-18)
 
 
