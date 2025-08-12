@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.48.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.47.1...v0.48.0) (2025-08-12)
+
+
+### Features
+
+* tests for configurable central navigation ([0ccb4e2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/0ccb4e212e5af7551a89fc98ef2fbe938c3fdf9a)), closes [univention/dev/internal/team-nubus#1301](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1301)
+
 ## [0.47.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.47.0...v0.47.1) (2025-07-21)
 
 
