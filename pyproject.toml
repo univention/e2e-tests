@@ -2,15 +2,18 @@
 name = "umspages"
 version = "0.2.0"
 description = "Page Objects used for end to end testing in the SouvAP Dev team"
-maintainers = [
-    {name = "Univention GmbH", email = "packages@univention.de"},
-]
-license = {text = "GNU Affero General Public License v3"}
+maintainers = [{ name = "Univention GmbH", email = "packages@univention.de" }]
+license = { text = "GNU Affero General Public License v3" }
 readme = "README.md"
 requires-python = ">=3.12,<4"
 
 [project.optional-dependencies]
-tests = [ "pytest-playwright==0.4.2", "requests==2.31.0", "url-normalize==1.4.3", "pytest-html==4.0.0"]
+tests = [
+    "pytest-playwright==0.4.2",
+    "requests==2.31.0",
+    "url-normalize==1.4.3",
+    "pytest-html==4.0.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -20,8 +23,8 @@ build-backend = "hatchling.build"
 packages = ["src/umspages"]
 
 [tool.pytest.ini_options]
-pythonpath = [ "src" ]
-testpaths = [ "tests" ]
+pythonpath = ["src"]
+testpaths = ["tests"]
 markers = [
     "acceptance_environment: target openDesk acceptance-environments",
     "announcements: tests related to univention-portal announcements",
@@ -39,6 +42,8 @@ markers = [
     "saml: all tests that enforce SAML login. Other tests may also use SAML depending on the environment",
     "selfservice: tests for updating profile, change recovery email, selfservice portal, etc.",
     "users: tests for user management console for admin users",
+    "feature_toggle: tests for the feature toggle",
+    "feature_toggle_left_sidebar: tests for the left sidebar feature toggle",
 ]
 filterwarnings = [
     # See https://github.com/cannatag/ldap3/issues/1159
@@ -51,7 +56,7 @@ target-version = "py311"
 line-length = 120
 
 [tool.ruff.lint]
-extend-select = ["I"]  # activate isort
+extend-select = ["I"] # activate isort
 
 [tool.ruff.lint.isort]
 known-first-party = ["umspages", "e2e", "udm_helpers", "api", "univention"]
