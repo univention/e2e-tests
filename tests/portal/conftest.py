@@ -128,6 +128,32 @@ def navigate_to_home_page_logged_in(page, user, user_password):
 
 
 @pytest.fixture()
+def user_without_groups(user, udm, wait_for_ldap_secondaries_to_catch_up):
+    user.reload()
+    user_groups = user.properties.get("groups", [])
+
+    groups_module = udm.get("groups/group")
+    for group_dn in user_groups:
+        try:
+            group = groups_module.get(group_dn)
+            if user.dn in group.properties.get("users", []):
+                group.properties["users"].remove(user.dn)
+                group.save()
+        except Exception as e:
+            print(f"Could not remove user from group {group_dn}: {e}")
+
+    wait_for_ldap_secondaries_to_catch_up()
+    return user
+
+
+@pytest.fixture()
+def navigate_to_home_page_logged_in_user_without_groups(page, user_without_groups, user_password):
+    home_page_logged_in = HomePageLoggedIn(page)
+    home_page_logged_in.navigate(user_without_groups.properties["username"], user_password)
+    return page
+
+
+@pytest.fixture()
 def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(admin_username, admin_password)
