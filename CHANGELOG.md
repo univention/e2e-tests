@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.49.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.48.3...v0.49.0) (2025-08-22)
+
+
+### Features
+
+* **left_sidebar:** toggle testing: add dummy test marked as feature toggle ([31d8369](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/31d83691b7447a14dba55fc1fa1cd39c4da3dee7)), closes [univention/dev/internal/team-nubus#1122](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1122)
+* **left-sidebar:** add test for left sidebar accessibility ([c5957b7](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/c5957b7eca53c9e77b38336156b53fd8fa59a977)), closes [univention/dev/internal/team-nubus#1122](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1122)
+
 ## [0.48.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.48.2...v0.48.3) (2025-08-20)
 
 
