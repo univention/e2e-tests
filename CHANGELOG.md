@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.49.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.0...v0.49.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency requests to v2.32.5 ([d48509c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/d48509c59a64006d5f5508ae35f71b8b641d1997)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+* **deps:** Update dependency tests/requests to v2.32.5 ([a14c2dd](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/a14c2ddf92c53cc73fccb95194135b73213c73ba)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.49.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.48.3...v0.49.0) (2025-08-22)
 
 
