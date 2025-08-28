@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.49.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.1...v0.49.2) (2025-08-28)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency univention/dev/nubus-for-k8s/common-ci to v1.44.2 ([10699a0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/10699a07d0bc76d5cd7f6804282703d84547eeaa)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.49.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.0...v0.49.1) (2025-08-28)
 
 
