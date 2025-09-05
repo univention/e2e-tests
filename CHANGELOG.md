@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.49.5](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.4...v0.49.5) (2025-09-05)
+
+
+### Bug Fixes
+
+* **deps:** Update gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base Docker tag to v5.2.2-build.20250904 ([554fcf2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/554fcf29d8b0816f2ee0b633cf425c84344b70ae)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.49.4](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.3...v0.49.4) (2025-09-05)
 
 
