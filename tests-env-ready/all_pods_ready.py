@@ -11,9 +11,33 @@ from enum import Enum
 from typing import Callable
 
 import kubernetes
-import pytest
 
 logger = logging.getLogger()
+
+
+class Timeout:
+    """Linux-only timeout using signal.setitimer()."""
+
+    def __init__(self, seconds: int, on_timeout: Callable[[], None]) -> None:
+        self.seconds = seconds
+        self.on_timeout = on_timeout
+        self._armed = False
+
+    def _handler(self, signum, frame):
+        self._armed = False
+        self.on_timeout()
+
+    def set(self) -> None:
+        if self._armed:
+            return
+        signal.signal(signal.SIGALRM, self._handler)
+        signal.setitimer(signal.ITIMER_REAL, self.seconds)
+        self._armed = True
+
+    def cancel(self) -> None:
+        if self._armed:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            self._armed = False
 
 
 @dataclass
@@ -41,23 +65,9 @@ def _k8s_corev1() -> kubernetes.client.CoreV1Api:
     return kubernetes.client.CoreV1Api()
 
 
-@pytest.fixture(scope="session")
-def config() -> Config:
-    return _config()
-
-
-@pytest.fixture
-def k8s_corev1() -> kubernetes.client.CoreV1Api:
-    return _k8s_corev1()
-
-
 def main():
     logging.basicConfig(level="DEBUG", format="%(asctime)s | %(levelname)-7s| %(name)s | %(message)s")
     wait_with_watch(_k8s_corev1(), _config())
-
-
-def test_pods_ready_with_watch(k8s_corev1: kubernetes.client.CoreV1Api, config: Config) -> None:
-    wait_with_watch(k8s_corev1, config)
 
 
 class ControllerType(Enum):
@@ -183,31 +193,6 @@ class NamespaceStatus:
             return False
 
         return all(pod.ready for pod in self.status.values())
-
-
-class Timeout:
-    """Linux-only timeout using signal.setitimer()."""
-
-    def __init__(self, seconds: int, on_timeout: Callable[[], None]) -> None:
-        self.seconds = seconds
-        self.on_timeout = on_timeout
-        self._armed = False
-
-    def _handler(self, signum, frame):
-        self._armed = False
-        self.on_timeout()
-
-    def set(self) -> None:
-        if self._armed:
-            return
-        signal.signal(signal.SIGALRM, self._handler)
-        signal.setitimer(signal.ITIMER_REAL, self.seconds)
-        self._armed = True
-
-    def cancel(self) -> None:
-        if self._armed:
-            signal.setitimer(signal.ITIMER_REAL, 0)
-            self._armed = False
 
 
 def wait_with_watch(k8s_corev1: kubernetes.client.CoreV1Api, config: Config) -> None:
