@@ -91,7 +91,13 @@ def parse_pod_manifest(manifest: kubernetes.client.V1Pod) -> PodStatus:
         if controller_type == ControllerType.Job:
             ready = any(cond.reason == "PodCompleted" and cond.status == "True" for cond in status_conditions)
         else:
-            ready = any(cond.type == "Ready" and cond.status == "True" for cond in status_conditions)
+            pod_ready = any(cond.type == "Ready" and cond.status == "True" for cond in status_conditions)
+
+            containers_ready = True
+            if manifest.status.container_statuses:
+                containers_ready = all(container.ready for container in manifest.status.container_statuses)
+
+            ready = pod_ready and containers_ready
         result = PodStatus(
             ready=ready,
             name=name,
