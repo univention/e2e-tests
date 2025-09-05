@@ -96,10 +96,7 @@ def do_first_run(args, test_details: dict[str, int], artifacts_dir: Path) -> int
         test_failures = count_test_failures(Path(args.junit_xml), test_details)
         if test_failures > args.max_retry_failures:
             log.info("More than %d tests failed. Not re-running", args.max_retry_failures)
-            return return_code
-
-    if return_code != PYTEST_EXIT_TESTS_FAILED:
-        return return_code
+            return -1
 
     return return_code
 
@@ -150,7 +147,7 @@ def main() -> int:
         level=logging.INFO, format="%(asctime)s (%(levelname)s): %(message)s", datefmt="%Y-%m-%d %H:%M:%S %Z"
     )
     parser = argparse.ArgumentParser(
-        description="Pytest wrapper that retries failures and snapshots artifacts per run (run_0/, run_1/, ...)."
+        description="Pytest wrapper that retries failed tests while preserving original test artifacts."
     )
 
     parser.add_argument("-r", "--retry", type=int, default=2, help="Retry attempts (default: 2)")
