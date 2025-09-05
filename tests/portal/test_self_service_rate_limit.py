@@ -80,7 +80,7 @@ class TestSelfServiceRateLimit:
 
     # email_test_api fixture is merely used here to skip the test if no SMTP server is configured
     @pytest.mark.usefixtures("reset_rate_limit", "email_test_api")
-    def test_pw_reset_reqeust_through_frontend_is_ratelimited(self, portal, user):
+    def test_pw_reset_request_through_frontend_is_ratelimited(self, portal, user):
         username = user.properties["username"]
         pw_reset_url = f"{portal.base_url}univention/command/passwordreset/send_token"
 
