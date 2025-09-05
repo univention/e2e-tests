@@ -187,6 +187,12 @@ class NamespaceStatus:
             return
         self.status[pod.name] = pod
 
+    def delete(self, pod: PodStatus):
+        if pod.controller_type == ControllerType.Job:
+            self.status.pop(pod.controller_name, None)
+            return
+        self.status.pop(pod.name, None)
+
     def pods_ready(self) -> bool:
         if (pod_number := len(self.status)) < 20:
             logger.warning("Not enough pods deployed. number: %d", pod_number)
@@ -228,13 +234,19 @@ def wait_with_watch(k8s_corev1: kubernetes.client.CoreV1Api, config: Config) -> 
                 stable_timeout.cancel()
                 continue
 
+            if type == "DELETED":
+                status.delete(pod)
+                stable_timeout.cancel()
+                continue
+
             status.update(pod)
             if status.pods_ready() is False:
                 logger.warning(pod.format_status())
                 stable_timeout.cancel()
-            else:
-                logger.info(pod.format_status())
-                stable_timeout.set()
+                continue
+
+            logger.info(pod.format_status())
+            stable_timeout.set()
 
 
 if __name__ == "__main__":
