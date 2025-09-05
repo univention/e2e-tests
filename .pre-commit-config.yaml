@@ -48,6 +48,7 @@ repos:
     rev: "7702a8801a158b8595569dd29e2dd655d8a08310"
     hooks:
       - id: "docker-compose-check"
+        entry: bash -c 'DEPLOY_NAMESPACE=default docker-compose --file docker-compose.yaml config --quiet'
 
   # "Dockerfile linter"
   - repo: "https://gitlab.com/univention/pre-commit-hooks/docker-pre-commit"
