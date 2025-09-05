@@ -18,5 +18,21 @@ services:
         source: pre-commit-cache
         target: /cache
 
+  test:
+    build:
+      context: .
+      target: test
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/e2e-tests/e2e-tests-runner:${IMAGE_TAG:-latest}
+    environment:
+      - RELEASE_NAME=${RELEASE_NAME:-nubus}
+      - DEPLOY_NAMESPACE=${DEPLOY_NAMESPACE:?DEPLOY_NAMESPACE must be set}
+    volumes:
+      - type: bind
+        source: ${KUBECONFIG:-~/.kube/config}
+        target: /root/.kube/config
+        read_only: true
+    command: >
+      bash -c "RELEASE_NAME=nubus DEPLOY_NAMESPACE=jlohmer source discover-env-from-cluster.sh && pytest -m acceptance_environment -vv -s --log-level=INFO --tracing=retain-on-failure --video=retain-on-failure --output docker-test-results"
+
 volumes:
   pre-commit-cache:
