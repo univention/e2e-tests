@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.50.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.6...v0.50.0) (2025-09-08)
+
+
+### Features
+
+* add pytest retry wrapper with backup/restore of artifacts ([62cfc8e](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/62cfc8eee39cef99ac7c543ac30aad7f3657dab7)), closes [univention/dev/internal/team-nubus#1410](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1410)
+
+
+### Bug Fixes
+
+* typo in test name ([949047b](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/949047b6c0d13049461b9d31a0b27a8efa2a3d6e)), closes [univention/dev/internal/team-nubus#1410](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1410)
+
 ## [0.49.6](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.5...v0.49.6) (2025-09-06)
 
 
