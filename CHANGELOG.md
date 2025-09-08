@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.51.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.50.0...v0.51.0) (2025-09-08)
+
+
+### Features
+
+* **ready-check:** Administrator login check with long retry timeouts to let the environment get ready ([749ac4c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/749ac4cbc20be87b5bfaf987330e3307bff73e60)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** Initial version of a ready check script ([aa2c004](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/aa2c004ffbcea8014f23f1fa552be07b0c69b654)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+
+
+### Bug Fixes
+
+* Introduce docker-compose service to make e2e tests more easily executable ([c485006](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/c485006efe9585745a5f7591587f49351facc758)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** Better configuration options and validation ([88c588e](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/88c588e5692fce28e353f6d492a5ce52fdafd6f3)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** Better log output and code refactoring ([c2bb873](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/c2bb873fe5899e233cab834037c3e820a16efb31)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** Check container status in addition to pod status ([8b94a87](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/8b94a87cb731de2a4bde3374012a657c6608d9a2)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** Make deployment ready check executable ([72cb6f1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/72cb6f12f79a9e93ed9bc6d225f8fc0f5dc4dadd)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+* **ready-check:** remove pod from status dict on delete event ([e4a5e6e](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/e4a5e6ecaa004113214e16bf1d07bd66864352c5)), closes [univention/dev/internal/team-nubus#1409](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1409)
+
 ## [0.50.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.49.6...v0.50.0) (2025-09-08)
 
 
