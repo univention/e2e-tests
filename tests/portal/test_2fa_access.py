@@ -14,7 +14,6 @@ from umspages.portal.home_page.logged_in import HomePageLoggedIn
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-@retrying_slow
 def test_user_can_access_2fa_selfservice(navigate_to_home_page_logged_in):
     assert_user_can_access_2fa_page(navigate_to_home_page_logged_in)
 
@@ -23,7 +22,6 @@ def test_user_can_access_2fa_selfservice(navigate_to_home_page_logged_in):
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-@retrying_slow
 def test_admin_can_access_2fa_selfservice(navigate_to_home_page_logged_in_as_admin):
     assert_user_can_access_2fa_page(navigate_to_home_page_logged_in_as_admin)
 
@@ -32,7 +30,6 @@ def test_admin_can_access_2fa_selfservice(navigate_to_home_page_logged_in_as_adm
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-@retrying_slow
 def test_admin_can_access_2fa_admin_page(navigate_to_home_page_logged_in_as_admin):
     assert_user_can_access_2fa_page(
         navigate_to_home_page_logged_in_as_admin,
@@ -43,6 +40,7 @@ def test_admin_can_access_2fa_admin_page(navigate_to_home_page_logged_in_as_admi
     )
 
 
+@retrying_slow
 def assert_user_can_access_2fa_page(
     page,
     tile_name_fragment="2FA Selfservice",
@@ -69,8 +67,12 @@ def assert_user_can_access_2fa_page(
     # Find the 2FA tile and click on it (which will open in a new tab)
     # Using get_new_tab to handle the new tab that opens
     # Support for both English and German interfaces
-    twofa_tile = home_page_logged_in.page.get_by_role("link", name=re.compile(tile_name_fragment))
-    expect(twofa_tile).to_be_visible()
+    try:
+        twofa_tile = home_page_logged_in.page.get_by_role("link", name=re.compile(tile_name_fragment))
+        expect(twofa_tile).to_be_visible()
+    except AssertionError:
+        page.reload()
+        raise
 
     new_tab = home_page_logged_in.get_new_tab(twofa_tile)
 
