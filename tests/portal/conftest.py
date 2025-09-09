@@ -302,13 +302,3 @@ def wait_for_ldap_secondaries_to_catch_up(portal) -> Callable[[], None]:
         response.raise_for_status()
 
     return _wait_for_ldap_replication
-
-
-@pytest.fixture
-def keycloak_admin_username(pytestconfig):
-    return pytestconfig.option.kc_admin_username
-
-
-@pytest.fixture
-def keycloak_admin_password(pytestconfig):
-    return pytestconfig.option.kc_admin_password

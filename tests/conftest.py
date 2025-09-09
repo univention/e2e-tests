@@ -338,3 +338,13 @@ def portal_link_list(request):
     """
     link_list = request.param
     return link_list
+
+
+@pytest.fixture
+def keycloak_admin_username(pytestconfig):
+    return pytestconfig.option.kc_admin_username
+
+
+@pytest.fixture
+def keycloak_admin_password(pytestconfig):
+    return pytestconfig.option.kc_admin_password
