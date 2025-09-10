@@ -9,6 +9,8 @@ import requests
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.login_page import LoginPage
 
+from .test_central_navigation import add_entries_to_navigation, restore_default_portal_properties  # noqa: F401
+
 
 def get_portal_layout(page, user, user_password, central_navigation_url, admin=False):
     layout = defaultdict(list)
@@ -42,152 +44,153 @@ def get_portal_layout(page, user, user_password, central_navigation_url, admin=F
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_admin_portal_layout(navigate_to_login_page, admin_username, admin_password, portal, subtests):
-    page = navigate_to_login_page
-    admin_layout = get_portal_layout(page, admin_username, admin_password, portal.central_navigation_url, admin=True)
+@pytest.mark.usefixtures("add_entries_to_navigation")
+class TestPortalLayout:
+    def test_admin_portal_layout(self, navigate_to_login_page, admin_username, admin_password, portal, subtests):
+        page = navigate_to_login_page
+        admin_layout = get_portal_layout(
+            page, admin_username, admin_password, portal.central_navigation_url, admin=True
+        )
 
-    expected_tiles = [
-        "Keycloak",
-        # "Welcome!",
-        "Users",
-        "Groups",
-        "Computers",
-        "Contacts",
-        "Groups",
-        "Users",
-        "Computers",
-        "Printers",
-        "Blocklists",
-        "DHCP",
-        "DNS",
-        "LDAP directory",
-        "Mail",
-        "Networks",
-        "Policies",
-        "Shares",
-        "Portal",
-        # "Welcome!",
-        "2FA Admin Helpdesk",
-        "2FA Selfservice",
-    ]
+        expected_tiles = [
+            "Keycloak",
+            # "Welcome!",
+            "Users",
+            "Groups",
+            "Computers",
+            "Contacts",
+            "Groups",
+            "Users",
+            "Computers",
+            "Printers",
+            "Blocklists",
+            "DHCP",
+            "DNS",
+            "LDAP directory",
+            "Mail",
+            "Networks",
+            "Policies",
+            "Shares",
+            "Portal",
+            # "Welcome!",
+            "2FA Admin Helpdesk",
+            "2FA Selfservice",
+        ]
 
-    for tile in expected_tiles:
-        with subtests.test(msg=f"tile {tile}"):
-            assert tile in admin_layout["tiles"]
+        for tile in expected_tiles:
+            with subtests.test(msg=f"tile {tile}"):
+                assert tile in admin_layout["tiles"]
 
-    # no extra tiles
-    with subtests.test(msg="no extra tiles"):
-        extra_tiles = set(admin_layout["tiles"]) - set(expected_tiles)
-        assert extra_tiles == set()
+        # no extra tiles
+        with subtests.test(msg="no extra tiles"):
+            extra_tiles = set(admin_layout["tiles"]) - set(expected_tiles)
+            assert extra_tiles == set()
 
-    expected_sidebar = {
-        "Certificates": ["Root certificate", "Certificate revocation list"],
-        "Change Language": ["Deutsch", "English"],
-        "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
-        "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
-    }
+        expected_sidebar = {
+            "Certificates": ["Root certificate", "Certificate revocation list"],
+            "Change Language": ["Deutsch", "English"],
+            "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
+            "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
+        }
 
-    for section, items in expected_sidebar.items():
-        with subtests.test(msg=f"sidebar section {section}"):
-            assert section in admin_layout["sidebar"]
-            for item in items:
-                assert item in admin_layout["sidebar"][section]
+        for section, items in expected_sidebar.items():
+            with subtests.test(msg=f"sidebar section {section}"):
+                assert section in admin_layout["sidebar"]
+                for item in items:
+                    assert item in admin_layout["sidebar"][section]
 
-    # no extra sidebar items
-    with subtests.test(msg="no extra sidebar items"):
-        extra_sidebar_items = set()
-        for section, items in admin_layout["sidebar"].items():
-            extra_items_from_section = set(items) - set(expected_sidebar[section])
-            extra_sidebar_items.update(extra_items_from_section)
-        assert extra_sidebar_items == set()
+        # no extra sidebar items
+        with subtests.test(msg="no extra sidebar items"):
+            extra_sidebar_items = set()
+            for section, items in admin_layout["sidebar"].items():
+                extra_items_from_section = set(items) - set(expected_sidebar[section])
+                extra_sidebar_items.update(extra_items_from_section)
+            assert extra_sidebar_items == set()
 
-    # central navigation
-    expected_central_navigation = {
-        "Administration": ["System and domain settings"],
-        "Applications": ["Login (Single sign-on)"],
-    }
+        # central navigation
+        expected_central_navigation = {
+            "Administration": ["System and domain settings"],
+            "Applications": ["Login (Single sign-on)"],
+        }
 
-    with subtests.test(msg="central navigation"):
-        assert "central_navigation" in admin_layout
-        for section, items in expected_central_navigation.items():
-            assert section in admin_layout["central_navigation"]
-            for item in items:
-                assert item in admin_layout["central_navigation"][section]
+        with subtests.test(msg="central navigation"):
+            assert "central_navigation" in admin_layout
+            for section, items in expected_central_navigation.items():
+                assert section in admin_layout["central_navigation"]
+                for item in items:
+                    assert item in admin_layout["central_navigation"][section]
 
-    # no extra central navigation items
+        # no extra central navigation items
 
-    with subtests.test(msg="no extra central navigation items"):
-        extra_central_navigation_items = set()
-        for section, items in admin_layout["central_navigation"].items():
-            extra_items_from_section = set(items) - set(expected_central_navigation[section])
-            extra_central_navigation_items.update(extra_items_from_section)
-        assert extra_central_navigation_items == set()
+        with subtests.test(msg="no extra central navigation items"):
+            extra_central_navigation_items = set()
+            for section, items in admin_layout["central_navigation"].items():
+                extra_items_from_section = set(items) - set(expected_central_navigation[section])
+                extra_central_navigation_items.update(extra_items_from_section)
+            assert extra_central_navigation_items == set()
 
+    def test_regular_user_portal_layout(
+        self,
+        navigate_to_login_page,
+        user,
+        user_password,
+        subtests,
+        portal,
+    ):
+        page = navigate_to_login_page
+        user_layout = get_portal_layout(page, user.properties["username"], user_password, portal.central_navigation_url)
 
-@pytest.mark.portal
-@pytest.mark.development_environment
-@pytest.mark.acceptance_environment
-def test_regular_user_portal_layout(
-    navigate_to_login_page,
-    user,
-    user_password,
-    subtests,
-    portal,
-):
-    page = navigate_to_login_page
-    user_layout = get_portal_layout(page, user.properties["username"], user_password, portal.central_navigation_url)
+        expected_tiles = [
+            "2FA Selfservice",
+        ]
 
-    expected_tiles = [
-        "2FA Selfservice",
-    ]
+        for tile in expected_tiles:
+            with subtests.test(msg=f"tile {tile}"):
+                assert tile in user_layout["tiles"]
 
-    for tile in expected_tiles:
-        with subtests.test(msg=f"tile {tile}"):
-            assert tile in user_layout["tiles"]
+        # no extra tiles
+        with subtests.test(msg="no extra tiles"):
+            extra_tiles = set(user_layout["tiles"]) - set(expected_tiles)
+            assert extra_tiles == set()
 
-    # no extra tiles
-    with subtests.test(msg="no extra tiles"):
-        extra_tiles = set(user_layout["tiles"]) - set(expected_tiles)
-        assert extra_tiles == set()
+        expected_sidebar = {
+            "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
+            "Certificates": ["Root certificate", "Certificate revocation list"],
+            "Change Language": ["Deutsch", "English"],
+            "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
+        }
 
-    expected_sidebar = {
-        "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
-        "Certificates": ["Root certificate", "Certificate revocation list"],
-        "Change Language": ["Deutsch", "English"],
-        "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
-    }
+        for item, expected in expected_sidebar.items():
+            with subtests.test(msg=f"sidebar item {item}"):
+                assert item in user_layout["sidebar"]
+                assert user_layout["sidebar"][item] == expected
 
-    for item, expected in expected_sidebar.items():
-        with subtests.test(msg=f"sidebar item {item}"):
-            assert item in user_layout["sidebar"]
-            assert user_layout["sidebar"][item] == expected
+        # no extra sidebar items
+        with subtests.test(msg="no extra sidebar items"):
+            extra_sidebar_items = set()
+            for section, items in user_layout["sidebar"].items():
+                extra_items_from_section = set(items) - set(expected_sidebar[section])
+                extra_sidebar_items.update(extra_items_from_section)
+            assert extra_sidebar_items == set()
 
-    # no extra sidebar items
-    with subtests.test(msg="no extra sidebar items"):
-        extra_sidebar_items = set()
-        for section, items in user_layout["sidebar"].items():
-            extra_items_from_section = set(items) - set(expected_sidebar[section])
-            extra_sidebar_items.update(extra_items_from_section)
-        assert extra_sidebar_items == set()
+        # central navigation
+        expected_central_navigation = {
+            "Administration": ["System and domain settings"],
+            "Applications": ["Login (Single sign-on)"],
+        }
 
-    # central navigation
-    expected_central_navigation = {
-        "Administration": ["System and domain settings"],
-        "Applications": ["Login (Single sign-on)"],
-    }
+        with subtests.test(msg="central navigation"):
+            assert "central_navigation" in user_layout
+            for section, items in expected_central_navigation.items():
+                assert section in user_layout["central_navigation"]
+                for item in items:
+                    assert item in user_layout["central_navigation"][section]
 
-    with subtests.test(msg="central navigation"):
-        assert "central_navigation" in user_layout
-        for section, items in expected_central_navigation.items():
-            assert section in user_layout["central_navigation"]
-            for item in items:
-                assert item in user_layout["central_navigation"][section]
+        # no extra central navigation items
 
-    # no extra central navigation items
-
-    with subtests.test(msg="no extra central navigation items"):
-        extra_central_navigation_items = set()
-        for section, items in user_layout["central_navigation"].items():
-            extra_items_from_section = set(items) - set(expected_central_navigation[section])
-            extra_central_navigation_items.update(extra_items_from_section)
-        assert extra_central_navigation_items == set()
+        with subtests.test(msg="no extra central navigation items"):
+            extra_central_navigation_items = set()
+            for section, items in user_layout["central_navigation"].items():
+                extra_items_from_section = set(items) - set(expected_central_navigation[section])
+                extra_central_navigation_items.update(extra_items_from_section)
+            assert extra_central_navigation_items == set()
