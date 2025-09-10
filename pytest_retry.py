@@ -73,8 +73,8 @@ def count_test_failures(junit_xml: Path, test_details: dict[str, int]) -> int:
     testcases = tree.findall(".//testcase")
     total_failures = 0
     for testcase in testcases:
-        name = testcase.get("name", "") or "<unknown>"
-        classname = testcase.get("classname", "") or "<unknown>"
+        name = testcase.get("name", "<unknown>")
+        classname = testcase.get("classname", "<unknown>")
         full_name = f"{classname}::{name}"
         failure_node = testcase.find("failure")
         error_node = testcase.find("error")
