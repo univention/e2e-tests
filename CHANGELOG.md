@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.51.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.0...v0.51.1) (2025-09-10)
+
+
+### Bug Fixes
+
+* reload page on retry for test_user_can_access_2fa_selfservice ([5d8e507](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/5d8e50706a59fb80d302c9ce67fcee8240ac3457)), closes [univention/dev/internal/team-nubus#1420](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1420)
+* simply default value for counting test failures ([8f365ec](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/8f365ec1236efa7a05f0399e3121d04a78499e7e)), closes [univention/dev/internal/team-nubus#1410](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1410)
+
 ## [0.51.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.50.0...v0.51.0) (2025-09-08)
 
 
