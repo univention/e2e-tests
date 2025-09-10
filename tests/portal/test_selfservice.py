@@ -204,9 +204,9 @@ def test_admin_does_not_see_umc_tiles_in_selfservice_portal(page, admin_username
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password, wait_for_portal_sync):
+def test_user_sees_correct_tiles_in_selfservice_portal(page, user, user_password, ensure_user_exists):
     username = user.properties["username"]
-    wait_for_portal_sync(username, 0)
+    ensure_user_exists(username)
 
     selfservice_portal = SelfservicePortal(page)
     selfservice_portal.navigate()

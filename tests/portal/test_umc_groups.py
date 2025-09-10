@@ -35,8 +35,6 @@ from umspages.common.base import expect
 from umspages.portal.groups.groups_page import UCSGroupsPage
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 
-from tests.portal.conftest import WaitForPortalSync
-
 
 @pytest.fixture
 def group(udm, faker, wait_for_ldap_secondaries_to_catch_up):
@@ -69,7 +67,6 @@ def test_create_group_in_umc(
     udm,
     faker,
     navigate_to_home_page_logged_in_as_admin,
-    wait_for_portal_sync: WaitForPortalSync,
     wait_for_ldap_secondaries_to_catch_up,
 ):
     group_name = faker.user_name()
@@ -82,7 +79,6 @@ def test_create_group_in_umc(
     groups_page.add_group(group_name, group_description)
 
     wait_for_ldap_secondaries_to_catch_up()
-    wait_for_portal_sync(group_name, 0)
 
     ldap_base = udm.get_ldap_base()
     group = udm.get("groups/group").get("cn=%s,cn=groups,%s" % (group_name, ldap_base))
@@ -97,12 +93,10 @@ def test_edit_group_in_umc(
     group,
     faker,
     navigate_to_home_page_logged_in_as_admin,
-    wait_for_portal_sync: WaitForPortalSync,
     wait_for_ldap_secondaries_to_catch_up,
 ):
     group_name = group.properties["name"]
     wait_for_ldap_secondaries_to_catch_up()
-    wait_for_portal_sync(group_name, 0)
     previous_group_description = group.properties["description"]
     new_group_description = faker.sentence()
 
@@ -125,12 +119,10 @@ def test_edit_group_in_umc(
 def test_remove_group_in_umc(
     group,
     navigate_to_home_page_logged_in_as_admin,
-    wait_for_portal_sync: WaitForPortalSync,
     wait_for_ldap_secondaries_to_catch_up,
 ):
     group_name = group.properties["name"]
     wait_for_ldap_secondaries_to_catch_up()
-    wait_for_portal_sync(group_name, 0)
 
     page = navigate_to_home_page_logged_in_as_admin
     home_page_logged_in = HomePageLoggedIn(page)

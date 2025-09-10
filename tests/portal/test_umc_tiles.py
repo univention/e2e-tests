@@ -91,10 +91,10 @@ def test_umc_tiles(navigate_to_login_page, admin_username, admin_password, subte
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_regular_user_does_not_see_umc_section(navigate_to_login_page, user, user_password, wait_for_portal_sync):
+def test_regular_user_does_not_see_umc_section(navigate_to_login_page, user, user_password, ensure_user_exists):
     username = user.properties["username"]
     page = navigate_to_login_page
-    wait_for_portal_sync(user, 2)
+    ensure_user_exists(username)
 
     login_page = LoginPage(page)
     login_page.navigate()
