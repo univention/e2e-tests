@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.51.5](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.4...v0.51.5) (2025-09-12)
+
+
+### Bug Fixes
+
+* Add central navigation entries to the portal UDM object for tests that need it ([f2ca738](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/f2ca738780447f17f3327ce6550692a7d60d5260)), closes [univention/dev/internal/team-nubus#1416](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1416)
+* Replace / Remove wait_for_portal_sync usage because it no longer works after central navigation changes ([4a36e48](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4a36e4841dadcf3d859047944b04f9672834c6b9)), closes [univention/dev/internal/team-nubus#1416](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1416)
+
 ## [0.51.4](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.3...v0.51.4) (2025-09-12)
 
 
