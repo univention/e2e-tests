@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.51.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.2...v0.51.3) (2025-09-12)
+
+
+### Bug Fixes
+
+* **deps:** Update mcr.microsoft.com/playwright/python Docker tag to v1.55.0 ([c2fc368](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/c2fc368daa2ac204fa69eea33ff3cc2412d550cd)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.51.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.1...v0.51.2) (2025-09-11)
 
 
