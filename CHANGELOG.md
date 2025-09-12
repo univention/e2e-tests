@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.52.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.5...v0.52.0) (2025-09-12)
+
+
+### Features
+
+* Add tests for UDM basic and oidc auth ([9210215](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/92102152f3662c661b75911dde9200134463f89b)), closes [univention/dev/internal/dev-issues/dev-incidents#138](https://git.knut.univention.de/univention/dev/internal/dev-issues/dev-incidents/issues/138)
+
 ## [0.51.5](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.51.4...v0.51.5) (2025-09-12)
 
 
