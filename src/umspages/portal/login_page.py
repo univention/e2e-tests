@@ -68,6 +68,7 @@ class LoginPage(PortalPage):
         )
 
     def navigate(self, cookies_accepted=False):
+        """Navigate to login page using default (OIDC) login method"""
         home_page = HomePageLoggedOut(self.page)
         home_page.navigate(cookies_accepted=cookies_accepted)
         home_page.is_displayed()
@@ -76,8 +77,15 @@ class LoginPage(PortalPage):
         expect(self.right_side_menu.logout_button).to_be_hidden()
         self.right_side_menu.click_login_button()
 
+    def navigate_oidc(self, cookies_accepted=False):
+        """Navigate to login page using OIDC login tile specifically"""
+        home_page = HomePageLoggedOut(self.page)
+        home_page.navigate(cookies_accepted=cookies_accepted)
+        home_page.is_displayed()
+        home_page.oidc_login_tile.click()
+
     def navigate_saml(self):
-        """Login via saml specifically"""
+        """Navigate to login page using SAML login tile specifically"""
         home_page = HomePageLoggedOut(self.page)
         home_page.navigate()
         home_page.is_displayed()

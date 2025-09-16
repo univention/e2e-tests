@@ -40,7 +40,7 @@ from umspages.portal.login_page import LoginPage
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_login(navigate_to_login_page, admin_username, admin_password):
-    """Tests the plain UMC login in our devenv but the SAML login in the nightly deployment"""
+    """Tests OIDC login by default"""
     page = navigate_to_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
@@ -54,7 +54,7 @@ def test_login(navigate_to_login_page, admin_username, admin_password):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_logout(navigate_to_login_page, admin_username, admin_password):
-    """Tests the plain UMC logout in our devenv but the SAML login in the nightly deployment"""
+    """Tests OIDC logout by default"""
     page = navigate_to_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
@@ -67,8 +67,11 @@ def test_logout(navigate_to_login_page, admin_username, admin_password):
     home_page_logged_out.assert_logged_out()
 
 
-@pytest.mark.saml()
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_saml_login(navigate_to_saml_login_page, admin_username, admin_password):
+    """Tests SAML login specifically to ensure it still works"""
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
@@ -77,16 +80,41 @@ def test_saml_login(navigate_to_saml_login_page, admin_username, admin_password)
     home_page_logged_in.assert_logged_in()
 
 
-@pytest.mark.saml()
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
 def test_saml_logout(navigate_to_saml_login_page, admin_username, admin_password):
+    """Tests SAML logout specifically"""
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
     home_page_logged_in = HomePageLoggedIn(page)
-    home_page_logged_in.assert_logged_in()
 
     home_page_logged_in.reveal_area(home_page_logged_in.right_side_menu, home_page_logged_in.header.hamburger_icon)
     home_page_logged_in.right_side_menu.click_logout_button()
 
     home_page_logged_out = HomePageLoggedOut(page)
     home_page_logged_out.assert_logged_out()
+
+
+@pytest.mark.parametrize(
+    "login_method,navigate_fixture",
+    [
+        ("oidc", "navigate_to_oidc_login_page"),
+        ("saml", "navigate_to_saml_login_page"),
+    ],
+)
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_login_methods_and_tiles(request, login_method, navigate_fixture, admin_username, admin_password):
+    """Test both OIDC and SAML login work and display tiles correctly"""
+    page = request.getfixturevalue(navigate_fixture)
+    login_page = LoginPage(page)
+    login_page.login(admin_username, admin_password)
+
+    home_page_logged_in = HomePageLoggedIn(page)
+    home_page_logged_in.assert_logged_in()
+
+    # Verify that we can see tiles after login (basic smoke test)
+    home_page_logged_in.is_displayed()

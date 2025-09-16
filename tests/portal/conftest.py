@@ -107,13 +107,23 @@ def navigate_to_home_page_logged_out(page):
 
 @pytest.fixture()
 def navigate_to_login_page(page):
+    """Navigate to default (OIDC) login page"""
     login_page = LoginPage(page)
     login_page.navigate()
     return page
 
 
 @pytest.fixture()
+def navigate_to_oidc_login_page(page):
+    """Navigate to OIDC login page specifically"""
+    login_page = LoginPage(page)
+    login_page.navigate_oidc()
+    return page
+
+
+@pytest.fixture()
 def navigate_to_saml_login_page(page):
+    """Navigate to SAML login page specifically"""
     login_page = LoginPage(page)
     login_page.navigate_saml()
     return page

@@ -132,8 +132,10 @@ class TestCentralNavigation:
         assert response.status_code == requests.codes.ok
         assert len(data["categories"]) == 2
 
-        # Should not contain the anonymous login
-        assert _get_first_entry(data)["display_name"] != "Login (Single sign-on)"
+        # Should not contain the anonymous login tiles
+        first_entry_name = _get_first_entry(data)["display_name"]
+        assert first_entry_name != "Login (SAML Single sign-on)"
+        assert first_entry_name != "Login (Single sign-on)"
 
         domain_admin = data["categories"][1]
         assert domain_admin["identifier"] == "domain-admin"

@@ -40,17 +40,22 @@ class HomePageLoggedOut(HomePage):
 
     def set_content(self, *args, **kwargs):
         """
-        The saml login tile is often renamed from "Login (Single sign-on)" to "Login"
-        This means that login_widget can be plain ucs login or saml login
-        while saml_login_tile is always the saml tile, no matter the name.
+        The portal now has both SAML and OIDC login tiles:
+        - "Login (Single sign-on)" - OIDC login (default)
+        - "Login (SAML Single sign-on)" - SAML login
         """
         super().set_content(*args, **kwargs)
 
-        # It is perfectly fine that the portal is configured to have multiple
-        # login tiles. By default we should use the first one. If a specific
-        # one is needed, then attributes like `saml_login_tile` should be used.
-        self.login_widget = self.page.get_by_role("link", name="Login").first
-        self.saml_login_tile = self.page.locator('xpath=//a[contains(@href, "univention/saml")]')
+        # By default, use OIDC login tile, fallback to generic "Login" for backward compatibility
+        self.oidc_login_tile = self.page.get_by_role("link", name="Login (Single sign-on)")
+        self.generic_login_tile = self.page.get_by_role("link", name="Login").first
+        self.login_widget = self.oidc_login_tile.or_(self.generic_login_tile)
+
+        # Specific login tiles for explicit usage
+        self.saml_login_tile = self.page.get_by_role("link", name="Login (SAML Single sign-on)")
+        # Legacy SAML tile selector as fallback
+        saml_legacy_tile = self.page.locator('xpath=//a[contains(@href, "univention/saml")]')
+        self.saml_login_tile = self.saml_login_tile.or_(saml_legacy_tile)
 
     def navigate(self, cookies_accepted=False):
         self.page.goto("/")
