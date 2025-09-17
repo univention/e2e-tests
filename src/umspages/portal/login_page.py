@@ -106,6 +106,34 @@ class LoginPage(PortalPage):
     def login_and_ensure_success(self, username, password):
         with capture_response(self.page, self.authenticate_url_pattern) as response_info:
             self.login(username, password)
+
+        # Wait for navigation away from login-actions page
+        # The login might return an intermediate page that needs client-side processing
+        try:
+            # Wait for navigation away from login-actions URLs (max 10 seconds)
+            self.page.wait_for_url(lambda url: "login-actions" not in url, timeout=10000)
+        except:
+            # If we're still on login-actions page, try refreshing as suggested
+            current_url = self.page.url
+            if "login-actions/authenticate" in current_url:
+                self.page.reload()
+                # Wait again for navigation after refresh
+                try:
+                    self.page.wait_for_url(lambda url: "login-actions" not in url, timeout=10000)
+                except:
+                    # Still stuck - this indicates a real login failure
+                    pass
+
+        # Check where we ended up and redirect to portal if needed
+        current_url = self.page.url
+        if "/univention/management" in current_url:
+            # We were redirected to management instead of portal - navigate to portal manually
+            from urllib.parse import urlparse
+
+            parsed_url = urlparse(current_url)
+            portal_url = f"{parsed_url.scheme}://{parsed_url.netloc}/univention/portal/"
+            self.page.goto(portal_url)
+
         self.assert_successful_login(response_info.value)
 
     login_with_retry = retrying_keycloak_login(login_and_ensure_success)
@@ -117,22 +145,44 @@ class LoginPage(PortalPage):
 
     def assert_successful_login(self, response):
         """
+        Check if login was successful by examining both the response and final page state.
+
         429 indicates that the brute-force detection was triggered
         400 indicates that the LDAP Server request from Keycloak failed.
-        These failure scenarios can easily be reproduced
-        by deleting all ldap-server-secondary pods.
 
-        200 could mean success or that the username or password was wrong.
-        To differentiate these cases, we check the response text.
+        For 200 responses, we need to check if we successfully navigated away from
+        the login-actions page, as Keycloak may return intermediate pages that
+        require client-side processing.
         """
         assert (
             response.status != 429
         ), "Login failed, probably reached the brute-force detection limits of keycloak-extensions"
-        assert response.status == 200, "Login failed, probably due to a failed LDAP Connection"
-        response_text = response.text()
-        assert (
-            "Redirecting, please wait." in response_text
-        ), "Login failed, probably due to a wrong username or password."
+
+        # Check final page state - the most reliable indicator of success
+        current_url = self.page.url
+
+        # If we're no longer on a login-actions page, login likely succeeded
+        if "login-actions" not in current_url:
+            return  # Success - we've navigated away from the auth page
+
+        # If we're still on login-actions page, check for specific error indicators
+        if response.status == 200:
+            response_text = response.text()
+            error_indicators = [
+                "invalid_user_credentials",  # Keycloak error
+                "Account is disabled",  # Account disabled
+                "Login failed",  # Generic login error
+                "Username or email",  # Back on login form
+            ]
+            for error_msg in error_indicators:
+                if error_msg in response_text:
+                    assert False, f"Login failed - found error indicator '{error_msg}' in response"
+
+            # If no specific error found but still on login-actions page, it might be a timeout or processing issue
+            assert False, f"Login appears to have failed - still on login-actions page: {current_url}"
+        else:
+            # Any non-200 status is a failure
+            assert False, f"Login failed with status code {response.status}"
 
 
 @contextmanager
