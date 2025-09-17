@@ -46,16 +46,18 @@ class HomePageLoggedOut(HomePage):
         """
         super().set_content(*args, **kwargs)
 
-        # By default, use OIDC login tile, fallback to generic "Login" for backward compatibility
-        self.oidc_login_tile = self.page.get_by_role("link", name="Login (Single sign-on)")
-        self.generic_login_tile = self.page.get_by_role("link", name="Login").first
-        self.login_widget = self.oidc_login_tile.or_(self.generic_login_tile)
-
-        # Specific login tiles for explicit usage
+        # Specific login tiles
+        self.oidc_login_tile = self.page.locator('xpath=//a[contains(@href, "univention/oidc")]')
         self.saml_login_tile = self.page.get_by_role("link", name="Login (SAML Single sign-on)")
+
         # Legacy SAML tile selector as fallback
         saml_legacy_tile = self.page.locator('xpath=//a[contains(@href, "univention/saml")]')
         self.saml_login_tile = self.saml_login_tile.or_(saml_legacy_tile)
+
+        # Default login widget points to OIDC tile (default login method)
+        # For backward compatibility, also match "Login (Single sign-on)" OIDC tile
+        oidc_by_name = self.page.get_by_role("link", name="Login (Single sign-on)")
+        self.login_widget = self.oidc_login_tile.or_(oidc_by_name)
 
     def navigate(self, cookies_accepted=False):
         self.page.goto("/")
@@ -75,7 +77,9 @@ class HomePageLoggedOut(HomePage):
         self.hide_area(self.right_side_menu, self.header.hamburger_icon)
 
     def is_displayed(self):
-        expect(self.login_widget).to_be_visible()
+        # Check that at least one login tile is visible (either OIDC or SAML)
+        # Since both tiles may be present, we just verify OIDC tile by default
+        expect(self.oidc_login_tile).to_be_visible()
 
     def click_login_widget(self):
         self.login_widget.click()
