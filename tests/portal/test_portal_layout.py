@@ -110,7 +110,7 @@ class TestPortalLayout:
         # central navigation
         expected_central_navigation = {
             "Administration": ["System and domain settings"],
-            "Applications": ["Login (Single sign-on)"],
+            "Applications": ["Login (SAML Single sign-on)"],
         }
 
         with subtests.test(msg="central navigation"):
@@ -176,7 +176,7 @@ class TestPortalLayout:
         # central navigation
         expected_central_navigation = {
             "Administration": ["System and domain settings"],
-            "Applications": ["Login (Single sign-on)"],
+            "Applications": ["Login (SAML Single sign-on)"],
         }
 
         with subtests.test(msg="central navigation"):

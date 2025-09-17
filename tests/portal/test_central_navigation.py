@@ -109,7 +109,7 @@ class TestCentralNavigation:
 
         assert response.status_code == requests.codes.ok
         display_name = _get_first_entry(data)["display_name"]
-        assert display_name == "Login (Single sign-on)"
+        assert display_name == "Login (SAML Single sign-on)"
 
     def test_navigation_api_returns_valid_icon_urls(self, portal):
         response = requests.get(portal.central_navigation_url)
