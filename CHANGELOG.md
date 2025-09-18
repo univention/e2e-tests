@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.53.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.52.2...v0.53.0) (2025-09-18)
+
+
+### Features
+
+* migrate to OIDC login by default, keep SAML as option ([da2b562](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/da2b562ebde2f04ca0ccba549f0b8140c01769b4)), closes [univention/dev/internal/team-nubus#1435](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1435)
+
+
+### Bug Fixes
+
+* Do not capture status code from the final chain of redirections ([263980a](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/263980a815695146583c1fb00e63471761a3a5b8)), closes [univention/dev/internal/team-nubus#1435](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1435)
+* login tile selector ([62aedbc](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/62aedbc0aa7600809457397c0e98abfd2b7518e4)), closes [univention/dev/internal/team-nubus#1435](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1435)
+* portal layout tests to expect SAML login instead of SSO ([9b3d40c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/9b3d40c7ef0e5e851f3994d7453475f244d97a2f)), closes [univention/dev/internal/team-nubus#1435](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1435)
+
 ## [0.52.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.52.1...v0.52.2) (2025-09-16)
 
 
