@@ -31,6 +31,11 @@
 # general it can be freely chosen.
 : "${RELEASE_NAME:=nubus}"
 
+# External dependencies are not used in the tests by default. We need to set this
+# variable to "true" if we want to use the LDAP secrets that are defined in the
+# environment for testing with external dependencies.
+: "${EXTERNAL_DEPENDENCIES:=false}"
+
 # detect if using an external minio
 external_minio=""
 if kubectl get -n "${DEPLOY_NAMESPACE}" "secrets" "minio-external-admin-credentials" > /dev/null 2>&1; then
@@ -42,7 +47,6 @@ echo "Release name: ${RELEASE_NAME}"
 echo "API Server: $(kubectl config view --minify -o jsonpath='{..server}')"
 echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}')"
 echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")"
-
 
 # Discover secrets and the domain.
 #
@@ -66,6 +70,14 @@ echo Installing the testing-api into the namespace
 portal_hostname="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.rules[0].host}')"
 portal_tls_secret="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.tls[0].secretName}')"
 
+LDAP_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-ldap-server-admin"
+LDAP_CREDENTIALS_SECRET_KEY="password"
+$EXTERNAL_DEPENDENCIES && {
+  echo Using external LDAP credentials
+  LDAP_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
+  LDAP_CREDENTIALS_SECRET_KEY="ldap-admin-password"
+}
+
 cat <<EOF > values-testing-api.yaml
 ---
 testingApi:
@@ -78,8 +90,8 @@ testingApi:
     auth:
       bindDn:  cn=admin,${ldap_base_dn}
       credentialSecret:
-        key: "password"
-        name: ${RELEASE_NAME}-ldap-server-admin
+        key: "${LDAP_CREDENTIALS_SECRET_KEY}"
+        name: ${LDAP_CREDENTIALS_SECRET_NAME}
 
   ingress:
     host: "${portal_hostname}"
