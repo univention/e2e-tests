@@ -31,6 +31,24 @@
 # general it can be freely chosen.
 : "${RELEASE_NAME:=nubus}"
 
+# External dependencies are not used in the tests by default. We need to set this
+# variable to "true" if we want to use the LDAP secrets that are defined in the
+# environment for testing with external dependencies.
+: "${EXTERNAL_DEPENDENCIES:=false}"
+
+# Setup secrets for external dependencies if requested.
+export LDAP_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-ldap-server-admin"
+export LDAP_CREDENTIALS_SECRET_KEY="password"
+export KEYCLOAK_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-keycloak-credentials"
+export KEYCLOAK_CREDENTIALS_SECRET_KEY="admin_password"
+
+$EXTERNAL_DEPENDENCIES && {
+  KEYCLOAK_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
+  KEYCLOAK_CREDENTIALS_SECRET_KEY="keycloak-admin-password"
+  LDAP_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
+  LDAP_CREDENTIALS_SECRET_KEY="ldap-admin-password"
+}
+
 # detect if using an external minio
 external_minio=""
 if kubectl get -n "${DEPLOY_NAMESPACE}" "secrets" "minio-external-admin-credentials" > /dev/null 2>&1; then
@@ -42,6 +60,9 @@ echo "Release name: ${RELEASE_NAME}"
 echo "API Server: $(kubectl config view --minify -o jsonpath='{..server}')"
 echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}')"
 echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")"
+echo "Using LDAP secret: ${LDAP_CREDENTIALS_SECRET_NAME}/${LDAP_CREDENTIALS_SECRET_KEY}"
+echo "Using Keycloak secret: ${KEYCLOAK_CREDENTIALS_SECRET_NAME}/${KEYCLOAK_CREDENTIALS_SECRET_KEY}"
+echo "Using external dependencies: ${EXTERNAL_DEPENDENCIES}"
 
 
 # Discover secrets and the domain.
@@ -50,7 +71,7 @@ echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")
 # with the progressing Nubus chart.
 default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-nubus-credentials" -o jsonpath="{.data.administrator_password}" | base64 -d)
 ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
-keycloak_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-keycloak-credentials" -o jsonpath="{.data.admin_password}" | base64 -d)
+keycloak_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "$KEYCLOAK_CREDENTIALS_SECRET_NAME" -o jsonpath="{.data.$KEYCLOAK_CREDENTIALS_SECRET_KEY}" | base64 -d)
 
 email_test_api_base_url=$(kubectl get --ignore-not-found ingress -n "${DEPLOY_NAMESPACE}" maildev -o jsonpath="{.spec.rules[0].host}")
 if [ -n "$email_test_api_base_url" ]
@@ -78,8 +99,8 @@ testingApi:
     auth:
       bindDn:  cn=admin,${ldap_base_dn}
       credentialSecret:
-        key: "password"
-        name: ${RELEASE_NAME}-ldap-server-admin
+        key: "${LDAP_CREDENTIALS_SECRET_KEY}"
+        name: ${LDAP_CREDENTIALS_SECRET_NAME}
 
   ingress:
     host: "${portal_hostname}"

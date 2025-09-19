@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 import logging
+import os
 from base64 import b64decode
 
 import ldap3.core.exceptions
@@ -138,9 +139,11 @@ class LdapDeployment(BaseDeployment):
         self.users_container_dn = f"cn=users,{self.base_dn}"
         self.administrator_dn = f"uid=Administrator,{self.users_container_dn}"
 
-        secret_name = self.add_release_prefix("ldap-server-admin")
+        secret_name = os.getenv("LDAP_CREDENTIALS_SECRET_NAME", self.add_release_prefix("ldap-server-admin"))
+        secret_key = os.getenv("LDAP_CREDENTIALS_SECRET_KEY", "password")
+
         secret = self._k8s.get_secret(secret_name)
-        self.admin_password = b64decode(secret.data["password"]).decode()
+        self.admin_password = b64decode(secret.data[secret_key]).decode()
 
     def all_primaries_reachable(self):
         for server in self.servers.values():
