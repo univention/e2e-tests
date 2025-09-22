@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.53.0...v0.54.0) (2025-09-22)
+
+
+### Features
+
+* use LDAP/Keycloak credentials from existing secrets if running with external dependencies ([edaedf2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/edaedf20ecf76697a539da0056dd460165e89499)), closes [univention/dev/internal/team-nubus#1395](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1395)
+
 ## [0.53.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.52.2...v0.53.0) (2025-09-18)
 
 
