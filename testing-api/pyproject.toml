@@ -20,7 +20,7 @@ tenacity = "*"
 uvicorn = "^0.21.1"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.2"
+pytest = "^8.0.0"
 
 [tool.poetry.scripts]
 testing-api = "testing_api.main:main"
