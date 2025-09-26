@@ -6,6 +6,7 @@ import random
 from base64 import b64decode
 
 import pytest
+from keycloak import KeycloakAdmin
 from minio import Minio
 
 from e2e.helm import add_release_prefix
@@ -199,4 +200,27 @@ def minio_client(k8s_supporting_port_forward, release_name, external_minio):
         access_key=admin_username,
         secret_key=admin_password,
         secure=False,
+    )
+
+
+@pytest.fixture
+def keycloak_admin_username(pytestconfig):
+    return pytestconfig.option.kc_admin_username
+
+
+@pytest.fixture
+def keycloak_admin_password(pytestconfig):
+    return pytestconfig.option.kc_admin_password
+
+
+@pytest.fixture
+def keycloak_admin(keycloak: KeycloakDeployment, keycloak_admin_username: str, keycloak_admin_password: str):
+    return KeycloakAdmin(
+        server_url=keycloak.base_url,
+        username=keycloak_admin_username,
+        password=keycloak_admin_password,
+        realm_name="nubus",
+        client_id="admin-cli",
+        verify=True,
+        user_realm_name="master",
     )

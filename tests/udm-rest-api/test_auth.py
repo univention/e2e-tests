@@ -9,16 +9,8 @@ from univention.admin.rest.client import UDM
 
 
 @pytest.fixture
-def auth_token(portal, keycloak, keycloak_admin_username, keycloak_admin_password, admin_username, admin_password):
-    nubus_realm = KeycloakAdmin(
-        server_url=keycloak.base_url,
-        username=keycloak_admin_username,
-        password=keycloak_admin_password,
-        realm_name="nubus",
-        client_id="admin-cli",
-        verify=True,
-        user_realm_name="master",
-    )
+def auth_token(portal, keycloak, admin_username, admin_password, keycloak_admin: KeycloakAdmin):
+    nubus_realm = keycloak_admin
 
     oidc_client = None
     for client in nubus_realm.get_clients():
