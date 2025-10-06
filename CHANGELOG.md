@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.55.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.54.0...v0.55.0) (2025-10-06)
+
+
+### Features
+
+* add automatic logout refresh test ([4ad537c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4ad537cf5d15fdbc8c05dbd69830ed77956b5b03)), closes [univention/dev/internal/team-nubus#1439](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1439)
+
 ## [0.54.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.53.0...v0.54.0) (2025-09-22)
 
 
