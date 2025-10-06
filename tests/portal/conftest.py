@@ -123,7 +123,7 @@ def navigate_to_oidc_login_page(page):
 
 @pytest.fixture()
 def navigate_to_saml_login_page(page):
-    """Navigate to SAML login page specifically"""
+    """Navigate to SAML login page specifically (only when SAML is enabled)"""
     login_page = LoginPage(page)
     login_page.navigate_saml()
     return page

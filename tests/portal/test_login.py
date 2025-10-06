@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import pytest
+import requests
 
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
@@ -69,9 +70,9 @@ def test_logout(navigate_to_login_page, admin_username, admin_password):
 
 @pytest.mark.portal
 @pytest.mark.development_environment
-@pytest.mark.acceptance_environment
+@pytest.mark.skip(reason="SAML endpoints are not exposed in Kubernetes deployments (disabled by default)")
 def test_saml_login(navigate_to_saml_login_page, admin_username, admin_password):
-    """Tests SAML login specifically to ensure it still works"""
+    """Tests SAML login specifically to ensure it still works (only when SAML is enabled)"""
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
@@ -82,9 +83,9 @@ def test_saml_login(navigate_to_saml_login_page, admin_username, admin_password)
 
 @pytest.mark.portal
 @pytest.mark.development_environment
-@pytest.mark.acceptance_environment
+@pytest.mark.skip(reason="SAML endpoints are not exposed in Kubernetes deployments (disabled by default)")
 def test_saml_logout(navigate_to_saml_login_page, admin_username, admin_password):
-    """Tests SAML logout specifically"""
+    """Tests SAML logout specifically (only when SAML is enabled)"""
     page = navigate_to_saml_login_page
     login_page = LoginPage(page)
     login_page.login(admin_username, admin_password)
@@ -101,7 +102,13 @@ def test_saml_logout(navigate_to_saml_login_page, admin_username, admin_password
     "login_method,navigate_fixture",
     [
         ("oidc", "navigate_to_oidc_login_page"),
-        ("saml", "navigate_to_saml_login_page"),
+        pytest.param(
+            "saml",
+            "navigate_to_saml_login_page",
+            marks=pytest.mark.skip(
+                reason="SAML endpoints are not exposed in Kubernetes deployments (disabled by default)"
+            ),
+        ),
     ],
 )
 @pytest.mark.portal
@@ -118,3 +125,26 @@ def test_login_methods_and_tiles(request, login_method, navigate_fixture, admin_
 
     # Verify that we can see tiles after login (basic smoke test)
     home_page_logged_in.is_displayed()
+
+
+@pytest.mark.portal
+@pytest.mark.acceptance_environment
+def test_saml_endpoint_not_exposed(portal):
+    """Verify SAML endpoints are not publicly accessible (disabled by default)"""
+    response = requests.get(f"{portal.base_url}/univention/saml/", allow_redirects=False)
+
+    assert response.status_code in [
+        403,
+        404,
+    ], f"SAML endpoint should not be accessible, got status {response.status_code}"
+
+
+@pytest.mark.portal
+@pytest.mark.acceptance_environment
+def test_only_oidc_login_tile_visible(navigate_to_home_page_logged_out):
+    """Verify that only OIDC login tile is visible (SAML disabled by default)"""
+    page = navigate_to_home_page_logged_out
+    home_page = HomePageLoggedOut(page)
+
+    assert home_page.has_oidc_login_tile(), "OIDC login tile should be visible"
+    assert not home_page.has_saml_login_tile(), "SAML login tile should not be visible (disabled by default)"

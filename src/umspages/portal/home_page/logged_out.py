@@ -83,3 +83,19 @@ class HomePageLoggedOut(HomePage):
 
     def click_login_widget(self):
         self.login_widget.click()
+
+    def has_oidc_login_tile(self):
+        """Check if OIDC login tile is visible"""
+        try:
+            expect(self.oidc_login_tile).to_be_visible()
+            return True
+        except AssertionError:
+            return False
+
+    def has_saml_login_tile(self):
+        """Check if SAML login tile is visible"""
+        try:
+            expect(self.saml_login_tile).to_be_visible()
+            return True
+        except AssertionError:
+            return False
