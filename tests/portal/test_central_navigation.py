@@ -67,11 +67,11 @@ def restore_default_portal_properties(udm, ldap_base_dn):
 def add_entries_to_navigation(portal, admin_username, udm, ldap_base_dn, restore_default_portal_properties):
     portal_entry_module = udm.get("portals/entry")
     keycloak_entry = portal_entry_module.get(f"cn=keycloak,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
-    login_saml = portal_entry_module.get(f"cn=login-saml,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
+    login_oidc = portal_entry_module.get(f"cn=login-oidc,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
     twofa_admin = portal_entry_module.get(f"cn=twofaAdmin,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
     twofa_selfservice = portal_entry_module.get(f"cn=twofaSelfservice,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
     umc_domain = portal_entry_module.get(f"cn=umc-domain,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
-    custom_navigation = [keycloak_entry.dn, login_saml.dn, twofa_admin.dn, twofa_selfservice.dn, umc_domain.dn]
+    custom_navigation = [keycloak_entry.dn, login_oidc.dn, twofa_admin.dn, twofa_selfservice.dn, umc_domain.dn]
 
     portal_module = udm.get("portals/portal")
     portal_obj = portal_module.get(f"cn=domain,cn=portal,cn=portals,cn=univention,{ldap_base_dn}")
@@ -109,7 +109,7 @@ class TestCentralNavigation:
 
         assert response.status_code == requests.codes.ok
         display_name = _get_first_entry(data)["display_name"]
-        assert display_name == "Login (SAML Single sign-on)"
+        assert display_name == "Login (Single sign-on)"
 
     def test_navigation_api_returns_valid_icon_urls(self, portal):
         response = requests.get(portal.central_navigation_url)
@@ -134,8 +134,9 @@ class TestCentralNavigation:
 
         # Should not contain the anonymous login tiles
         first_entry_name = _get_first_entry(data)["display_name"]
-        assert first_entry_name != "Login (SAML Single sign-on)"
-        assert first_entry_name != "Login (Single sign-on)"
+        assert (
+            first_entry_name != "Login (Single sign-on)"
+        ), "Anonymous OIDC login tile should not be visible for authenticated users"
 
         domain_admin = data["categories"][1]
         assert domain_admin["identifier"] == "domain-admin"
