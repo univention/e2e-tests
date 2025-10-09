@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 import argparse
+import json
 import logging
 import shutil
 import subprocess
@@ -186,6 +187,18 @@ def main() -> int:
         log.info("ATTEMPT %d/%d: sleeping %d seconds", i, args.retry, args.wait)
         time.sleep(args.wait)
         log.info("ATTEMPT %d/%d: re-running failed tests", i, args.retry)
+
+        # DEBUG: Check pytest cache
+        cache_file = Path(".pytest_cache/v/cache/lastfailed")
+        if cache_file.exists():
+            try:
+                with open(cache_file) as f:
+                    cache_contents = json.load(f)
+                    log.info("Pytest cache contains %d failed test(s): %s", len(cache_contents), cache_contents)
+            except Exception as e:
+                log.warning("Failed to read cache file: %s", e)
+        else:
+            log.warning("Pytest cache file does not exist at %s", cache_file)
 
         rc = run_pytest(args.pytest_args, rerun_failed=True)
         backup_testrun_artifacts(args.backup, Path(BACKUP_DIR_BASE_NAME + str(i)))

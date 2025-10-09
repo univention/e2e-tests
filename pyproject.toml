@@ -32,6 +32,7 @@ markers = [
     "central_navigation: tests related to central navigation for the univention-portal",
     "cookies: univention-portal cookies banner and others",
     "cookie_banner: Cookie banner related tests around Keycloak",
+    "debug_test: debug tests for testing pytest_retry and other infrastructure",
     "development_environment: target openDesk dev-env",
     "groups: Tests for the group management console for admin users",
     "i18n: univention-portal translations",
