@@ -339,8 +339,3 @@ def portal_link_list(request):
     """
     link_list = request.param
     return link_list
-
-
-@pytest.fixture(scope="session")
-def screenshots_output_dir(pytestconfig):
-    return pytestconfig.getoption("--screenshots-output-dir")
