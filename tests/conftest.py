@@ -341,14 +341,6 @@ def portal_link_list(request):
     return link_list
 
 
-@pytest.fixture()
-def navigate_to_login_page(page):
-    """Navigate to default (OIDC) login page"""
-    login_page = LoginPage(page)
-    login_page.navigate()
-    return page
-
-
 @pytest.fixture(scope="session")
 def screenshots_output_dir(pytestconfig):
     return pytestconfig.getoption("--screenshots-output-dir")
