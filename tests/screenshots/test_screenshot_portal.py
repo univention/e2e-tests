@@ -28,15 +28,22 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+from pathlib import Path
+
 import pytest
 
 from umspages.portal.login_page import LoginPage
 
 from .conftest import (
-    screenshot_filename,
+    SCREENSHOT_NAME_REPLACEMENTS,
     viewport_size_for_screenshots_1280_720,
     viewport_size_for_screenshots_1920_1080,
 )
+
+
+def screenshot_filename(request, screenshots_output_dir, prefix: str = "") -> Path:
+    filename = request.node.name.translate(SCREENSHOT_NAME_REPLACEMENTS)
+    return Path(screenshots_output_dir, f"{prefix}{filename}.png")
 
 
 @pytest.mark.screenshots
@@ -74,3 +81,15 @@ class TestScreenshotsLogin(object):
         page.pause()
         login_box = page.get_by_text("Deutsch Deutsch Englisch (English) Bei Ihrem Konto anmelden Benutzername oder E")
         login_box.screenshot(path=screenshot_filename(request, screenshots_output_dir, prefix="box-"))
+
+
+@pytest.mark.screenshots
+@pytest.mark.parametrize(
+    "screenshot_page", [viewport_size_for_screenshots_1280_720, viewport_size_for_screenshots_1920_1080], indirect=True
+)
+class TestScreenshotsPortal(object):
+    def test_logged_in(
+        self, navigate_to_home_page_logged_in_as_admin, screenshots_output_dir, request, screenshot_page
+    ):
+        page = navigate_to_home_page_logged_in_as_admin
+        page.screenshot(path=screenshot_filename(request, screenshots_output_dir))
