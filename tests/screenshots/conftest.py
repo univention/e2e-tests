@@ -43,6 +43,16 @@ SCREENSHOT_NAME_REPLACEMENTS = str.maketrans(
 )
 
 
+@pytest.fixture(scope="session")
+def portal_base_url(pytestconfig):
+    return pytestconfig.getoption("--portal-base-url")
+
+
+@pytest.fixture(scope="session")
+def keycloak_base_url(pytestconfig):
+    return pytestconfig.getoption("--keycloak-base-url")
+
+
 def screenshot_filename(request, screenshots_output_dir, prefix: str = "") -> Path:
     filename = request.node.name.translate(SCREENSHOT_NAME_REPLACEMENTS)
     return Path(screenshots_output_dir, f"{prefix}{filename}.png")
