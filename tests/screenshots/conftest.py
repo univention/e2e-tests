@@ -34,6 +34,8 @@ from urllib.parse import urlparse
 
 import pytest
 
+from ..portal.conftest import navigate_to_home_page_logged_in_as_admin
+
 SCREENSHOT_NAME_REPLACEMENTS = str.maketrans(
     {
         "[": "--",
@@ -44,18 +46,12 @@ SCREENSHOT_NAME_REPLACEMENTS = str.maketrans(
 
 
 @pytest.fixture(scope="session")
-def portal_base_url(pytestconfig):
-    return pytestconfig.getoption("--portal-base-url")
+def screenshots_output_dir(pytestconfig):
+    return pytestconfig.getoption("--screenshots-output-dir")
 
 
-@pytest.fixture(scope="session")
-def keycloak_base_url(pytestconfig):
-    return pytestconfig.getoption("--keycloak-base-url")
-
-
-def screenshot_filename(request, screenshots_output_dir, prefix: str = "") -> Path:
-    filename = request.node.name.translate(SCREENSHOT_NAME_REPLACEMENTS)
-    return Path(screenshots_output_dir, f"{prefix}{filename}.png")
+def screenshot_filename(screenshots_output_dir, name: str, path: str = "") -> Path:
+    return Path(screenshots_output_dir, path, f"{name}.png")
 
 
 def set_viewport_size(page, width=1920, height=1080):
@@ -64,13 +60,11 @@ def set_viewport_size(page, width=1920, height=1080):
 
 
 def viewport_size_for_screenshots_1920_1080(page):
-    set_viewport_size(page)
-    return page
+    return set_viewport_size(page)
 
 
 def viewport_size_for_screenshots_1280_720(page):
-    set_viewport_size(page, 1280, 720)
-    return page
+    return set_viewport_size(page, 1280, 720)
 
 
 @pytest.fixture
@@ -80,7 +74,9 @@ def screenshot_page(request, page):
 
 
 @pytest.fixture(scope="session")
-def browser_context_args(browser_context_args, portal_base_url, keycloak_base_url):
+def browser_context_args(browser_context_args, pytestconfig):
+    portal_base_url = pytestconfig.getoption("--portal-base-url")
+    keycloak_base_url = pytestconfig.getoption("--keycloak-base-url")
     in_a_week = datetime.now() + timedelta(weeks=1)
     portal_cookie_domain = urlparse(portal_base_url).hostname
     keycloak_cookie_domain = urlparse(keycloak_base_url).hostname
