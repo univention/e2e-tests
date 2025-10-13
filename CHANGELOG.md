@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.56.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.55.0...v0.56.0) (2025-10-13)
+
+
+### Features
+
+* adapt central navigation test to OIDC ([3601b01](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/3601b01a020e61ab53abc155e4ef6d5597a3e03e)), closes [univention/dev/internal/team-nubus#1442](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1442)
+* disable saml login tile and endpoints by default tests ([1ae0013](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/1ae0013730259a4fe03c9f7352907f0b4eac2b16)), closes [univention/dev/internal/team-nubus#1442](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1442)
+
+
+### Bug Fixes
+
+* adapt portal layout to OIDC ([1f6da13](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/1f6da13f2ecea630578592d2737ad1eea554f7b6)), closes [univention/dev/internal/team-nubus#1442](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1442)
+
 ## [0.55.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.54.0...v0.55.0) (2025-10-06)
 
 
