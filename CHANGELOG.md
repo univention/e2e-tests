@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.56.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.56.0...v0.56.1) (2025-10-17)
+
+
+### Bug Fixes
+
+* search for portal main container by different names to make testing more robust ([388f514](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/388f514a8ee09dfeaf46b684ad3e4b5d9972454a)), closes [univention/dev/internal/team-nubus#1441](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1441) [univention/dev/internal/team-nubus#1441](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1441) [univention/dev/internal/team-nubus#1398](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1398)
+* use new keymapping for admin password in changed keycloak secrets ([ff2140b](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/ff2140b53e01c909f86f75b4faef42c45c3f7e4d)), closes [univention/dev/internal/team-nubus#1398](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1398)
+
 ## [0.56.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.55.0...v0.56.0) (2025-10-13)
 
 
