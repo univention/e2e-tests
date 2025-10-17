@@ -12,8 +12,11 @@ from kubernetes.client import models
 
 
 def get_by_name(items: Sequence, name: str):
-    item = next(i for i in items if i.name == name)
-    return item
+    try:
+        item = next(i for i in items if i.name == name)
+        return item
+    except StopIteration:
+        raise ValueError(f"No item found with name '{name}'")
 
 
 class SecretDetails(NamedTuple):

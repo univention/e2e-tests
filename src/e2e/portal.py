@@ -42,17 +42,30 @@ class PortalDeployment(BaseDeployment):
 
     def _discover_from_cluster(self):
         deployment_name = self.add_release_prefix("portal-server")
+
+        try:
+            self._discover_from_cluster_for_container(deployment_name, "portal-server")
+            return
+        except ValueError as e:
+            log.warning(
+                "Could not discover portal-server secrets from container 'portal-server': %s. "
+                "Falling back to container 'main'.",
+                e,
+            )
+            self._discover_from_cluster_for_container(deployment_name, "main")
+
+    def _discover_from_cluster_for_container(self, deployment_name: str, container_name: str):
         deployment = self._k8s.get_deployment(deployment_name)
 
         self.service_account_password = self._discover_secret_value_from_volume(
             deployment.spec.template.spec,
-            container_name="portal-server",
+            container_name=container_name,
             volume_name="secret-udm",
         )
         try:
             self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
                 deployment.spec.template.spec,
-                container_name="portal-server",
+                container_name=container_name,
                 volume_name="secret-central-navigation",
             )
         except StopIteration:
@@ -61,7 +74,7 @@ class PortalDeployment(BaseDeployment):
             warnings.warn("Falling back to authenticator_secret vollume in portal-server", DeprecationWarning)
             self.central_navigation_shared_secret = self._discover_secret_value_from_volume(
                 deployment.spec.template.spec,
-                container_name="portal-server",
+                container_name=container_name,
                 volume_name="authenticator-secret",
             )
 
