@@ -11,8 +11,12 @@ from playwright.sync_api import BrowserContext
 
 from e2e.keycloak import KeycloakDeployment
 from e2e.kubernetes import KubernetesCluster
+from umspages.common.base import expect
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
+from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
+
+from tests.portal.conftest import WaitForUserExists
 
 
 @pytest.fixture(scope="session")
@@ -29,11 +33,16 @@ def oidc_well_known(keycloak: KeycloakDeployment):
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 @pytest.mark.usefixtures("update_keycloak_backchannel_logout_url")
-def test_refresh_on_backchannel_logout(context: BrowserContext, user, user_password, oidc_well_known: dict[str, Any]):
+def test_refresh_on_backchannel_logout(
+    context: BrowserContext, user, user_password, ensure_user_exists: WaitForUserExists, oidc_well_known: dict[str, Any]
+):
     portal_page = context.new_page()
     logout_page = context.new_page()
-    home_page_logged_in = HomePageLoggedIn(portal_page)
+
     username = user.properties["username"]
+    ensure_user_exists(username)
+
+    home_page_logged_in = HomePageLoggedIn(portal_page)
     home_page_logged_in.navigate(username, user_password)
 
     end_session_endpoint = oidc_well_known["end_session_endpoint"]
@@ -43,6 +52,34 @@ def test_refresh_on_backchannel_logout(context: BrowserContext, user, user_passw
 
     home_page_logged_out = HomePageLoggedOut(portal_page)
     home_page_logged_out.assert_logged_out()
+
+
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+@pytest.mark.usefixtures("update_keycloak_backchannel_logout_url")
+def test_close_modal_dialogs_on_backchannel_logout(
+    context: BrowserContext, user, user_password, ensure_user_exists: WaitForUserExists, oidc_well_known: dict[str, Any]
+):
+    portal_page = context.new_page()
+    logout_page = context.new_page()
+
+    username = user.properties["username"]
+    ensure_user_exists(username)
+
+    set_recovery_email_page = ManageProfileDialogPage(portal_page)
+    set_recovery_email_page.navigate(username, user_password)
+    expect(set_recovery_email_page.save_button).to_be_visible(timeout=10000)
+
+    end_session_endpoint = oidc_well_known["end_session_endpoint"]
+
+    logout_page.goto(end_session_endpoint)
+    logout_page.get_by_role("button", name="Logout").click()
+
+    home_page_logged_out = HomePageLoggedOut(portal_page)
+    home_page_logged_out.assert_logged_out()
+
+    expect(set_recovery_email_page.save_button).to_be_hidden()
 
 
 @pytest.fixture
