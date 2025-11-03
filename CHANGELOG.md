@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.57.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.56.1...v0.57.0) (2025-11-03)
+
+
+### Features
+
+* add close modal dialogs on automatic logout test ([45be64f](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/45be64fa81e1310fac9e85c30ec58ff7ffda3c6a)), closes [univention/dev/internal/team-nubus#1443](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1443)
+
 ## [0.56.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.56.0...v0.56.1) (2025-10-17)
 
 
