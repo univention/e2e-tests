@@ -129,13 +129,13 @@ class AdHocProvisioning:
             "config": {
                 "clientId": "federation-client",
                 "clientSecret": client_secret,
-                "tokenUrl": f"{self.keycloak_url}/realms/{self.dummy_realm}/protocol/openid-connect/token",
-                "authorizationUrl": f"{self.keycloak_url}/realms/{self.dummy_realm}/protocol/openid-connect/auth",
-                "userInfoUrl": f"{self.keycloak_url}/realms/{self.dummy_realm}/protocol/openid-connect/userinfo",
+                "tokenUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/token",
+                "authorizationUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/auth",
+                "userInfoUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/userinfo",
                 "defaultScope": "openid profile email",
                 "validateSignature": "true",
                 "useJwksUrl": "true",
-                "jwksUrl": f"{self.keycloak_url}/realms/{self.dummy_realm}/protocol/openid-connect/certs",
+                "jwksUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/certs",
             },
         }
 
