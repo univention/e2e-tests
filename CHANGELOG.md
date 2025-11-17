@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.57.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.57.0...v0.57.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* use normalized URLs on the adhoc setup ([dbd9277](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/dbd9277865a4f5e88a9abf7914356f0ee65097f4)), closes [univention/dev/internal/dev-issues/dev-incidents#186](https://git.knut.univention.de/univention/dev/internal/dev-issues/dev-incidents/issues/186)
+
 ## [0.57.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.56.1...v0.57.0) (2025-11-03)
 
 
