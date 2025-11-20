@@ -32,3 +32,11 @@ class KeycloakDeployment(BaseDeployment):
             return
         url_parts = self._k8s.discover_url_parts_from_ingress(self.add_release_prefix("keycloak"))
         self.base_url = url_parts.to_url()
+
+    def num_keycloak_replicas(self) -> int:
+        stateful_set = self._k8s.get_stateful_set(self.add_release_prefix("keycloak"))
+        assert stateful_set
+        return stateful_set.spec.replicas
+
+    def get_pods(self) -> list[str]:
+        return self._k8s.get_pod_names_for_stateful_set(self.add_release_prefix("keycloak"))
