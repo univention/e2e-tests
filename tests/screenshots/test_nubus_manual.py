@@ -1,5 +1,7 @@
 import pytest
 
+import univention
+
 from .conftest import (
     screenshot_path,
     viewport_size_for_screenshots_1920_1080,
@@ -8,7 +10,7 @@ from .conftest import (
 # List of files used in Nubus Manual
 # [ ] - admin-helpdesk.png
 # [ ] - computers_computer_advanced.png
-# [ ] - computers_computer.png
+# [x] - computers_computer.png
 # [ ] - create-group.png
 # [ ] - create-network.png
 # [ ] - create_printershare.png
@@ -48,6 +50,55 @@ from .conftest import (
 @pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1920_1080], indirect=True)
 class TestScreenshotNubusManual(object):
     manual_path: str = "nubus-manual"
+
+    def test_computers_computer(
+        self,
+        navigate_to_home_page_logged_in_as_admin,
+        screenshots_output_dir,
+        screenshot_page,
+        udm,
+    ):
+        page = navigate_to_home_page_logged_in_as_admin
+
+        networks_module = udm.get("networks/network")
+        network = networks_module.new()
+        network.properties.update(
+            {
+                "name": "default",
+                "network": "10.200.58.0",
+                "netmask": "24",
+                "nextIp": "10.200.58.10",
+            }
+        )
+        try:
+            network.save()
+        except univention.admin.rest.client.UnprocessableEntity as exc:
+            print(exc)
+
+        page.get_by_role("link", name="Computers iFrame").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Add").click()
+        page.locator('iframe[title="Computers"]').content_frame.locator("#widget_umc_widgets_ComboBox_4 span").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
+            "option", name="Computer: IP client"
+        ).click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Next").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP client name *").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP client name *").fill(
+            "workstation3"
+        )
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP address").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP address").fill(
+            "10.200.58.58"
+        )
+        page.locator('iframe[title="Computers"]').content_frame.locator("#widget_umc_widgets_ComboBox_6 span").click()
+        page.locator('iframe[title="Computers"]').content_frame.get_by_role("option", name="default").click()
+
+        locator = page.locator('iframe[title="Computers"]').content_frame.get_by_role(
+            "dialog", name="Add a new computer."
+        )
+        locator.screenshot(
+            path=screenshot_path(screenshots_output_dir, name="computers_computer", path=self.manual_path)
+        )
 
     def test_devices(self, navigate_to_home_page_logged_in_as_admin, screenshots_output_dir, screenshot_page):
         page = navigate_to_home_page_logged_in_as_admin
