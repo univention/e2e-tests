@@ -50,8 +50,20 @@ def screenshots_output_dir(pytestconfig):
     return pytestconfig.getoption("--screenshots-output-dir")
 
 
-def screenshot_filename(screenshots_output_dir, name: str, path: str = "") -> Path:
-    return Path(screenshots_output_dir, path, f"{name}.png")
+def screenshot_path(output_dir, name: str, path: str = "") -> Path:
+    """
+    Assemble the absolut path for the screenshot file.
+
+    :param output_dir: Base directory for the screenshots.
+    :param name: Name of the filename without the filename extension. Uses PNG as extension.
+    :param path: The path to screenshot inside the base directory. Use it to group screenshots. Defaults to ``""``.
+    :return: Absolute path for the screenshot filename.
+    """
+    return Path(output_dir, path, f"{name}.png")
+
+
+def screenshot_filename(name: str, suffix: str = "") -> str:
+    return f"{name}_{suffix}"
 
 
 def set_viewport_size(page, width=1920, height=1080):
