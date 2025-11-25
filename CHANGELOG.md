@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.58.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.57.1...v0.58.0) (2025-11-25)
+
+
+### Features
+
+* test Keycloak Infinispan functionality ([b1ba95c](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/b1ba95c1506cb483fde62e6e22b434578e69232b)), closes [univention/dev/internal/team-nubus#1374](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1374)
+
 ## [0.57.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.57.0...v0.57.1) (2025-11-17)
 
 
