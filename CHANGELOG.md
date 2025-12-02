@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.58.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.0...v0.58.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* bump image to errata 298 ([88c7008](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/88c700898a181f1f847b26e2b8978a1a38c14cb6)), closes [univention/dev/internal/team-nubus#1543](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1543)
+
 ## [0.58.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.57.1...v0.58.0) (2025-11-25)
 
 
