@@ -47,6 +47,12 @@ def pytest_addoption(parser):
         "--external-minio", action="store_true", default=False, help="Set if using an externally deployed minio"
     )
 
+    # upgrade test options
+    parser.addoption(
+        "--upgrade-artifacts-path",
+        help="The full path to a file in which to save in or retrive from the information about an upgrade test",
+    )
+
 
 @pytest.fixture(scope="session")
 def base_seed(pytestconfig) -> int:
@@ -211,6 +217,14 @@ def keycloak_admin_username(pytestconfig):
 @pytest.fixture
 def keycloak_admin_password(pytestconfig):
     return pytestconfig.option.kc_admin_password
+
+
+@pytest.fixture
+def upgrade_artifacts_path(pytestconfig):
+    opt = pytestconfig.option.upgrade_artifacts_path
+    assert opt, "A test requires persisting between runs, but --upgrade-artifacts-path is not set"
+
+    return opt
 
 
 @pytest.fixture

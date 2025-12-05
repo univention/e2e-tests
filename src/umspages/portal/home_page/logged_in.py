@@ -32,7 +32,7 @@ import re
 
 from e2e.decorators import retrying_keycloak_login
 
-from ..login_page import LoginPage
+from ..login_page import LoginPage, TotpSetup
 from .base import HomePage
 
 
@@ -61,7 +61,7 @@ class HomePageLoggedIn(HomePage):
         self.collaboration_tile = self.page.get_by_role("link", name="Collaboration New Tab")
         self.video_conference_tile = self.page.get_by_role("link", name="Ad hoc videoconference New Tab")
 
-    def navigate(self, username, password):
+    def navigate(self, username, password, totp_setup: TotpSetup | None = None):
         self.page.goto("/")
 
         # TODO: Calling "navigate" should ensure that we are logged in.
@@ -84,7 +84,7 @@ class HomePageLoggedIn(HomePage):
             login_page = LoginPage(self.page)
             login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
-            login_page.login_and_ensure_success(username, password)
+            login_page.login_and_ensure_success(username, password, totp_setup=totp_setup)
 
         login()
         self.page.wait_for_url("/univention/portal/**", timeout=5000)
