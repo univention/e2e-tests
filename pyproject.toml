@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 [project]
 name = "umspages"
 version = "0.2.0"
@@ -44,6 +47,8 @@ markers = [
     "users: tests for user management console for admin users",
     "feature_toggle: tests for the feature toggle",
     "feature_toggle_left_sidebar: tests for the left sidebar feature toggle",
+    "pre_upgrade: tests to run before an upgrade in an upgrade test",
+    "post_upgrade: tests to run after an upgrade in an upgrade test"
 ]
 filterwarnings = [
     # See https://github.com/cannatag/ldap3/issues/1159
