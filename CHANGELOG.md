@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.58.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.1...v0.58.2) (2025-12-16)
+
+
+### Bug Fixes
+
+* **helm:** Remove unused extraEnvVars configuration ([0f7dd5d](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/0f7dd5d35fa1f4fa136969ed4c1fc0f5e490f194)), closes [univention/dev/internal/team-nubus#977](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/977)
+
 ## [0.58.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.0...v0.58.1) (2025-12-02)
 
 
