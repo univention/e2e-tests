@@ -29,15 +29,6 @@ It supports the nubus e2e tests by exposing functionality otherwise not reachabl
 	</thead>
 	<tbody>
 		<tr>
-			<td>extraEnvVars</td>
-			<td>list</td>
-			<td><pre lang="json">
-[]
-</pre>
-</td>
-			<td>Optionally specify a secret to create (primarily intended to be used in development environments to provide custom certificates)</td>
-		</tr>
-		<tr>
 			<td>extraSecrets</td>
 			<td>list</td>
 			<td><pre lang="json">
