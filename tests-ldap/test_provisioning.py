@@ -14,8 +14,12 @@ from ldap3 import MODIFY_REPLACE
 from e2e.helm import add_release_prefix
 from e2e.provisioning import ProvisioningApi
 from e2e.util import StoppableAsyncThread, wait_until
-from univention.provisioning.consumer import ProvisioningConsumerClient, ProvisioningConsumerClientSettings
-from univention.provisioning.models import MessageProcessingStatus, RealmTopic
+from univention.provisioning.consumer.api import (
+    ProvisioningConsumerClient,
+    ProvisioningConsumerClientSettings,
+    RealmTopic,
+)
+from univention.provisioning.models.message import MessageProcessingStatus
 
 log = logging.getLogger(__name__)
 

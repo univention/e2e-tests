@@ -12,6 +12,7 @@ python_version = "3.12"
 [packages]
 playwright = "*"
 pytest-html = "*"
+pytest-asyncio = "*"
 pytest-playwright = "*"
 requests = "*"
 url-normalize = "*"
@@ -24,7 +25,8 @@ udm-rest-api-client = "*"
 pytest-subtests = "*"
 kubernetes = "*"
 ldap3 = "*"
-nubus-provisioning-consumer = {ref = "main", git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", subdirectory = "src"}
+nubus-provisioning-consumer = {ref = "8ee63d0f2eb540309333082943127e6feec7cdf0", git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", subdirectory = "consumer"}
+nubus-provisioning-common = {ref = "8ee63d0f2eb540309333082943127e6feec7cdf0", git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", subdirectory = "common"}
 python-keycloak = "*"
 minio = "*"
 

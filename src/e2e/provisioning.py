@@ -16,12 +16,12 @@ class ProvisioningApi(BaseDeployment):
     service_port = 80
 
     def __init__(self, k8s: KubernetesCluster, release_name: str):
-        self.service_name = self.add_release_prefix("provisioning-api")
         super().__init__(k8s, release_name)
+        self.service_name = self.add_release_prefix("provisioning-api")
 
     def _discover_from_cluster(self):
-        secret_name = self.add_release_prefix("provisioning-api-credentials")
+        secret_name = self.add_release_prefix("provisioning-api-admin")
         secret = self._k8s.get_secret(secret_name)
 
-        self.admin_username = b64decode(secret.data["ADMIN_USERNAME"]).decode()
-        self.admin_password = b64decode(secret.data["ADMIN_PASSWORD"]).decode()
+        self.admin_username = "admin"
+        self.admin_password = b64decode(secret.data["password"]).decode()
