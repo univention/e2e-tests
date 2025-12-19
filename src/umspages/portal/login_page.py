@@ -29,6 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import re
+import time
 from dataclasses import dataclass
 
 import pyotp
@@ -43,6 +44,7 @@ from .home_page.logged_out import HomePageLoggedOut
 @dataclass
 class TotpSetup:
     secret: str | None = None
+    last_token_used: str | None = None
 
 
 # TODO: Split into UCSLoginPage and KeycloakLoginPage
@@ -112,7 +114,7 @@ class LoginPage(PortalPage):
     def click_login_button(self):
         self.login_button.click()
 
-    def login_and_ensure_success(self, username, password):
+    def login_and_ensure_success(self, username, password, totp_setup: TotpSetup | None = None):
         """
         Perform login without response validation.
 
@@ -121,11 +123,11 @@ class LoginPage(PortalPage):
         chain (200 from portal) instead of the immediate Keycloak response (302).
         Navigation-based validation in the calling code is more reliable.
         """
-        self.login(username, password)
+        self.login(username, password, totp_setup)
 
     login_with_retry = retrying_keycloak_login(login_and_ensure_success)
 
-    def login(self, username, password, totp_secret: str | None = None, totp_setup: TotpSetup | None = None):
+    def login(self, username, password, totp_setup: TotpSetup | None = None):
         """
         Perform login with the given username and password.
 
@@ -144,17 +146,19 @@ class LoginPage(PortalPage):
 
         You can not set both `totp_secret` and `totp_setup` at the same time.
         """
-        assert totp_secret is None or totp_setup is None, "Can't set both totp_secret and totp_setup"
         self.fill_username(username)
         self.fill_password(password)
         self.click_login_button()
 
-        if totp_setup:
+        if totp_setup and not totp_setup.secret:
             self.totp_setup(totp_setup)
-
-        if totp_secret:
-            totp = pyotp.TOTP(totp_secret).now()
-            self.fill_totp(totp)
+        elif totp_setup:
+            totp = pyotp.TOTP(totp_setup.secret)
+            token = totp.now()
+            while totp_setup.last_token_used is not None and token == totp_setup.last_token_used:
+                time.sleep(1)
+                token = totp.now()
+            self.fill_totp(token)
             self.click_login_button()
 
     def totp_setup(self, totp_setup: TotpSetup):
@@ -163,6 +167,7 @@ class LoginPage(PortalPage):
 
         key = self.totp_secret_key.inner_text().strip().replace(" ", "")
         totp_setup.secret = key
-        totp_code = pyotp.TOTP(key).now()
-        self.fill_totp(totp_code)
+        token = pyotp.TOTP(key).now()
+        self.fill_totp(token)
+        totp_setup.last_token_used = token
         self.submit_button.click()

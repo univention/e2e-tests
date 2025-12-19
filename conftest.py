@@ -221,7 +221,10 @@ def keycloak_admin_password(pytestconfig):
 
 @pytest.fixture
 def upgrade_artifacts_path(pytestconfig):
-    return pytestconfig.option.upgrade_artifacts_path
+    opt = pytestconfig.option.upgrade_artifacts_path
+    assert opt, "A test requires persisting between runs, but --upgrade-artifacts-path is not set"
+
+    return opt
 
 
 @pytest.fixture
