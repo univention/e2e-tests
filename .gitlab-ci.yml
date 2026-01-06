@@ -53,6 +53,10 @@ container-malware-scan:
   parallel:
     matrix: *publish-matrix
 
+container-release-attestation:
+  rules:
+    - when: "never"
+
 test-container:
   stage: "test"
   rules:
