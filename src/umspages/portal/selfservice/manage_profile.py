@@ -36,7 +36,12 @@ from ..home_page.logged_in import HomePageLoggedIn
 class ManageProfileDialogPage(BasePage):
     def set_content(self, *args, **kwargs):
         super().set_content(*args, **kwargs)
-        self.telephone_box = self.page.get_by_role("textbox", name="Telephone number 1:", exact=True)
+        self.telephone_box = (
+            self.page.locator('[data-test="form-element"]')
+            .filter(has_text="Telephone number")
+            .locator('input[type="text"]')
+            .first
+        )
         self.title_box = self.page.get_by_role("textbox", name="Title")
         self.first_name_box = self.page.get_by_role("textbox", name="First name *")
         self.last_name_box = self.page.get_by_role("textbox", name="Last name *")
