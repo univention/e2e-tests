@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.58.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.2...v0.58.3) (2026-01-06)
+
+
+### Bug Fixes
+
+* do not run container-release-attestation for e2e test images ([efeafeb](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/efeafeba6bcaecfefd448dc232b0763045ae05ff)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+* update telephone field locator after a11y improvements ([2d5cf41](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/2d5cf4128146f1342f6594cd0080b5aaae11a28e)), closes [univention/dev/internal/team-nubus#1526](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1526)
+
 ## [0.58.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.1...v0.58.2) (2025-12-16)
 
 
