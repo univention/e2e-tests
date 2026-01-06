@@ -161,9 +161,8 @@ def ucr_configmap(k8s, release_name):
 
 
 @pytest.fixture(scope="session")
-def umc_deployment(k8s: KubernetesCluster, release_name: str, portal: PortalDeployment):
-    assert portal.base_url
-    return UniventionManagementConsoleDeployment(k8s, release_name, portal.base_url)
+def umc_deployment(k8s: KubernetesCluster, release_name: str):
+    return UniventionManagementConsoleDeployment(k8s, release_name)
 
 
 @pytest.fixture(scope="session")

@@ -3,10 +3,7 @@
 
 import time
 
-import requests
-
 from e2e.base import BaseDeployment
-from e2e.decorators import retrying_umc_pods
 from e2e.kubernetes import KubernetesCluster
 
 
@@ -15,10 +12,9 @@ class UniventionManagementConsoleDeployment(BaseDeployment):
     Represents a deployment of the Univention Management Console (UMC).
     """
 
-    def __init__(self, k8s: KubernetesCluster, release_name: str, portal_base_url: str):
+    def __init__(self, k8s: KubernetesCluster, release_name: str):
         """Initializes the UMC deployment object."""
         super().__init__(k8s, release_name)
-        self.portal_base_url = portal_base_url
         self.umc_server_stateful_set_name = self.add_release_prefix("umc-server")
         self.memcached_deployment_name = self.add_release_prefix("umc-server-memcached")
 
@@ -54,11 +50,11 @@ class UniventionManagementConsoleDeployment(BaseDeployment):
             self._k8s.wait_for_pod_ready(pod)
 
     def wait_for_umc(self):
-        """Waits for the UMC to be available."""
-        self._umc_meta_request()
+        """Waits for all UMC server pods to be running and ready."""
+        umc_pod_names = []
+        pods_wanted = self._k8s.get_stateful_set(self.umc_server_stateful_set_name).spec.replicas
+        while len(umc_pod_names) != pods_wanted:
+            umc_pod_names = self._k8s.get_pod_names_for_stateful_set(self.umc_server_stateful_set_name)
 
-    @retrying_umc_pods
-    def _umc_meta_request(self):
-        """Makes a request to the UMC meta endpoint to check for readiness."""
-        resp = requests.get(f"{self.portal_base_url}univention/get/meta")
-        resp.raise_for_status()
+        for pod in umc_pod_names:
+            self._k8s.wait_for_pod_ready(pod)
