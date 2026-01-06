@@ -22,7 +22,7 @@ class BetterRetryError(RetryError):
 
 
 retrying = retry(
-    stop=stop_after_delay(20),
+    stop=stop_after_delay(40),
     wait=wait_fixed(2),
     before_sleep=before_sleep_log(log, logging.WARNING),
     retry_error_cls=BetterRetryError,
@@ -94,8 +94,8 @@ Examples:
 
 
 retrying_slow = retry(
-    stop=stop_after_delay(40),
-    wait=wait_fixed(2),
+    stop=stop_after_delay(90),
+    wait=wait_fixed(3),
     before_sleep=before_sleep_log(log, logging.WARNING),
     retry_error_cls=BetterRetryError,
 )
