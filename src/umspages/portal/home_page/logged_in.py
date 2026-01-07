@@ -84,10 +84,10 @@ class HomePageLoggedIn(HomePage):
             login_page = LoginPage(self.page)
             login_page.navigate(cookies_accepted=True)
             login_page.is_displayed()
-            login_page.login_and_ensure_success(username, password, totp_setup=totp_setup)
+            login_page.login(username, password, totp_setup=totp_setup)
+            self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         login()
-        self.page.wait_for_url("/univention/portal/**", timeout=5000)
 
         self.assert_logged_in()
 
