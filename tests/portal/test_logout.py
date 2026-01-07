@@ -110,9 +110,19 @@ def remove_umc_server(k8s: KubernetesCluster, release_name: str):
 
 
 def restart_umc_traefik_proxy(k8s: KubernetesCluster, release_name: str):
-    umc_server_proxy_pods = k8s.get_pod_names_for_deployment(f"{release_name}-umc-server")
+    deployment_name = f"{release_name}-umc-server"
+    umc_server_proxy_pods = k8s.get_pod_names_for_deployment(deployment_name)
     for umc_server_proxy_pod in umc_server_proxy_pods:
         k8s.delete_pod(umc_server_proxy_pod)
+
+    # Wait for pods to be recreated and ready
+    pod_names = []
+    pods_wanted = k8s.get_deployment(deployment_name).spec.replicas
+    while len(pod_names) != pods_wanted:
+        pod_names = k8s.get_pod_names_for_deployment(deployment_name)
+
+    for pod_name in pod_names:
+        k8s.wait_for_pod_ready(pod_name)
 
 
 @pytest.fixture
