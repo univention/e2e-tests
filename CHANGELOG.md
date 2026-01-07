@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.59.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.3...v0.59.0) (2026-01-07)
+
+
+### Features
+
+* add upgrade tests ([51209c0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/51209c02dfe6b8b0cacc6a34a68e980a381dfdc6)), closes [univention/dev/internal/team-nubus#1535](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1535)
+
+
+### Bug Fixes
+
+* extend wait for retry decorators ([1a8c577](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/1a8c577974ea65a1171c151da1d4912b416231f5)), closes [univention/dev/internal/team-nubus#1535](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1535)
+* move wait_for_url into login function for retrying ([8c9fd54](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/8c9fd54727dcf6a726d329d7effdc4aa55898dc7)), closes [univention/dev/internal/team-nubus#1535](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1535)
+* reduce flakiness in self service PW reset tests ([4b690b5](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/4b690b552b57203d63adb1ca37b524dbe2e64402)), closes [univention/dev/internal/team-nubus#1535](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1535)
+* wait for umc traefik proxy to be ready after restart ([164642f](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/164642f587b522d00d1d5f544d310730d4a5e718)), closes [univention/dev/internal/team-nubus#1535](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1535)
+
 ## [0.58.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.58.2...v0.58.3) (2026-01-06)
 
 
