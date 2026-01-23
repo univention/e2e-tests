@@ -80,7 +80,7 @@ class PortalDeployment(BaseDeployment):
 
         if not self.base_url:
             url_parts = self._k8s.discover_url_parts_from_ingress(
-                self.add_release_prefix("portal-frontend-rewrites"),
+                self.add_release_prefix("portal-frontend-static"),
                 self._k8s.namespace,
             )
             self.base_url = url_parts.to_url()
