@@ -137,7 +137,7 @@ def update_keycloak_backchannel_logout_url(keycloak_admin: KeycloakAdmin, remove
     umc_oidc_client_id = umc_oidc_client["id"]
 
     old_backchannel_logout_url = umc_oidc_client["attributes"]["backchannel.logout.url"]
-    new_backchannel_logout_url = f"{remove_umc_server}/oidc/backchannel-logout"
+    new_backchannel_logout_url = f"{remove_umc_server}/univention/oidc/backchannel-logout"
     update_backchannel_logout_url(umc_oidc_client_id, new_backchannel_logout_url, keycloak_admin)
 
     yield
