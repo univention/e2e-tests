@@ -56,7 +56,7 @@ DUMMY_TELEPHONE = "123456789"
 
 @pytest.fixture()
 def dummy_username(faker):
-    yield f"test-{ faker.user_name() }"
+    yield f"test-{faker.user_name()}"
 
 
 @pytest.mark.portal
