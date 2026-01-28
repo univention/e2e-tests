@@ -295,20 +295,3 @@ def ensure_user_exists(minio_client) -> WaitForUserExists:
         time.sleep(2)  # Give the system some time to process the data
 
     return _wait_for_user_creation
-
-
-@pytest.fixture
-def wait_for_ldap_secondaries_to_catch_up(portal) -> Callable[[], None]:
-    """
-    Allows to wait until all ldap server secondaries have caught up
-    to the primary at the point of calling this function
-    """
-
-    def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
-        response = requests.get(
-            f"{portal.base_url}/testing-api/v1/ldap-replication-waiter",
-            {"retry_timeout": retry_timeout},
-        )
-        response.raise_for_status()
-
-    return _wait_for_ldap_replication

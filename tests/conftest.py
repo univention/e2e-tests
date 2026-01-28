@@ -29,7 +29,7 @@
 # <https://www.gnu.org/licenses/>.
 
 import logging
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 from urllib.parse import urljoin
 
 import pytest
@@ -338,3 +338,20 @@ def portal_link_list(request):
     """
     link_list = request.param
     return link_list
+
+
+@pytest.fixture
+def wait_for_ldap_secondaries_to_catch_up(portal) -> Callable[[], None]:
+    """
+    Allows to wait until all ldap server secondaries have caught up
+    to the primary at the point of calling this function.
+    """
+
+    def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
+        response = requests.get(
+            f"{portal.base_url}/testing-api/v1/ldap-replication-waiter",
+            {"retry_timeout": retry_timeout},
+        )
+        response.raise_for_status()
+
+    return _wait_for_ldap_replication
