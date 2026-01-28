@@ -38,6 +38,7 @@ markers = [
     "development_environment: target openDesk dev-env",
     "groups: Tests for the group management console for admin users",
     "i18n: univention-portal translations",
+    "keycloak_bootstrap: tests for keycloak-bootstrap LDAP mapper configuration",
     "login: all tests related to login on univention-portal",
     "logout: all tests related to logout on univention-portal",
     "notifications: tests related to univention-portal notifications",
