@@ -123,20 +123,20 @@ def test_two_notifications(
     expect(link).to_have_count(1)
     expected_url = notification_json_data["link"]["url"]
     actual_url = link.get_attribute("href")
-    assert url_normalize(expected_url) == url_normalize(
-        actual_url
-    ), f"Wrong link in notification pop up. Expected: {expected_url}, actual: {actual_url}"
+    assert url_normalize(expected_url) == url_normalize(actual_url), (
+        f"Wrong link in notification pop up. Expected: {expected_url}, actual: {actual_url}"
+    )
 
     expected_target = notification_json_data["link"]["target"]
     actual_target = link.get_attribute("target")
-    assert (
-        expected_target == actual_target
-    ), f"Wrong link target in notification pop up. Expected: {expected_target}, actual: {actual_target}"
+    assert expected_target == actual_target, (
+        f"Wrong link target in notification pop up. Expected: {expected_target}, actual: {actual_target}"
+    )
     expected_link_text = notification_json_data["link"]["text"]
     actual_link_text = link.inner_text()
-    assert (
-        expected_link_text == actual_link_text
-    ), f"Wrong link text in notification pop up. Expected: {expected_link_text}, actual: {actual_link_text}"
+    assert expected_link_text == actual_link_text, (
+        f"Wrong link text in notification pop up. Expected: {expected_link_text}, actual: {actual_link_text}"
+    )
 
     expect(notification.title).to_have_text(
         f"{notification_json_data['severity'].capitalize()}: {notification_json_data['title']}",
@@ -182,7 +182,7 @@ def test_notification_expiry_time(
     notification_json_data["expireTime"] = expiry_dt.isoformat()
 
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, f"Got status { response.status_code } while sending notification: { response.text }"
+    assert response.ok, f"Got status {response.status_code} while sending notification: {response.text}"
 
     wait = (expiry_dt - dt_now).total_seconds()
     time.sleep(wait + 1)  # +1 for safety
@@ -196,7 +196,7 @@ def test_notification_expiry_time(
 
     notification_json_data["expireTime"] = (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat()
     response = requests.post(send_notification_endpoint, json=notification_json_data)
-    assert response.ok, f"Got status { response.status_code } while sending notification: { response.text }"
+    assert response.ok, f"Got status {response.status_code} while sending notification: {response.text}"
     expect(home_page_logged_in.notification_drawer.no_notifications_heading).to_be_hidden()
     expect(home_page_logged_in.notification_drawer.notifications).to_have_count(1)
     expect(home_page_logged_in.notification_drawer.notification(0)).to_be_visible()

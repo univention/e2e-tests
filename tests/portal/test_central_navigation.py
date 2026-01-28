@@ -134,9 +134,9 @@ class TestCentralNavigation:
 
         # Should not contain the anonymous login tiles
         first_entry_name = _get_first_entry(data)["display_name"]
-        assert (
-            first_entry_name != "Login (Single sign-on)"
-        ), "Anonymous OIDC login tile should not be visible for authenticated users"
+        assert first_entry_name != "Login (Single sign-on)", (
+            "Anonymous OIDC login tile should not be visible for authenticated users"
+        )
 
         domain_admin = data["categories"][1]
         assert domain_admin["identifier"] == "domain-admin"

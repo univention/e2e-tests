@@ -6,9 +6,12 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
+default_language_version:
+  python: python3.11
+
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "v4.6.0"
+    rev: v6.0.0
     hooks:
       # "Check for added large files"
       - id: "check-added-large-files"
@@ -25,19 +28,19 @@ repos:
 
   # "Commit messages"
   - repo: "https://github.com/compilerla/conventional-pre-commit"
-    rev: "v3.4.0"
+    rev: v4.3.0
     hooks:
       - id: "conventional-pre-commit"
         stages: ["commit-msg"]
 
   - repo: "https://git.knut.univention.de/univention/infrastructure/pre-commit-hooks/check-issue-reference"
-    rev: "v1.0.1"
+    rev: v1.0.1
     hooks:
       - id: check-issue-reference
         name: "Check issue reference"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.6
+    rev: v0.14.14
     hooks:
       - id: ruff
         args: [ --fix ]
@@ -45,7 +48,7 @@ repos:
 
   # "docker-compose.yaml linter"
   - repo: "https://gitlab.com/univention/pre-commit-hooks/docker-compose-check"
-    rev: "7702a8801a158b8595569dd29e2dd655d8a08310"
+    rev: 7702a8801a158b8595569dd29e2dd655d8a08310
     hooks:
       - id: "docker-compose-check"
         entry: bash -c 'DEPLOY_NAMESPACE=default docker-compose --file docker-compose.yaml config --quiet'
@@ -74,7 +77,7 @@ repos:
   #     - "https://git.knut.univention.de"
 
   - repo: "https://github.com/norwoodj/helm-docs"
-    rev: "v1.14.2"
+    rev: v1.14.2
     hooks:
       - id: "helm-docs"
         args:
@@ -82,7 +85,7 @@ repos:
           - "--template-files=README.md.gotmpl"
 
   - repo: "https://git.knut.univention.de/univention/infrastructure/pre-commit-hooks/addlicense"
-    rev: "v1.0.2"
+    rev: v1.0.3
     hooks:
       - id: "addlicense"
         name: "Check or add license headers to files"

@@ -124,9 +124,9 @@ def verify_membership_changes(old_state, new_state, changes):
 
         # Verify removals
         for removed_member in change.get("removed", set()):
-            assert (
-                removed_member not in new_members
-            ), f"Member {removed_member} should have been removed from {group_dn}"
+            assert removed_member not in new_members, (
+                f"Member {removed_member} should have been removed from {group_dn}"
+            )
 
         # Verify additions
         for added_member in change.get("added", set()):

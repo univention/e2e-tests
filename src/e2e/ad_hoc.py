@@ -235,7 +235,7 @@ class AdHocProvisioning:
         }
         try:
             self.kc_existing.connection.raw_post(
-                f'/admin/realms/{self.existing_realm}/authentication/executions/{ua_execution["id"]}/config',
+                f"/admin/realms/{self.existing_realm}/authentication/executions/{ua_execution['id']}/config",
                 data=json.dumps(udm_config),
             )
         except KeycloakPostError as e:
