@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.59.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.1...v0.59.2) (2026-02-02)
+
+
+### Bug Fixes
+
+* OIDC backchannel logout URL to include UMC root-path ([32f977e](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/32f977ef1b14be59bc0f804d1cae5f67ac5b9fc8)), closes [univention/dev/internal/team-nubus#1551](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1551)
+
 ## [0.59.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.0...v0.59.1) (2026-01-13)
 
 
