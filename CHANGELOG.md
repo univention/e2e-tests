@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.59.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.2...v0.59.3) (2026-02-16)
+
+
+### Bug Fixes
+
+* version bump and fix pre-commit ([b93454f](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/b93454fd798af587eabd08936a972c57707ae9d7)), closes [univention/dev/internal/team-nubus#1550](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1550)
+
 ## [0.59.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.1...v0.59.2) (2026-02-02)
 
 
