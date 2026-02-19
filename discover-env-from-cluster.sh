@@ -86,6 +86,7 @@ echo Installing the testing-api into the namespace
 
 portal_hostname="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.rules[0].host}')"
 portal_tls_secret="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.tls[0].secretName}')"
+portal_ingress_class="$(kubectl get ingress -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-portal-server" -o jsonpath='{.spec.ingressClassName}')"
 
 cat <<EOF > values-testing-api.yaml
 ---
@@ -104,6 +105,7 @@ testingApi:
 
   ingress:
     host: "${portal_hostname}"
+    ingressClassName: "${portal_ingress_class}"
     tls:
       secretName: "${portal_tls_secret}"
 ...

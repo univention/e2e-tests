@@ -83,6 +83,7 @@ testingApi:
 
   ingress:
     host: null
+    ingressClassName: "nginx"
     tls:
       enabled: true
       secretName: ""

@@ -119,6 +119,15 @@ null
 			<td></td>
 		</tr>
 		<tr>
+			<td>testingApi.ingress.ingressClassName</td>
+			<td>string</td>
+			<td><pre lang="json">
+"nginx"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>testingApi.ingress.tls.enabled</td>
 			<td>bool</td>
 			<td><pre lang="json">

@@ -128,6 +128,7 @@ def restart_umc_traefik_proxy(k8s: KubernetesCluster, release_name: str):
 @pytest.fixture
 def update_keycloak_backchannel_logout_url(keycloak_admin: KeycloakAdmin, remove_umc_server: str | None):
     if remove_umc_server is None:
+        yield
         return
 
     clients = keycloak_admin.get_clients()

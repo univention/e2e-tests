@@ -16,7 +16,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: {{ .Values.testingApi.ingress.ingressClassName | default "nginx" | quote }}
   {{- if .Values.testingApi.ingress.tls.enabled }}
   tls:
     - hosts:
