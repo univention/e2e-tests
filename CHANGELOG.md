@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.60.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.3...v0.60.0) (2026-02-23)
+
+
+### Features
+
+* add tests for Keycloak LDAP mapper alwaysReadFromLdap option ([845ccb6](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/845ccb6bbc19166fc39aa032bbcbb69cae3e2c02)), closes [univention/dev/internal/team-nubus#1549](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1549)
+
 ## [0.59.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.2...v0.59.3) (2026-02-16)
 
 
