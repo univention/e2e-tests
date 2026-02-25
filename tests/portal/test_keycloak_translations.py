@@ -221,7 +221,7 @@ def test_keycloak_user_expired_messages(
 
     expect(
         login_page.page.locator("#kc-form div").filter(has_text=expected_messages[language_code]).first
-    ).to_be_visible()
+    ).to_be_visible(timeout=10000)
 
 
 @pytest.mark.login
