@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.60.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.60.0...v0.60.1) (2026-02-26)
+
+
+### Bug Fixes
+
+* **harproxy:** Make the testing api ingressClasName configurable ([7d1a9c0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/7d1a9c048ed3e126cc90476f84b288f0a3ff0283)), closes [univention/dev/internal/team-nubus#1604](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1604)
+* **keycloak:** Increase keycloak user expired message timeout to 10 seconds ([edf0059](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/edf0059d0cb7fa300b470cfafb66a31a5ee13fa6)), closes [univention/dev/internal/team-nubus#1604](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1604)
+
 ## [0.60.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.59.3...v0.60.0) (2026-02-23)
 
 
