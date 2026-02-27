@@ -17,7 +17,7 @@ pydantic = "^2.3.0"
 pydantic-settings = "^2.0.3"
 python = "^3.11"
 tenacity = "*"
-uvicorn = "^0.21.1"
+uvicorn = "^0.41.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
