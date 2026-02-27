@@ -1,4 +1,4 @@
-playwright==1.37.0
+playwright==1.58.0
 pytest-html==4.0.0
 pytest-playwright==0.4.2
 requests==2.32.5
