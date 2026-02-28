@@ -10,7 +10,7 @@ license = "GNU Affero General Public License v3"
 packages = [{ include = "testing_api", from = "src" }, ]
 
 [tool.poetry.dependencies]
-fastapi = "^0.103.1"
+fastapi = "^0.134.0"
 fastapi-utils = "^0.7.0"
 ldap3 = "^2.9.1"
 pydantic = "^2.3.0"
