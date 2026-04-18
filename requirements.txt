@@ -2,7 +2,7 @@ playwright==1.37.0
 pytest-html==4.0.0
 pytest-playwright==0.4.2
 requests==2.32.5
-url-normalize==1.4.3
+url-normalize==2.2.1
 
 # Packages which are not available on a public package index
 --extra-index-url https://git.knut.univention.de/api/v4/projects/3/packages/pypi/simple
