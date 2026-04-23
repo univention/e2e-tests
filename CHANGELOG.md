@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.60.2...v0.61.0) (2026-04-23)
+
+
+### Features
+
+* **udm-rest-api:** New test for the license cache and metrics endpoint ([2cf47c1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/2cf47c1b03c80ff89c3e1c667a6848268bc46050)), closes [univention/dev/internal/team-nubus#1634](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1634)
+
 ## [0.60.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.60.1...v0.60.2) (2026-04-17)
 
 
