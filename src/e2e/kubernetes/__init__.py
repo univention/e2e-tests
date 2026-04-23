@@ -401,6 +401,59 @@ class KubernetesCluster:
         pods = self.get_pods_for_deployment(name=name, namespace=namespace)
         return [pod.metadata.name for pod in pods.items]
 
+    def trigger_cronjob_as_job(
+        self,
+        cronjob_name: str,
+        job_name: str,
+        namespace: str | None = None,
+    ):
+        """Equivalent to `kubectl create job --from=cronjob/<cronjob_name> <job_name>`."""
+        ns = namespace or self.namespace
+        batch = client.BatchV1Api()
+        cj = batch.read_namespaced_cron_job(name=cronjob_name, namespace=ns)
+
+        template = cj.spec.job_template
+        annotations = dict(template.metadata.annotations or {})
+        annotations["cronjob.kubernetes.io/instantiate"] = "manual"
+        labels = dict(template.metadata.labels or {})
+
+        job = client.V1Job(
+            api_version="batch/v1",
+            kind="Job",
+            metadata=client.V1ObjectMeta(name=job_name, annotations=annotations, labels=labels),
+            spec=template.spec,
+        )
+        batch.create_namespaced_job(namespace=ns, body=job)
+
+    def wait_for_job(self, job_name: str, namespace: str | None = None, timeout: int = 300):
+        """Block until the `Job` succeeds; raise on failure or timeout."""
+        ns = namespace or self.namespace
+        batch = client.BatchV1Api()
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            job = batch.read_namespaced_job(name=job_name, namespace=ns)
+            status = job.status
+            if status.succeeded:
+                return
+            if status.failed:
+                raise RuntimeError(f"Job {job_name} failed: {status.conditions}")
+            time.sleep(2)
+        raise TimeoutError(f"Job {job_name} did not complete within {timeout}s")
+
+    def delete_job(self, job_name: str, namespace: str | None = None):
+        """Delete a `Job` and its pods; a missing Job is not an error."""
+        ns = namespace or self.namespace
+        batch = client.BatchV1Api()
+        try:
+            batch.delete_namespaced_job(
+                name=job_name,
+                namespace=ns,
+                body=client.V1DeleteOptions(propagation_policy="Foreground"),
+            )
+        except ApiException as e:
+            if e.status != 404:
+                raise
+
 
 def discover_namespace() -> str:
     _, active_context = config.list_kube_config_contexts()

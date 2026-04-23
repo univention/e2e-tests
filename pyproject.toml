@@ -39,6 +39,7 @@ markers = [
     "groups: Tests for the group management console for admin users",
     "i18n: univention-portal translations",
     "keycloak_bootstrap: tests for keycloak-bootstrap LDAP mapper configuration",
+    "license_cache: tests for the udm-rest-api license cache CronJob",
     "login: all tests related to login on univention-portal",
     "logout: all tests related to logout on univention-portal",
     "notifications: tests related to univention-portal notifications",
