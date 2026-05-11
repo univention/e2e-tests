@@ -70,8 +70,7 @@ def add_entries_to_navigation(portal, admin_username, udm, ldap_base_dn, restore
     login_oidc = portal_entry_module.get(f"cn=login-oidc,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
     twofa_admin = portal_entry_module.get(f"cn=twofaAdmin,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
     twofa_selfservice = portal_entry_module.get(f"cn=twofaSelfservice,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
-    umc_domain = portal_entry_module.get(f"cn=umc-domain,cn=entry,cn=portals,cn=univention,{ldap_base_dn}")
-    custom_navigation = [keycloak_entry.dn, login_oidc.dn, twofa_admin.dn, twofa_selfservice.dn, umc_domain.dn]
+    custom_navigation = [keycloak_entry.dn, login_oidc.dn, twofa_admin.dn, twofa_selfservice.dn]
 
     portal_module = udm.get("portals/portal")
     portal_obj = portal_module.get(f"cn=domain,cn=portal,cn=portals,cn=univention,{ldap_base_dn}")

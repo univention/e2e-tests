@@ -109,7 +109,6 @@ class TestPortalLayout:
 
         # central navigation
         expected_central_navigation = {
-            "Administration": ["System and domain settings"],
             "Applications": ["Login (Single sign-on)"],
         }
 
@@ -175,7 +174,6 @@ class TestPortalLayout:
 
         # central navigation
         expected_central_navigation = {
-            "Administration": ["System and domain settings"],
             "Applications": ["Login (Single sign-on)"],
         }
 
