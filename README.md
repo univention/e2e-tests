@@ -41,12 +41,12 @@ before we switch to this as the suggested default approach.
 Make sure to have a recent Python interpreter. We only verify that the one in
 the container image (atm, 3.12.3) works, the other versions are best-effort only.
 
-Make sure to have `pipenv` available, see <https://pipenv.pypa.io/en/latest/>.
+Make sure to have `uv` available, see <https://docs.astral.sh/uv/>.
 
 Verify like this:
 
 ```sh
-pipenv --help
+uv --version
 ```
 
 ### Installation
@@ -54,15 +54,12 @@ pipenv --help
 The installation is only needed once:
 
 ```
-# Installs everything from the Pipfile.lock.
-pipenv sync
-
-# Gives you a shell with the dependencies available.
-pipenv shell
+# Creates a virtual environment and installs everything from uv.lock.
+uv sync
 
 # Installs required browsers.
 # This is a bit heavier and may take a bit of time.
-playwright install
+uv run playwright install
 ```
 
 ### How to run tests
@@ -80,9 +77,6 @@ export DEPLOY_NAMESPACE=your-nubus-deployment
 # Look into the script to understand its preconditions and options
 # in detail.
 source ./discover-env-from-cluster.sh
-
-# Enter the virtual environment with the dependencies
-pipenv shell
 ```
 
 #### Run
