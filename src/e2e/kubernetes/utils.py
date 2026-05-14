@@ -37,9 +37,9 @@ class UrlParts(NamedTuple):
 
     def to_url(self):
         if self.port == default_ports.get(self.scheme):
-            return f"{self.scheme}://{self.host}/"
+            return f"{self.scheme}://{self.host}"
         else:
-            return f"{self.scheme}://{self.host}:{self.port}/"
+            return f"{self.scheme}://{self.host}:{self.port}"
 
 
 def get_secret_by_volume(
