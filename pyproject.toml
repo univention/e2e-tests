@@ -9,14 +9,29 @@ maintainers = [{ name = "Univention GmbH", email = "packages@univention.de" }]
 license = { text = "GNU Affero General Public License v3" }
 readme = "README.md"
 requires-python = ">=3.12,<4"
-
-[project.optional-dependencies]
-tests = [
-    "pytest-playwright==0.4.2",
-    "requests==2.32.5",
-    "url-normalize==1.4.3",
-    "pytest-html==4.0.0",
+dependencies = [
+    "faker",
+    "kubernetes",
+    "ldap3",
+    "minio",
+    "nubus-provisioning-consumer",
+    "pdbpp",
+    "playwright",
+    "pyotp",
+    "pytest",
+    "pytest-html",
+    "pytest-playwright",
+    "pytest-subtests",
+    "python-keycloak>=2.0.0",
+    "requests",
+    "tenacity",
+    "udm-rest-api-client",
+    "url-normalize",
+    "uritemplate",
 ]
+
+[tool.uv.sources]
+nubus-provisioning-consumer = { git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", rev = "9e72e27d39b63ff4b6dd7c3551f65d6e3e0cc817", subdirectory = "src" }
 
 [build-system]
 requires = ["hatchling"]

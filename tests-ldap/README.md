@@ -56,7 +56,7 @@ requirements towards the deployment.
 2. Enter the Python environment of the test suite, see `../README.md`:
 
    ```bash
-   pipenv shell
+   uv sync
    ```
 
 ### Running the tests

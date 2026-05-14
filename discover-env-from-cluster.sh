@@ -21,6 +21,7 @@
 #
 # 4. Check the output.
 
+set +e
 
 # If no namespace is provided, then try to discover the namespace via "kubectl".
 # The parameter "--minify" is important, it ensures that we only get the

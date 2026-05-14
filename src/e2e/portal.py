@@ -37,7 +37,7 @@ class PortalDeployment(BaseDeployment):
     def __init__(self, k8s: KubernetesCluster, release_name: str, *, override_base_url: str | None = None):
         if override_base_url:
             log.warning("Overriding portal base_url to %s", override_base_url)
-            self.base_url = override_base_url
+            self.base_url = override_base_url.rstrip("/")
         super().__init__(k8s, release_name)
 
     def _discover_from_cluster(self):
