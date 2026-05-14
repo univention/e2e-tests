@@ -184,24 +184,29 @@ class AdHocProvisioning:
                 flow_alias=flow_alias,
             )
 
-        # Add and configure Univention authenticator
-        self.logger.info("Adding Univention Authenticator execution")
-        exec_payload = {"provider": "univention-authenticator"}
-        self.kc_existing.create_authentication_flow_execution(
-            payload=exec_payload,
-            flow_alias=flow_alias,
-        )
-
-        # Get updated executions
-        executions = self.kc_existing.get_authentication_flow_executions(flow_alias)
+        # Add Univention Authenticator execution (only if not already present)
         ua_execution = next(
-            (e for e in executions if e["displayName"] == "Univention Authenticator"),
+            (e for e in executions if e.get("displayName") == "Univention Authenticator"),
             None,
         )
         if not ua_execution:
-            raise KeycloakError(
-                "Univention Authenticator execution not found after creation",
+            self.logger.info("Adding Univention Authenticator execution")
+            exec_payload = {"provider": "univention-authenticator"}
+            self.kc_existing.create_authentication_flow_execution(
+                payload=exec_payload,
+                flow_alias=flow_alias,
             )
+            executions = self.kc_existing.get_authentication_flow_executions(flow_alias)
+            ua_execution = next(
+                (e for e in executions if e["displayName"] == "Univention Authenticator"),
+                None,
+            )
+            if not ua_execution:
+                raise KeycloakError(
+                    "Univention Authenticator execution not found after creation",
+                )
+        else:
+            self.logger.info("Univention Authenticator execution already exists, skipping")
 
         # Configure Univention Authenticator
         self.logger.info("Configuring Univention Authenticator")
@@ -561,12 +566,13 @@ class AdHocProvisioning:
         try:
             self.logger.info("Starting Keycloak federation setup")
 
-            # Create dummy realm
+            # Create dummy realm (check first to avoid python-keycloak skip_exists TypeError)
             self.logger.info(f"Creating dummy realm: {self.dummy_realm}")
-            self.kc_master.create_realm(
-                payload=self._get_realm_payload(self.dummy_realm),
-                skip_exists=True,
-            )
+            existing_realms = {r["realm"] for r in self.kc_master.get_realms()}
+            if self.dummy_realm not in existing_realms:
+                self.kc_master.create_realm(payload=self._get_realm_payload(self.dummy_realm))
+            else:
+                self.logger.info(f"Dummy realm '{self.dummy_realm}' already exists, skipping creation")
 
             # Initialize connections to other realms
             self.kc_dummy = self._create_keycloak_admin(self.dummy_realm, "master")
@@ -644,15 +650,21 @@ class AdHocProvisioning:
 
     def cleanup(self) -> None:
         """Main cleanup method to remove all federation components."""
-        try:
-            self.logger.info("Starting Keycloak federation cleanup")
-            self.remove_identity_provider()
-            self.remove_authentication_flow()
-            self.remove_dummy_realm()
-            self.logger.info("Keycloak federation cleanup completed successfully")
-        except Exception as e:
-            self.logger.error(f"Cleanup failed: {e}", exc_info=True)
-            raise
+        self.logger.info("Starting Keycloak federation cleanup")
+        errors = []
+        for step, fn in [
+            ("remove_identity_provider", self.remove_identity_provider),
+            ("remove_authentication_flow", self.remove_authentication_flow),
+            ("remove_dummy_realm", self.remove_dummy_realm),
+        ]:
+            try:
+                fn()
+            except Exception as e:
+                self.logger.error(f"Cleanup step '{step}' failed: {e}", exc_info=True)
+                errors.append(e)
+        if errors:
+            raise errors[0]
+        self.logger.info("Keycloak federation cleanup completed successfully")
 
 
 def main():
