@@ -12,6 +12,8 @@ from keycloak.exceptions import KeycloakError
 from e2e.keycloak import KeycloakDeployment
 from e2e.kubernetes import KubernetesCluster
 
+pytestmark = pytest.mark.xdist_group("keycloak-cache")
+
 TEST_CLIENT_SECRET = "my-cache-test-secret"
 TEST_REDIRECT_URI = "http://localhost:18888/callback"
 
