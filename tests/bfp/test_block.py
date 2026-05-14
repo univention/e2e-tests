@@ -38,6 +38,8 @@ from umspages.keycloak.admin_console.admin_console_home_page import AdminConsole
 from umspages.keycloak.admin_login_page import AdminLoginPage
 from umspages.keycloak.on_block_page import OnDeviceBlockPage, OnIPBlockPage
 
+pytestmark = pytest.mark.xdist_group("bfp")
+
 
 @pytest.mark.brute_force_protection
 def test_device_block(
