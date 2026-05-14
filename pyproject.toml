@@ -22,6 +22,7 @@ dependencies = [
     "pytest-html",
     "pytest-playwright",
     "pytest-subtests",
+    "pytest-xdist[psutil]",
     "python-keycloak>=2.0.0",
     "requests",
     "tenacity",
@@ -67,6 +68,7 @@ markers = [
     "pre_upgrade: tests to run before an upgrade in an upgrade test",
     "post_upgrade: tests to run after an upgrade in an upgrade test"
 ]
+addopts = "-n auto"
 filterwarnings = [
     # See https://github.com/cannatag/ldap3/issues/1159
     'ignore:typeMap is deprecated. Please use TYPE_MAP instead:DeprecationWarning',

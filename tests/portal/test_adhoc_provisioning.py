@@ -11,6 +11,8 @@ from e2e.decorators import retrying_slow
 from umspages.common.base import expect
 from umspages.portal.login_page import LoginPage
 
+pytestmark = pytest.mark.xdist_group("adhoc-provisioning")
+
 
 @pytest.fixture
 def setup_ad_hoc_provisioning(

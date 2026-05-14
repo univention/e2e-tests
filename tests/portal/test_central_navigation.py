@@ -6,6 +6,8 @@ import requests
 
 from e2e.decorators import retrying_slow
 
+pytestmark = pytest.mark.xdist_group("central-navigation")
+
 
 def _get_first_entry(data):
     first_entry = data["categories"][0]["entries"][0]

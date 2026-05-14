@@ -18,6 +18,8 @@ from umspages.portal.selfservice.manage_profile import ManageProfileDialogPage
 
 from tests.portal.conftest import WaitForUserExists
 
+pytestmark = pytest.mark.xdist_group("keycloak-backchannel")
+
 
 @pytest.fixture(scope="session")
 def oidc_well_known(keycloak: KeycloakDeployment):

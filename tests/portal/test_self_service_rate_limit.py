@@ -10,6 +10,8 @@ from e2e.email.password_reset import PasswordResetEmail
 from e2e.ucr import UCR
 from e2e.umc import UniventionManagementConsoleDeployment
 
+pytestmark = pytest.mark.xdist_group("ucr-rate-limit")
+
 
 @pytest.fixture(scope="class")
 def set_self_service_rate_limit(ucr_configmap: UCR, umc_deployment: UniventionManagementConsoleDeployment):
