@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.61.1...v0.61.2) (2026-05-18)
+
+
+### Bug Fixes
+
+* **portal:** no more default umc tile, adapt tests ([e8b0fb9](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/e8b0fb9ae6fa7b30979c90147a9643ec3c603b07)), closes [univention/dev/internal/team-nubus#1648](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1648)
+
 ## [0.61.1](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.61.0...v0.61.1) (2026-05-18)
 
 
