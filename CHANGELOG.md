@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.3](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.61.2...v0.61.3) (2026-05-19)
+
+
+### Bug Fixes
+
+* **udm_api:** compare sent and got properties key by key instead of asserting ([57a50c8](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/commit/57a50c82e210bef6e508a1c876f5301a27579784)), closes [#0](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/issues/0)
+
 ## [0.61.2](https://git.knut.univention.de/univention/dev/nubus-for-k8s/e2e-tests/compare/v0.61.1...v0.61.2) (2026-05-18)
 
 
