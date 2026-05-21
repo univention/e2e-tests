@@ -1,5 +1,7 @@
 import pytest
 
+from umspages.common.base import expect
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from univention.admin.rest.client import UnprocessableEntity
 
 from .conftest import (
@@ -81,15 +83,37 @@ def create_forward_zone(udm):
 
 @pytest.mark.screenshots
 @pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1280_720], indirect=True)
+@pytest.mark.parametrize(
+    "folder_name,filename,target_language",
+    [
+        ("Devices", "devices", None),
+        ("Geräte", "devices-de", "Deutsch"),
+    ],
+    ids=["en", "de"],
+)
 class TestScreenshotUIGroups(object):
     manual_path: str = "nubus-manual"
 
-    def test_devices(self, navigate_to_home_page_logged_in_as_admin, screenshots_output_dir, screenshot_page):
+    def test_devices(
+        self,
+        navigate_to_home_page_logged_in_as_admin,
+        screenshots_output_dir,
+        screenshot_page,
+        folder_name,
+        filename,
+        target_language,
+    ):
         page = navigate_to_home_page_logged_in_as_admin
-        page.locator(".portal-folder").filter(has_text="Devices").click()
+        if target_language:
+            home_page = HomePageLoggedIn(page)
+            home_page.switch_language(target_language)
+            page.reload()
+        folder = page.locator(".portal-folder").filter(has_text=folder_name)
+        expect(folder).to_be_visible()
+        folder.click()
         locator = page.locator('#modal-wrapper--isVisible-1 [data-test="portalFolder"]')
         locator.screenshot(
-            path=screenshot_path(screenshots_output_dir, name="devices", path=self.manual_path),
+            path=screenshot_path(screenshots_output_dir, name=filename, path=self.manual_path),
             animations="disabled",
         )
 
