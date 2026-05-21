@@ -1,12 +1,12 @@
 import pytest
 
 from umspages.common.base import expect
-from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from univention.admin.rest.client import UnprocessableEntity
 
 from .conftest import (
     screenshot_path,
     set_viewport_size,
+    switch_language,
     viewport_size_for_screenshots_1280_720,
 )
 
@@ -79,13 +79,6 @@ def create_forward_zone(udm):
         dns.save()
     except UnprocessableEntity as exc:
         print(exc)
-
-
-def switch_language(page, target_language):
-    if target_language:
-        home_page = HomePageLoggedIn(page)
-        home_page.switch_language(target_language)
-        page.reload()
 
 
 DEVICE_SCREENSHOTS = [

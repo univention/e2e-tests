@@ -28,13 +28,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
-from datetime import datetime, timedelta
 from pathlib import Path
-from urllib.parse import urlparse
 
 import pytest
 
-from ..portal.conftest import navigate_to_home_page_logged_in_as_admin, browser_context_args
+from umspages.portal.home_page.logged_in import HomePageLoggedIn
+
+from ..portal.conftest import browser_context_args, navigate_to_home_page_logged_in_as_admin
 
 SCREENSHOT_NAME_REPLACEMENTS = str.maketrans(
     {
@@ -83,3 +83,10 @@ def viewport_size_for_screenshots_1280_720(page):
 def screenshot_page(request, page):
     page = request.param(page)
     return page
+
+
+def switch_language(page, target_language):
+    if target_language:
+        home_page = HomePageLoggedIn(page)
+        home_page.switch_language(target_language)
+        page.reload()
