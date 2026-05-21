@@ -86,7 +86,7 @@ class TestScreenshotUIGroups(object):
 
     def test_devices(self, navigate_to_home_page_logged_in_as_admin, screenshots_output_dir, screenshot_page):
         page = navigate_to_home_page_logged_in_as_admin
-        page.get_by_role("button", name="Devices Folder: 2 Items").click()
+        page.locator(".portal-folder").filter(has_text="Devices").click()
         locator = page.locator('#modal-wrapper--isVisible-1 [data-test="portalFolder"]')
         locator.screenshot(
             path=screenshot_path(screenshots_output_dir, name="devices", path=self.manual_path),
