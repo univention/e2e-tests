@@ -81,16 +81,58 @@ def create_forward_zone(udm):
         print(exc)
 
 
+def switch_language(page, target_language):
+    if target_language:
+        home_page = HomePageLoggedIn(page)
+        home_page.switch_language(target_language)
+        page.reload()
+
+
+DEVICE_SCREENSHOTS = [
+    pytest.param("Devices", "devices", None, id="en"),
+    pytest.param("Geräte", "devices-de", "Deutsch", id="de"),
+]
+
+COMPUTER_LABELS = {
+    "de": {
+        "tile": "Rechner iFrame",
+        "iframe": "Rechner",
+        "add": "Hinzufügen",
+        "computer_type": "Rechner: macOS client",
+        "next": "Weiter",
+        "client_name": "Rechnername *",
+        "ip_address": "IP-Adresse",
+        "dialog": "Neuen Rechner hinzufügen.",
+        "advanced": "Erweitert",
+        "operating_system": "Betriebssystem",
+        "network_settings": "Netzwerk-Einstellungen",
+        "description": "Beschreibung",
+    },
+    "en": {
+        "tile": "Computers iFrame",
+        "iframe": "Computers",
+        "add": "Add",
+        "computer_type": "Computer: macOS client",
+        "next": "Next",
+        "client_name": "Client name *",
+        "ip_address": "IP address",
+        "dialog": "Add a new computer.",
+        "advanced": "Advanced",
+        "operating_system": "Operating system",
+        "network_settings": "Network settings",
+        "description": "Description",
+    },
+}
+
+COMPUTER_SCREENSHOTS = [
+    pytest.param(COMPUTER_LABELS["en"], "", None, id="en"),
+    pytest.param(COMPUTER_LABELS["de"], "-de", "Deutsch", id="de"),
+]
+
+
 @pytest.mark.screenshots
 @pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1280_720], indirect=True)
-@pytest.mark.parametrize(
-    "folder_name,filename,target_language",
-    [
-        ("Devices", "devices", None),
-        ("Geräte", "devices-de", "Deutsch"),
-    ],
-    ids=["en", "de"],
-)
+@pytest.mark.parametrize("folder_name,filename,target_language", DEVICE_SCREENSHOTS)
 class TestScreenshotUIGroups(object):
     manual_path: str = "nubus-manual"
 
@@ -104,14 +146,13 @@ class TestScreenshotUIGroups(object):
         target_language,
     ):
         page = navigate_to_home_page_logged_in_as_admin
-        if target_language:
-            home_page = HomePageLoggedIn(page)
-            home_page.switch_language(target_language)
-            page.reload()
+        switch_language(page, target_language)
         folder = page.locator(".portal-folder").filter(has_text=folder_name)
         expect(folder).to_be_visible()
         folder.click()
+
         locator = page.locator('#modal-wrapper--isVisible-1 [data-test="portalFolder"]')
+        expect(locator).to_be_visible()
         locator.screenshot(
             path=screenshot_path(screenshots_output_dir, name=filename, path=self.manual_path),
             animations="disabled",
@@ -120,6 +161,7 @@ class TestScreenshotUIGroups(object):
 
 @pytest.mark.screenshots
 @pytest.mark.parametrize("screenshot_page", [viewport_size_for_screenshots_1280_720], indirect=True)
+@pytest.mark.parametrize("labels,filename_suffix,target_language", COMPUTER_SCREENSHOTS)
 class TestScreenshotNubusManualComputersModule(object):
     manual_path: str = "nubus-manual"
 
@@ -129,85 +171,85 @@ class TestScreenshotNubusManualComputersModule(object):
         screenshots_output_dir,
         screenshot_page,
         udm,
+        labels,
+        filename_suffix,
+        target_language,
     ):
         page = navigate_to_home_page_logged_in_as_admin
+        switch_language(page, target_language)
         create_network_object_default(udm)
 
-        page.get_by_role("link", name="Computers iFrame").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Add").click()
-        page.locator('iframe[title="Computers"]').content_frame.locator("#widget_umc_widgets_ComboBox_4 span").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "option", name="Computer: macOS client"
-        ).click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Next").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="Client name *").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="Client name *").fill(
-            "workstation3"
-        )
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP address").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="IP address").fill(
-            "10.200.58.10"
-        )
-        page.locator('iframe[title="Computers"]').content_frame.locator("#widget_umc_widgets_ComboBox_6 span").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("option", name="default").click()
+        computers_tile = page.get_by_role("link", name=labels["tile"])
+        expect(computers_tile).to_be_visible()
+        computers_tile.click()
 
-        locator = page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "dialog", name="Add a new computer."
-        )
-        locator.screenshot(
-            path=screenshot_path(screenshots_output_dir, name="computers_computer", path=self.manual_path)
+        frame = page.locator(f'iframe[title="{labels["iframe"]}"]').content_frame
+        frame.get_by_role("button", name=labels["add"]).click()
+        frame.locator("#widget_umc_widgets_ComboBox_4 span").click()
+        frame.get_by_role("option", name=labels["computer_type"]).click()
+        frame.get_by_role("button", name=labels["next"], exact=True).click()
+        frame.get_by_role("textbox", name=labels["client_name"]).fill("workstation3")
+        frame.get_by_role("textbox", name=labels["ip_address"]).fill("10.200.58.10")
+        frame.locator("#widget_umc_widgets_ComboBox_6 span").click()
+        frame.get_by_role("option", name="default").click()
+
+        dialog = frame.get_by_role("dialog", name=labels["dialog"])
+        expect(dialog).to_be_visible()
+        dialog.screenshot(
+            path=screenshot_path(
+                screenshots_output_dir, name=f"computers_computer{filename_suffix}", path=self.manual_path
+            )
         )
 
     def test_computers_computer_advanced(
-        self, navigate_to_home_page_logged_in_as_admin, screenshots_output_dir, screenshot_page, udm
+        self,
+        navigate_to_home_page_logged_in_as_admin,
+        screenshots_output_dir,
+        screenshot_page,
+        udm,
+        labels,
+        filename_suffix,
+        target_language,
     ):
         page = navigate_to_home_page_logged_in_as_admin
+        switch_language(page, target_language)
         set_viewport_size(page, 1280, 920)
         create_network_object_default(udm)
         create_forward_zone(udm)
 
+        computers_tile = page.get_by_role("link", name=labels["tile"])
+        expect(computers_tile).to_be_visible()
+        computers_tile.click()
+
+        frame = page.locator(f'iframe[title="{labels["iframe"]}"]').content_frame
+
         # Navigate to Add computer
-        page.get_by_role("link", name="Computers iFrame").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Add").click()
-        page.locator('iframe[title="Computers"]').content_frame.locator("#widget_umc_widgets_ComboBox_4 span").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "option", name="Computer: macOS client"
-        ).click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Next").click()
-
+        frame.get_by_role("button", name=labels["add"]).click()
+        frame.locator("#widget_umc_widgets_ComboBox_4 span").click()
+        frame.get_by_role("option", name=labels["computer_type"]).click()
+        frame.get_by_role("button", name=labels["next"], exact=True).click()
         # Fill in values in wizard
-        page.locator('iframe[title="Computers"]').content_frame.locator("#umc_widgets_LabelPane_11").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="Client name *").fill(
-            "workstation3"
-        )
+        frame.get_by_role("textbox", name=labels["client_name"]).fill("workstation3")
+        dialog = frame.get_by_role("dialog", name=labels["dialog"])
+        expect(dialog).to_be_visible()
 
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "dialog", name="Add a new computer."
-        ).get_by_role("img").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("option", name="default").click()
+        dialog.get_by_role("img").click()
+        frame.get_by_role("option", name="default").click()
 
         # Switch to advanced module view
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "button", name="Advanced", exact=True
-        ).click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "textbox", name="Operating system", exact=True
-        ).click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role(
-            "textbox", name="Operating system", exact=True
-        ).fill("macOS")
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("button", name="Network settings").click()
-        page.locator('iframe[title="Computers"]').content_frame.locator(
-            "#widget_umc_modules_udm_ComboBox_2"
-        ).get_by_role("img").click()
+        frame.get_by_role("button", name=labels["advanced"], exact=True).click()
+        frame.get_by_role("textbox", name=labels["operating_system"], exact=True).click()
+        frame.get_by_role("textbox", name=labels["operating_system"], exact=True).fill("macOS")
+        frame.get_by_role("button", name=labels["network_settings"]).click()
 
-        page.locator('iframe[title="Computers"]').content_frame.locator(
-            "#widget_umc_modules_udm_ComboBox_2"
-        ).get_by_role("img").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("option", name="example.org").click()
-        page.locator('iframe[title="Computers"]').content_frame.locator("#umc_widgets_ComboBox_7").click()
-        page.locator('iframe[title="Computers"]').content_frame.get_by_role("textbox", name="Description").click()
+        frame.locator("#widget_umc_modules_udm_ComboBox_2").get_by_role("img").click()
+        frame.locator("#widget_umc_modules_udm_ComboBox_2").get_by_role("img").click()
+        frame.get_by_role("option", name="example.org").click()
+        frame.locator("#umc_widgets_ComboBox_7").click()
+        frame.get_by_role("textbox", name=labels["description"]).click()
 
         page.screenshot(
-            path=screenshot_path(screenshots_output_dir, name="computers_computer_advanced", path=self.manual_path)
+            path=screenshot_path(
+                screenshots_output_dir, name=f"computers_computer_advanced{filename_suffix}", path=self.manual_path
+            )
         )
