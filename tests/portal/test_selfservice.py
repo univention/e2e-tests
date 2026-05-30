@@ -424,3 +424,42 @@ def test_user_forced_to_change_password_on_next_login(
     # Log in with new password (should succeed)
     login_page.login(username, new_password)
     expect(home_page_logged_in.header.hamburger_icon).to_be_visible()
+
+
+@pytest.mark.selfservice
+@pytest.mark.portal
+@pytest.mark.development_environment
+@pytest.mark.acceptance_environment
+def test_wrong_old_password_during_forced_change_shows_friendly_error(
+    user_password,
+    user,
+    faker,
+    page,
+    wait_for_ldap_secondaries_to_catch_up,
+    ensure_user_exists: WaitForUserExists,
+):
+    username = user.properties["username"]
+
+    user.properties["pwdChangeNextLogin"] = True
+    user.save()
+    wait_for_ldap_secondaries_to_catch_up()
+    ensure_user_exists(username)
+
+    HomePageLoggedOut(page).navigate()
+
+    login_page = LoginPage(page)
+    login_page.navigate()
+    login_page.login(username, user_password)
+
+    # Submit a wrong old password, the change must be rejected
+    new_password = faker.password()
+    page.get_by_label("Password", exact=True).fill(f"{user_password}_wrong")
+    page.get_by_label("New Password").fill(new_password)
+    page.get_by_label("Confirm password").fill(new_password)
+    page.get_by_role("button", name="Submit").click()
+
+    # A user-friendly error must be visible
+    expect(page.get_by_text("The authentication has failed", exact=False)).to_be_visible()
+    # Raw LDAP error details must not be exposed to the user
+    expect(page.get_by_text("Invalid credentials", exact=False)).not_to_be_visible()
+    expect(page.get_by_text("LDAP", exact=False)).not_to_be_visible()
