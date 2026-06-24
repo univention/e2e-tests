@@ -193,6 +193,7 @@ class KubernetesCluster:
         namespace: str | None = None,
         container_name: str | None = None,
         tail_lines: int | None = None,
+        since_seconds: int | None = None,
     ):
         """
         Get pod logs.
@@ -203,13 +204,18 @@ class KubernetesCluster:
             namespace: Kubernetes namespace
             container_name: Name of the container (optional)
             tail_lines: Number of lines to fetch from the end
+            since_seconds: Only return logs newer than this many seconds
         """
         if not namespace:
             namespace = self.namespace
         api = client.CoreV1Api()
         try:
             return api.read_namespaced_pod_log(
-                name=pod_name, namespace=namespace, container=container_name, tail_lines=tail_lines
+                name=pod_name,
+                namespace=namespace,
+                container=container_name,
+                tail_lines=tail_lines,
+                since_seconds=since_seconds,
             )
         except ApiException as e:
             raise RuntimeError(f"Failed to get pod logs: {e}")
