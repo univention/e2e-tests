@@ -54,7 +54,6 @@ class TestPortalLayout:
 
         expected_tiles = [
             "Keycloak",
-            # "Welcome!",
             "Users",
             "Groups",
             "Computers",
@@ -72,9 +71,7 @@ class TestPortalLayout:
             "Policies",
             "Shares",
             "Portal",
-            # "Welcome!",
             "2FA Admin Helpdesk",
-            "2FA Selfservice",
         ]
 
         for tile in expected_tiles:
@@ -90,7 +87,7 @@ class TestPortalLayout:
             "Certificates": ["Root certificate", "Certificate revocation list"],
             "Change Language": ["Deutsch", "English"],
             "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
-            "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
+            "User settings": ["Change your password", "Protect your account", "My Profile"],
         }
 
         for section, items in expected_sidebar.items():
@@ -139,21 +136,11 @@ class TestPortalLayout:
         page = navigate_to_login_page
         user_layout = get_portal_layout(page, user.properties["username"], user_password, portal.central_navigation_url)
 
-        expected_tiles = [
-            "2FA Selfservice",
-        ]
-
-        for tile in expected_tiles:
-            with subtests.test(msg=f"tile {tile}"):
-                assert tile in user_layout["tiles"]
-
-        # no extra tiles
-        with subtests.test(msg="no extra tiles"):
-            extra_tiles = set(user_layout["tiles"]) - set(expected_tiles)
-            assert extra_tiles == set()
+        with subtests.test(msg="no tiles"):
+            assert user_layout["tiles"] == []
 
         expected_sidebar = {
-            "User settings": ["Change your password", "Protect your account", "My Profile", "2FA Selfservice"],
+            "User settings": ["Change your password", "Protect your account", "My Profile"],
             "Certificates": ["Root certificate", "Certificate revocation list"],
             "Change Language": ["Deutsch", "English"],
             "Help": ["Univention Forum (Help)", "Feedback", "Univention Blog", "Univention Website"],
@@ -192,3 +179,26 @@ class TestPortalLayout:
                 extra_items_from_section = set(items) - set(expected_central_navigation[section])
                 extra_central_navigation_items.update(extra_items_from_section)
             assert extra_central_navigation_items == set()
+
+    def test_2fa_user_portal_layout(
+        self,
+        navigate_to_home_page_logged_in_as_twofa_user,
+        subtests,
+    ):
+        page = navigate_to_home_page_logged_in_as_twofa_user
+        home_page = HomePageLoggedIn(page)
+
+        tiles = [tile.inner_text() for tile in page.locator(".portal-tile__name").all()]
+        with subtests.test(msg="tile 2FA Selfservice"):
+            assert "2FA Selfservice" in tiles
+
+        home_page.reveal_area(home_page.right_side_menu, home_page.header.hamburger_icon)
+        sidebar = home_page.right_side_menu.get_all_sidebar_entries_text()
+        home_page.hide_area(home_page.right_side_menu, home_page.header.hamburger_icon)
+
+        expected_2fa_sidebar = {"User settings": ["2FA Selfservice"]}
+        for section, items in expected_2fa_sidebar.items():
+            with subtests.test(msg=f"sidebar section {section}"):
+                assert section in sidebar
+                for item in items:
+                    assert item in sidebar[section]  # type: ignore[index]

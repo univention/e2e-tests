@@ -44,7 +44,7 @@ from api.udm_api import UDMFixtures
 from e2e.decorators import BetterRetryError
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.home_page.logged_out import HomePageLoggedOut
-from umspages.portal.login_page import LoginPage
+from umspages.portal.login_page import LoginPage, TotpSetup
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +166,61 @@ def navigate_to_home_page_logged_in_user_without_groups(page, user_without_group
 def navigate_to_home_page_logged_in_as_admin(page, admin_username, admin_password):
     home_page_logged_in = HomePageLoggedIn(page)
     home_page_logged_in.navigate(admin_username, admin_password)
+    return page
+
+
+@pytest.fixture
+def twofa_user(
+    udm, faker, email_domain, external_email_domain, user_password, wait_for_ldap_secondaries_to_catch_up, ldap_base_dn
+):
+    """A regular user in the 2FA Users group, not deleted after the test."""
+    users_user = udm.get("users/user")
+    test_user = users_user.new()
+    username = f"TEST-{faker.user_name()}"
+
+    test_user.properties.update(
+        {
+            "firstname": faker.first_name(),
+            "lastname": faker.last_name(),
+            "username": username,
+            "displayName": faker.name(),
+            "password": user_password,
+            "mailPrimaryAddress": f"{username}@{email_domain}",
+            "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
+            "groups": [f"cn=2FA Users,cn=groups,{ldap_base_dn}"],
+        }
+    )
+    test_user.save()
+
+    wait_for_ldap_secondaries_to_catch_up()
+
+    return test_user
+
+
+@pytest.fixture
+def temp_twofa_user(twofa_user):
+    """A user in the 2FA Users group, automatically deleted after the test."""
+    yield twofa_user
+
+    twofa_user.reload()
+    twofa_user.delete()
+
+
+@pytest.fixture()
+def navigate_to_home_page_logged_in_as_twofa_user(context, temp_twofa_user, user_password):
+    totp_setup = TotpSetup(secret=None)
+    username = temp_twofa_user.properties["username"]
+
+    # First login triggers the mandatory TOTP setup required action
+    setup_page = context.new_page()
+    HomePageLoggedIn(setup_page).navigate(username, user_password, totp_setup)
+    setup_page.close()
+
+    context.clear_cookies()
+
+    # Second login uses the now-configured TOTP secret
+    page = context.new_page()
+    HomePageLoggedIn(page).navigate(username, user_password, totp_setup)
     return page
 
 

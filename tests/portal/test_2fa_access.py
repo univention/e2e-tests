@@ -14,16 +14,20 @@ from umspages.portal.home_page.logged_in import HomePageLoggedIn
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_user_can_access_2fa_selfservice(navigate_to_home_page_logged_in):
-    assert_user_can_access_2fa_page(navigate_to_home_page_logged_in)
+def test_2fa_user_can_access_2fa_selfservice(navigate_to_home_page_logged_in_as_twofa_user):
+    assert_user_can_access_2fa_page(navigate_to_home_page_logged_in_as_twofa_user)
 
 
 @pytest.mark.selfservice
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
-def test_admin_can_access_2fa_selfservice(navigate_to_home_page_logged_in_as_admin):
-    assert_user_can_access_2fa_page(navigate_to_home_page_logged_in_as_admin)
+def test_domain_user_cannot_see_2fa_selfservice(navigate_to_home_page_logged_in):
+    page = navigate_to_home_page_logged_in
+    home_page_logged_in = HomePageLoggedIn(page)
+    home_page_logged_in.assert_logged_in()
+    twofa_selfservice_tile = page.get_by_role("link", name=re.compile("2FA Selfservice"))
+    expect(twofa_selfservice_tile).to_have_count(0)
 
 
 @pytest.mark.selfservice

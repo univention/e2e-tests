@@ -18,58 +18,6 @@ class UpgradeBackup:
 
 
 @pytest.fixture
-def twofa_user(
-    udm, faker, email_domain, external_email_domain, user_password, wait_for_ldap_secondaries_to_catch_up, ldap_base_dn
-):
-    """
-    A regular user in the 2FA Users group.
-
-    The user will be created for the test case and is *not* removed after the test case
-    so that it can be re-used in the post-upgrade tests.
-
-    The password is available in the fixture ``user_password``.
-    """
-    users_user = udm.get("users/user")
-    test_user = users_user.new()
-    # Test 2FA setup specifically with a mixed case username
-    # https://github.com/keycloak/keycloak/issues/43621
-    uppercase_username_prefix = "TEST"
-    username = f"{uppercase_username_prefix}-{faker.user_name()}"
-
-    test_user.properties.update(
-        {
-            "firstname": faker.first_name(),
-            "lastname": faker.last_name(),
-            "username": username,
-            "displayName": faker.name(),
-            "password": user_password,
-            "mailPrimaryAddress": f"{username}@{email_domain}",
-            "PasswordRecoveryEmail": f"{username}@{external_email_domain}",
-            "groups": [f"cn=2FA Users,cn=groups,{ldap_base_dn}"],
-        }
-    )
-    test_user.save()
-
-    wait_for_ldap_secondaries_to_catch_up()
-
-    return test_user
-
-
-@pytest.fixture
-def temp_twofa_user(twofa_user):
-    """
-    Returns a UDM user object where the user is part of the
-    "2FA Users" group and therefore forced to setup Totp.
-
-    The user is automatically deleted after the test.
-    """
-    yield twofa_user
-
-    twofa_user.reload()
-    twofa_user.delete()
-
-
-@pytest.fixture
 def persistent_twofa_user(twofa_user, user_password, upgrade_artifacts_path):
     """
     Creates a user and yields a tuple with a dict containing the

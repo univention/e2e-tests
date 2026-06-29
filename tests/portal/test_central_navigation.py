@@ -91,7 +91,7 @@ def add_entries_to_navigation(portal, admin_username, udm, ldap_base_dn, restore
         # Check that the portal cache has been updated
         assert response.status_code == requests.codes.ok
         # Test that the response contains at least some categories
-        assert len(data.get("categories", [])) == 2
+        assert len(data.get("categories", [])) == 1
 
     verify_central_navigation_api_contents()
 
@@ -129,15 +129,9 @@ class TestCentralNavigation:
         data = response.json()
 
         assert response.status_code == requests.codes.ok
-        assert len(data["categories"]) == 2
+        assert len(data["categories"]) == 1
 
-        # Should not contain the anonymous login tiles
-        first_entry_name = _get_first_entry(data)["display_name"]
-        assert first_entry_name != "Login (Single sign-on)", (
-            "Anonymous OIDC login tile should not be visible for authenticated users"
-        )
-
-        domain_admin = data["categories"][1]
+        domain_admin = data["categories"][0]
         assert domain_admin["identifier"] == "domain-admin"
         assert len(domain_admin["entries"]) == 2
         assert domain_admin["entries"][0]["identifier"] == "keycloak"
