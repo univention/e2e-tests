@@ -85,7 +85,7 @@ e2e-tests:
   script: |
     ./entrypoint.sh pytest -n auto --showlocals --junitxml=test_results.xml --html=report.html --self-contained-html --capture=no --verbose
   tags:
-    - "docker"
+    - "dm-xl"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_PIPELINE_SOURCE == "api"'
