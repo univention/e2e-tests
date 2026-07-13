@@ -11,8 +11,7 @@ include:
       - "jobs/lint-pre-commit.yaml"
       - "jobs/lint-commit-messages.yaml"
       - "jobs/semantic-release-env.yaml"
-      - "jobs/container-build.yaml"
-      - "jobs/container-build-external.yaml"
+      - "jobs/container-build-external-buildkit.yaml"
       - "jobs/package-and-publish-helm-charts-external.yaml"
 
 lint-pre-commit:
@@ -25,10 +24,10 @@ variables:
 
 .build-matrix: &build-matrix
   - IMAGE_NAME: "e2e-tests-runner"
-    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "Dockerfile"
   - IMAGE_NAME: "testing-api"
-    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "docker/testing-api/Dockerfile"
 
 .publish-matrix: &publish-matrix
