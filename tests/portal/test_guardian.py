@@ -34,6 +34,7 @@ from umspages.common.base import expect
 from umspages.portal.guardian.guardian_page import UCSGuardianPage
 
 
+@pytest.mark.skip(reason="Drop Guardian from the umbrella chart")
 @pytest.mark.portal
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
