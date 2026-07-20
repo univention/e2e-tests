@@ -100,13 +100,14 @@ def persistent_twofa_user(twofa_user, user_password, upgrade_artifacts_path):
 
 
 @pytest.fixture
-def existing_twofa_user(udm, ldap_base_dn: str, upgrade_artifacts_path):
+def existing_twofa_user(upgrade_artifacts_path):
     """
     Loads a user from the upgrade_artifacts_path.
-    Yields a tuple with a dict "username", "password" as the first element
+    Returns a tuple with a dict "username", "password" as the first element
     and an instance of "TotpSetup" to be passed to the login function.
 
-    This user is deleted during the cleanup of this fixture.
+    The user is kept so that reruns of the post-upgrade tests can log in
+    with it again. It is removed together with the test environment.
     """
     assert upgrade_artifacts_path
     with open(upgrade_artifacts_path, "r") as fd:
@@ -114,13 +115,7 @@ def existing_twofa_user(udm, ldap_base_dn: str, upgrade_artifacts_path):
 
     totp_setup = TotpSetup(secret=backup["totp_secret"])
 
-    yield (backup, totp_setup)
-
-    users_user = udm.get("users/user")
-    user_dn = f"uid={backup['username']},cn=users,{ldap_base_dn}"
-    test_user = users_user.get(user_dn)
-
-    test_user.delete()
+    return (backup, totp_setup)
 
 
 def setup_totp(page: Page, username: str, user_password: str, totp_setup: TotpSetup):
