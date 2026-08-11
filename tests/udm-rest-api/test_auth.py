@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
+from urllib.parse import urljoin
+
 import pytest
 from keycloak import KeycloakAdmin
 from keycloak.openid_connection import KeycloakOpenIDConnection
@@ -14,7 +16,7 @@ def auth_token(portal, keycloak, admin_username, admin_password, keycloak_admin:
 
     oidc_client = None
     for client in nubus_realm.get_clients():
-        if client["clientId"] == f"{portal.base_url}univention/oidc/":
+        if client["clientId"] == urljoin(portal.base_url, "univention/oidc/"):
             oidc_client = client
             break
 

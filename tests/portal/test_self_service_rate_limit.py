@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
+from urllib.parse import urljoin
+
 import pytest
 import requests
 
@@ -82,7 +84,7 @@ class TestSelfServiceRateLimit:
     @pytest.mark.usefixtures("reset_rate_limit", "email_test_api")
     def test_pw_reset_request_through_frontend_is_ratelimited(self, portal, user):
         username = user.properties["username"]
-        pw_reset_url = f"{portal.base_url}univention/command/passwordreset/send_token"
+        pw_reset_url = urljoin(portal.base_url, "univention/command/passwordreset/send_token")
 
         # the first request should succeed
         resp = password_reset_request(pw_reset_url, username)

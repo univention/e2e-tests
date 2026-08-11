@@ -13,6 +13,7 @@ import logging
 import re
 import time
 from collections import Counter
+from urllib.parse import urljoin
 
 import pytest
 from keycloak.openid_connection import KeycloakOpenIDConnection
@@ -42,7 +43,7 @@ def _config_flag(config: dict, key: str) -> bool:
 
 
 def _direct_grant_client(keycloak_admin, portal) -> dict:
-    client_id = f"{portal.base_url}univention/oidc/"
+    client_id = urljoin(portal.base_url, "univention/oidc/")
     for client in keycloak_admin.get_clients():
         if client["clientId"] == client_id:
             if not (client.get("directAccessGrantsEnabled") and client.get("secret")):

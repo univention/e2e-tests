@@ -14,6 +14,7 @@ This script automates the setup of Keycloak ad-hoc federation between realms, in
 import json
 import logging
 from typing import Any, Dict
+from urllib.parse import urljoin
 
 from keycloak import KeycloakAdmin
 from keycloak.exceptions import KeycloakError, KeycloakPostError
@@ -117,6 +118,7 @@ class AdHocProvisioning:
 
     def _get_idp_payload(self, client_secret: str = "") -> Dict[str, Any]:
         """Get IDP configuration payload."""
+        realm_base = urljoin(f"{self.keycloak_url}/", f"realms/{self.dummy_realm}/protocol/openid-connect/")
         return {
             "alias": f"oidc-{self.dummy_realm}",
             "displayName": f"OIDC {self.dummy_realm}",
@@ -129,13 +131,13 @@ class AdHocProvisioning:
             "config": {
                 "clientId": "federation-client",
                 "clientSecret": client_secret,
-                "tokenUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/token",
-                "authorizationUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/auth",
-                "userInfoUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/userinfo",
+                "tokenUrl": urljoin(realm_base, "token"),
+                "authorizationUrl": urljoin(realm_base, "auth"),
+                "userInfoUrl": urljoin(realm_base, "userinfo"),
                 "defaultScope": "openid profile email",
                 "validateSignature": "true",
                 "useJwksUrl": "true",
-                "jwksUrl": f"{self.keycloak_url}realms/{self.dummy_realm}/protocol/openid-connect/certs",
+                "jwksUrl": urljoin(realm_base, "certs"),
             },
         }
 

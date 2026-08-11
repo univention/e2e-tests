@@ -28,6 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <https://www.gnu.org/licenses/>.
 
+from urllib.parse import urljoin
+
 import pytest
 import requests
 
@@ -131,7 +133,7 @@ def test_login_methods_and_tiles(request, login_method, navigate_fixture, admin_
 @pytest.mark.acceptance_environment
 def test_saml_endpoint_not_exposed(portal):
     """Verify SAML endpoints are not publicly accessible (disabled by default)"""
-    response = requests.get(f"{portal.base_url}/univention/saml/", allow_redirects=False)
+    response = requests.get(urljoin(portal.base_url, "univention/saml/"), allow_redirects=False)
 
     assert response.status_code in [
         403,

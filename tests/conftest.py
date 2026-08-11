@@ -349,7 +349,7 @@ def wait_for_ldap_secondaries_to_catch_up(portal) -> Callable[[], None]:
 
     def _wait_for_ldap_replication(retry_timeout: float = 90) -> None:
         response = requests.get(
-            f"{portal.base_url}/testing-api/v1/ldap-replication-waiter",
+            urljoin(portal.base_url, "testing-api/v1/ldap-replication-waiter"),
             {"retry_timeout": retry_timeout},
         )
         response.raise_for_status()
