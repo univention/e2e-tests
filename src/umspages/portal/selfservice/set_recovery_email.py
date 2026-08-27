@@ -40,8 +40,8 @@ class SetRecoveryEmailDialogPage(BasePage):
         self.username_box = self.page.get_by_label("username *")
         self.password_box = self.page.get_by_test_id("password-box")
         self.next_button = self.page.get_by_role("button", name="Next")
-        self.email_box = self.page.get_by_role("textbox", name="Email", exact=True)
-        self.retype_email_box = self.page.get_by_role("textbox", name="Email (retype)")
+        self.email_box = self.page.get_by_role("textbox", name="Recovery email address", exact=True)
+        self.retype_email_box = self.page.get_by_role("textbox", name="Recovery email address (retype)")
         self.submit_button = self.page.get_by_role("button", name="Submit")
 
     def navigate(self, username, password):
