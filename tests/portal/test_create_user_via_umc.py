@@ -4,18 +4,22 @@
 import pytest
 from playwright.sync_api import Page
 
+from e2e.password_hashes import assert_password_hashes, read_password_hashes
 from umspages.portal.home_page.logged_in import HomePageLoggedIn
 from umspages.portal.users.users_page import UCSUsersPage
 
 
 @pytest.mark.selfservice
 @pytest.mark.portal
+@pytest.mark.password_hashes
 @pytest.mark.development_environment
 @pytest.mark.acceptance_environment
 def test_create_user_via_the_umc(
     navigate_to_home_page_logged_in_as_admin: Page,
     faker,
     udm,
+    ldap_primary,
+    subtests,
 ):
     username = faker.user_name()
     password = faker.password()
@@ -33,4 +37,9 @@ def test_create_user_via_the_umc(
 
     assert user
     assert user.properties["univentionObjectIdentifier"]
+
+    with subtests.test("password hashes"):
+        entry = read_password_hashes(ldap_primary, user.dn)
+        assert_password_hashes(entry, user.dn, key_version_number=1)
+
     user.delete()
