@@ -10,7 +10,7 @@ FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
 ARG WORKDIR
 WORKDIR ${WORKDIR}
 
-COPY --from=ghcr.io/astral-sh/uv:0.11.29 /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.11.33@sha256:77280f2f771df71f90786c314fe1bbc1e023feac652969bbf139c280babf2eb7 /uv /uvx /usr/local/bin/
 
 ENV \
     PATH="/home/${USER}/.local/bin:${PATH}" \
