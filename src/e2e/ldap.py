@@ -70,6 +70,25 @@ class LdapServer:
             connection.bind()
         return connection
 
+    def get_entry(self, dn: LdapDn, attributes: list[str]) -> dict[str, list[bytes]]:
+        """
+        Read one entry and return its attributes undecoded.
+
+        Values stay raw `bytes` so that hashes and Kerberos key material can be
+        inspected byte exact. Attribute names are lowercased and attributes
+        without a value are omitted, so that `"sambantpassword" not in entry`
+        is a meaningful assertion.
+        """
+        with self.connect() as conn:
+            conn.search(
+                dn,
+                "(objectClass=*)",
+                search_scope="BASE",
+                attributes=attributes,
+            )
+            raw_attributes = conn.entries[0].entry_raw_attributes
+        return {name.lower(): values for name, values in raw_attributes.items() if values}
+
     def get_context_csn(self) -> list[str]:
         context_csn = []
         try:
