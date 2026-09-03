@@ -89,6 +89,27 @@ class LdapServer:
             raw_attributes = conn.entries[0].entry_raw_attributes
         return {name.lower(): values for name, values in raw_attributes.items() if values}
 
+    def search_entries(
+        self,
+        search_filter: str,
+        attributes: list[str],
+        base_dn: LdapDn | None = None,
+    ) -> dict[LdapDn, dict[str, list[bytes]]]:
+        """
+        Read every matching entry of a subtree, keyed by DN.
+        """
+        with self.connect() as conn:
+            conn.search(
+                base_dn or self.base_dn,
+                search_filter,
+                search_scope="SUBTREE",
+                attributes=attributes,
+            )
+            return {
+                entry.entry_dn: {name.lower(): values for name, values in entry.entry_raw_attributes.items() if values}
+                for entry in conn.entries
+            }
+
     def get_context_csn(self) -> list[str]:
         context_csn = []
         try:
