@@ -101,8 +101,6 @@ def send_notification_endpoint(notifications_api_base_url):
 @pytest.mark.xfail()
 @pytest.mark.notifications
 @pytest.mark.portal
-@pytest.mark.development_environment
-@pytest.mark.acceptance_environment
 def test_two_notifications(
     login_and_clear_old_notifications,
     send_notification_endpoint,
@@ -166,8 +164,6 @@ def logout_after_clearing_old_notifications(login_and_clear_old_notifications):
 
 @pytest.mark.notifications
 @pytest.mark.portal
-@pytest.mark.development_environment
-@pytest.mark.acceptance_environment
 def test_notification_expiry_time(
     logout_after_clearing_old_notifications,
     send_notification_endpoint,
