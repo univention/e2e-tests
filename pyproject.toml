@@ -32,7 +32,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-nubus-provisioning-consumer = { git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", rev = "9e72e27d39b63ff4b6dd7c3551f65d6e3e0cc817", subdirectory = "src" }
+nubus-provisioning-consumer = { git = "https://git.knut.univention.de/univention/dev/projects/provisioning.git", rev = "d9a661c643c56985e13e4b903eec07763053aa4a", subdirectory = "src" }
 
 [build-system]
 requires = ["hatchling"]
