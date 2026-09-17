@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.67.6"
+    ref: "rowino/limit-scope"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -17,6 +17,8 @@ include:
 lint-pre-commit:
   before_script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
+  after_script:
+    - 'echo "CANARY lint-pre-commit / NO environment -> expect EMPTY: SECURED_CANARY=[${SECURED_CANARY:-<EMPTY>}]"'
 
 variables:
   TEST_PORTAL_BASE_URL:
@@ -47,6 +49,8 @@ push-image-external:
 container-sign-external:
   parallel:
     matrix: *publish-matrix
+  after_script:
+    - 'echo "CANARY container-sign-external / environment=secured -> expect canary-ok: SECURED_CANARY=[${SECURED_CANARY:-<EMPTY>}]"'
 
 container-malware-scan:
   parallel:
@@ -55,6 +59,10 @@ container-malware-scan:
 container-release-attestation:
   rules:
     - when: "never"
+
+package-helm-charts:
+  after_script:
+    - 'echo "CANARY package-helm-charts / environment=secured -> expect canary-ok: SECURED_CANARY=[${SECURED_CANARY:-<EMPTY>}]"'
 
 test-container:
   stage: "test"
