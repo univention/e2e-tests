@@ -17,6 +17,8 @@
 | Self-service  | Non-admin user can set a recovery email                         | `tests/portal/test_selfservice`                   |
 | Self-service  | `/univention/portal` selfservice tiles logged in and out        | `tests/portal/test_selfservice`                   |
 | Self-service  | Non-admin user can manage its profile                           | `tests/portal/test_selfservice`                   |
+| Self-service  | Profile picture with malware is rejected                        | `tests/portal/test_self_service_malware_scan`     |
+| Self-service  | Profile picture upload fails if the malware scanner is down     | `tests/portal/test_self_service_malware_scan`     |
 | Announcements | Anonymous user sees announcements                               | `tests/portal/test_announcements`                 |
 | Announcements | Admin user can access announcements page (and tile)             | `tests/portal/test_announcements`                 |
 
