@@ -42,12 +42,16 @@ export LDAP_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-ldap-server-admin"
 export LDAP_CREDENTIALS_SECRET_KEY="password"
 export KEYCLOAK_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-keycloak-credentials"
 export KEYCLOAK_CREDENTIALS_SECRET_KEY="adminPassword"
+export ADMIN_CREDENTIALS_SECRET_NAME="${RELEASE_NAME}-nubus-credentials"
+export ADMIN_CREDENTIALS_SECRET_KEY="administrator_password"
 
 $EXTERNAL_DEPENDENCIES && {
   KEYCLOAK_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
   KEYCLOAK_CREDENTIALS_SECRET_KEY="keycloak-admin-password"
   LDAP_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
   LDAP_CREDENTIALS_SECRET_KEY="ldap-admin-password"
+  ADMIN_CREDENTIALS_SECRET_NAME="nubus-existing-secrets"
+  ADMIN_CREDENTIALS_SECRET_KEY="administrator-password"
 }
 
 # detect if using an external minio
@@ -63,6 +67,7 @@ echo "Cluster: $(kubectl config view --minify -o jsonpath='{.contexts[0].context
 echo "External minio: $([ -n "$external_minio" ] && echo "true" || echo "false")"
 echo "Using LDAP secret: ${LDAP_CREDENTIALS_SECRET_NAME}/${LDAP_CREDENTIALS_SECRET_KEY}"
 echo "Using Keycloak secret: ${KEYCLOAK_CREDENTIALS_SECRET_NAME}/${KEYCLOAK_CREDENTIALS_SECRET_KEY}"
+echo "Using Administrator secret: ${ADMIN_CREDENTIALS_SECRET_NAME}/${ADMIN_CREDENTIALS_SECRET_KEY}"
 echo "Using external dependencies: ${EXTERNAL_DEPENDENCIES}"
 
 
@@ -70,7 +75,7 @@ echo "Using external dependencies: ${EXTERNAL_DEPENDENCIES}"
 #
 # These commands depend on the Nubus deployment and will have to be kept in sync
 # with the progressing Nubus chart.
-default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "${RELEASE_NAME}-nubus-credentials" -o jsonpath="{.data.administrator_password}" | base64 -d)
+default_admin_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "$ADMIN_CREDENTIALS_SECRET_NAME" -o jsonpath="{.data.$ADMIN_CREDENTIALS_SECRET_KEY}" | base64 -d)
 ldap_base_dn=$(kubectl -n "${DEPLOY_NAMESPACE}" get configmaps "${RELEASE_NAME}-ldap-server-primary" -o jsonpath="{.data.LDAP_BASEDN}")
 keycloak_password=$(kubectl get secret -n "${DEPLOY_NAMESPACE}" "$KEYCLOAK_CREDENTIALS_SECRET_NAME" -o jsonpath="{.data.$KEYCLOAK_CREDENTIALS_SECRET_KEY}" | base64 -d)
 
