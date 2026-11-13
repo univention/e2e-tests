@@ -320,6 +320,20 @@ class KubernetesCluster:
         )
         return secret
 
+    def get_helm_release_secrets(self, release_name: str, namespace: str | None = None) -> list:
+        """
+        Retrieve the `Secrets` in which Helm stores the revisions of a release.
+
+        If `namespace` is not provided, then the discovered namespace will be
+        used.
+        """
+        v1 = client.CoreV1Api()
+        secrets = v1.list_namespaced_secret(
+            namespace=namespace or self.namespace,
+            label_selector=f"owner=helm,name={release_name}",
+        )
+        return secrets.items
+
     def get_configmap(self, name: str, namespace: str | None = None):
         """
         Retrieve a `Secret` from the cluster.
