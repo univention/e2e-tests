@@ -59,6 +59,7 @@ markers = [
     "login: all tests related to login on univention-portal",
     "logout: all tests related to logout on univention-portal",
     "notifications: tests related to univention-portal notifications",
+    "password_generation_off: tests for deployments that set global.secrets.generatePasswords to false",
     "password_hashes: tests for the password hashes and Kerberos key material on LDAP accounts",
     "portal: tests for univention-portal",
     "saml: all tests that enforce SAML login. Other tests may also use SAML depending on the environment",
